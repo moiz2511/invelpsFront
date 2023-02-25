@@ -1,0 +1,11 @@
+.common-button {
+  background-color: var(--secondary-color);
+  font-size: 18px;
+  font-weight: 700;
+  color: #fff;
+  padding: 10px 30px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 20px;
+}

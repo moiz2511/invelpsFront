@@ -1,0 +1,22 @@
+.loginCard  {
+    max-width: 600px;
+    min-width: 400px;
+    margin: 2em auto;
+    text-align: center;
+    max-height: 600px;
+}
+
+.loginToolBar { 
+    color: white;
+    background-color: rgb(60, 109, 156);
+    justify-content: center;
+}
+
+.loginCardContent {
+    background-color: white;
+    justify-content: center;
+}
+
+.loginButton {
+    background-color: rgb(60, 109, 156);;
+}

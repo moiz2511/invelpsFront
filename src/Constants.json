@@ -1,0 +1,7 @@
+{
+    "APP_BASE_URL": "http://localhost:3000",
+    "BACKEND_SERVER_BASE_URL": "http://localhost:8000/api",
+    "FINANCIAL_MODELLING_API_BASE_URL": "https://financialmodelingprep.com/api",
+    "FINANCIAL_MODELLING_API_KEY": "9230476494350ad483e3b88802bd94d8",
+    "APP_API_TIMEOUT": 200000
+}

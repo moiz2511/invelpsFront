@@ -1,0 +1,298 @@
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
+html {
+  --primary-color: #ccbf90;
+  --secondary-color: #407879;
+  --primary-blue: #4a5978;
+  /* font-family: 'Montserrat', sans-serif; */
+  /* font-family: 'Playfair Display', serif; */
+}
+.homePage {
+  margin: 0;
+  font-family: "Montserrat", sans-serif;
+  font-weight: 400;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background: #dcdcdc;
+}
+
+button {
+  font-family: "Montserrat", sans-serif;
+}
+/* h1 {
+  font-family: "Montserrat", sans-serif;
+}
+h2 {
+  font-family: "Montserrat", sans-serif;
+}
+h3 {
+  font-family: "Montserrat", sans-serif;
+} */
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
+    monospace;
+}
+
+.landing-container {
+  /* padding: 30px; */
+  max-width: 1600px;
+  margin: 0 auto;
+}
+/* hero section start  */
+.hero {
+  min-height: 90vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.hero-inner {
+  margin-top: 30px;
+  display: grid;
+  grid-template-columns: 0.5fr 1fr;
+  background: #fff;
+  padding: 50px;
+}
+.hero-textbox {
+  color: var(--secondary-color);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-items: center;
+  margin-right: 50px;
+}
+.hero-textbox > h1 {
+  font-size: 36px;
+  font-weight: 700;
+  text-align: center;
+  padding: 0;
+  margin: 0;
+}
+.hero-textbox > h3 {
+  font-weight: 700;
+  font-size: 22px;
+  padding: 0;
+  margin: 0 0 20px 0;
+}
+.hero-textbox > p {
+  font-size: 18px;
+  padding: 0;
+  text-align: center;
+  margin: 20px 0;
+}
+.hero-textbox > button {
+  margin-top: auto;
+  font-size: 25px;
+}
+.hero-imagebox {
+  align-self: center;
+}
+.hero-imagebox > img {
+  width: 100%;
+  height: auto;
+  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+}
+/* about section ends */
+
+.about {
+  min-height: 90vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  /* padding-top: 20vh; */
+}
+.about-inner {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  background-color: #fff;
+  padding: 50px;
+}
+.about-inner-textbox {
+  background-color: var(--secondary-color);
+  color: #fff;
+  font-size: 18px;
+  font-weight: 700;
+  padding: 0 20px;
+}
+.about-inner-textbox > p {
+  margin-top: 30px;
+}
+.about-inner-imagebox {
+  background-color: var(--secondary-color);
+  align-self: center;
+  justify-self: center;
+}
+.about-inner-imagebox > img {
+  width: 100%;
+  height: 100%;
+}
+.about > .about-inner > button {
+  margin-top: 20px;
+  width: 500px;
+  margin-left: calc(100vw - 92vw);
+}
+/* about section ends */
+/* services serction starts */
+.services {
+  min-height: 90vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.services-inner {
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+  grid-gap: 50px;
+  justify-items: center;
+  padding: 50px;
+  background-color: #fff;
+}
+.services-inner-textbox {
+  height: 250px;
+  width: 380px;
+  padding: 10px;
+}
+.services-inner-textbox > ul {
+  list-style: none;
+  font-size: 18px;
+  padding: 0 0 0 5px;
+}
+.services-inner-textbox > ul > li {
+  margin-top: 10px;
+}
+.services-inner-textbox > ul li::before {
+  content: "\25AA"; /* Add content: \2022 is the CSS Code/unicode for a bullet */
+  color: var(--primary-color); /* Change the color */
+  font-weight: bold; /* If you want it to be bold */
+  display: inline-block; /* Needed to add space between the bullet and the text */
+  width: 1em; /* Also needed for space (tweak if needed) */
+  margin-left: -1em; /* Also needed for space (tweak if needed) */
+}
+.services-inner-textbox > h2 {
+  color: var(--secondary-color);
+  margin-bottom: 20px;
+}
+.services-inner-textbox > p {
+  font-size: 22px;
+  font-weight: 700;
+}
+.services-inner-textbox > button {
+  /* margin-top: 30px; */
+}
+/* services serction ends */
+/* mission section starts */
+.mission {
+  min-height: 90vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.mission-inner {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  /* padding-top: 20vh; */
+  height: fit-content;
+  background-color: #fff;
+  padding: 50px;
+  /* margin-bottom: 200px; */
+}
+.mission-inner-img-container {
+  padding: 10px;
+}
+.mission-inner-img-container > img {
+  width: 100%;
+  height: auto;
+}
+.mission-inner-text-container {
+  display: flex;
+  flex-direction: column;
+  padding: 0 10px;
+}
+.mission-inner-text-container > button {
+  align-self: center;
+}
+.mission-inner-text-container > h2 {
+  color: var(--secondary-color);
+  font-size: 28px;
+}
+.mission-inner-text-container > p {
+  font-size: 18px;
+}
+
+.mission-inner-text-container > p:nth-of-type(1) {
+  font-weight: 700;
+}
+
+.mission-inner-text-container--list {
+  /* margin-top: -5px; */
+  font-size: 18px;
+  padding: 0 0 0 20px;
+  list-style: none;
+}
+
+.mission-inner-text-container--list li::before {
+  content: "\25AA"; /* Add content: \2022 is the CSS Code/unicode for a bullet */
+  color: var(--primary-color); /* Change the color */
+  font-weight: bold; /* If you want it to be bold */
+  display: inline-block; /* Needed to add space between the bullet and the text */
+  width: 1em; /* Also needed for space (tweak if needed) */
+  margin-left: -1em; /* Also needed for space (tweak if needed) */
+}
+/* mission serction ends */
+
+@media screen and (max-width: 1250px) {
+  .services-inner {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  }
+}
+
+@media screen and (max-width: 800px) {
+  .landing-container {
+    padding: 10px;
+  }
+  .hero-inner {
+    grid-template-columns: 1fr;
+  }
+  .hero-textbox {
+    margin-bottom: 20px;
+    margin-right: 0px;
+  }
+  .services-inner {
+    padding-top: 100px;
+    padding-bottom: 100px;
+  }
+  .about-inner {
+    padding-top: 0;
+    grid-template-columns: 1fr;
+  }
+  .mission-inner {
+    padding-top: 0;
+    grid-template-columns: 1fr;
+  }
+
+  .about {
+    text-align: center;
+  }
+
+  .about > .about-inner > button {
+    margin-top: 50px;
+    margin-left: 0;
+    width: 100%;
+  }
+}
+
+.common-button {
+  background-color: var(--secondary-color);
+  font-size: 18px;
+  font-weight: 700;
+  color: #fff;
+  padding: 10px 30px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 20px;
+}

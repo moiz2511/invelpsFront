@@ -1,0 +1,9 @@
+.company-icon {
+    /* background: url('https://financialmodelingprep.com/image-stock/RMS.PA.png'); */
+    height: 30px;
+    width: 30px;
+    display: block;
+    background-repeat: no-repeat;
+    background-size: 25px;
+    /* Other styles here */
+}
