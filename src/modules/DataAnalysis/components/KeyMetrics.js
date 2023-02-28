@@ -498,7 +498,7 @@ const DAKeyMetrics = () => {
                             </Select>
                         </FormControl>
                     </Grid>}
-                    <Grid item sx={{ marginTop: 0.75 }}>
+                    <Grid item sx={{ marginTop: 1.2 }}>
                         {/* <TextField
                             id="fromFilter"
                             label="From"
@@ -508,7 +508,9 @@ const DAKeyMetrics = () => {
                             onChange={(event) => setFromFilter(event.target.value)}
                             value={fromFilter}
                         /> */}
-                        from: {" "}
+                        <label style={{ color: 'rgba(0, 0, 0, 0.6)', fontFamily: '"Roboto","Helvetica","Arial","sans-serif"' }}>
+                            from:
+                        </label>
                         <DatePicker
                             selected={fromFilterVal}
                             onChange={(date)=>handleFromChange(date)}
@@ -520,8 +522,10 @@ const DAKeyMetrics = () => {
 
                         />
                     </Grid>
-                    <Grid item sx={{ marginTop: 0.75 }}>
-                        to: {" "}
+                    <Grid item sx={{ marginTop: 1.2}}>
+                        <label style={{ color: 'rgba(0, 0, 0, 0.6)', fontFamily: '"Roboto","Helvetica","Arial","sans-serif"' }}>
+                            to:
+                        </label>
                         <DatePicker
                             selected={toFilterVal}
                             onChange={(date)=>handleToChange(date)}
@@ -558,7 +562,7 @@ const DAKeyMetrics = () => {
                         <CircularProgress />
                     </Backdrop>
                 </Box>}
-                {tableConentFetched && <CustomizedTable tableRows={tableContent} headCells={tableHeaders} />}
+                {tableConentFetched && <CustomizedTable tableRows={tableContent} headCells={tableHeaders} showTool={1} />}
                 {/* {tableConentFetched && <CustomizedTable tableRows={table2Content} headCells={table2Headers} />} */}
             </Card>
         </React.Fragment>

@@ -80,9 +80,9 @@ sx={{ width: "40rem" ,boxShadow:"none",border:"none"}}
                         <Table>
                             <TableBody>
                                 <TableRow >
-                                    <TableCell align="center" style={{ width: '25%' }}>Measure</TableCell>
+                                    <TableCell align="center" style={{ width: '25%', fontWeight: 'bold' }}>Measure</TableCell>
                                     <TableCell align="center" style={{ width: '25%' }}>{props.keyMatric == true ? props.row.unit.measure : props.row.measure}</TableCell>
-                                    <TableCell align="center" style={{ width: '25%' }}>{'Category'}</TableCell>
+                                    <TableCell align="center" style={{ width: '25%', fontWeight: 'bold' }}>{'Category'}</TableCell>
                                     <TableCell align="center" style={{ width: '25%' }}>{props.keyMatric == true ? props.row.unit.category : props.row.category }</TableCell>
                                 </TableRow>
                             </TableBody>
@@ -92,22 +92,34 @@ sx={{ width: "40rem" ,boxShadow:"none",border:"none"}}
                         <Table>
                             <TableBody>
                                 <TableRow style={{ backgroundColor: '#f5f5f5' }}>
-                                    <TableCell align="center" style={{ width: '25%' }}>Description</TableCell>
+                                    <TableCell align="center" style={{ width: '25%', fontWeight: 'bold' }}>Description</TableCell>
                                     <TableCell style={{ width: '75%' }}>{props.keyMatric == true ? props.row.unit.description : props.row.description}</TableCell>
                                 </TableRow>
                                 <TableRow style={{ width: '100%' }}>
-                                    <TableCell align="center" style={{ width: '25%' }}>Formula</TableCell>
+                                    <TableCell align="center" style={{ width: '25%', fontWeight: 'bold' }}>Formula</TableCell>
                                     <TableCell style={{ width: '75%' }}>{props.keyMatric == true ? props.row.unit.description : props.row.description}</TableCell>
                                 </TableRow>
                                 <TableRow style={{ backgroundColor: '#f5f5f5' }}>
-                                    <TableCell align="center" style={{ width: '25%' }}>Interpretation</TableCell>
+                                    <TableCell align="center" style={{ width: '25%', fontWeight: 'bold' }}>Interpretation</TableCell>
                                     <TableCell style={{ width: '75%' }}>{props.keyMatric == true ? props.row.unit.description : props.row.description}</TableCell>
                                 </TableRow>
                                 <TableRow style={{ width: '100%' }}>
-                                    <TableCell align="center" style={{ width: '25%' }}>Limitation</TableCell>
+                                    <TableCell align="center" style={{ width: '25%', fontWeight: 'bold' }}>Limitation</TableCell>
                                     <TableCell style={{ width: '75%' }}>{props.keyMatric==true? props.row.unit.description:props.row.description}</TableCell>
                                 </TableRow>
 
+                            </TableBody>
+                        </Table>
+                    </TableContainer>
+                    <TableContainer component={Paper} sx={{ width: "40rem", boxShadow: "none", border: "none" }}>
+                        <Table>
+                            <TableBody>
+                                <TableRow >
+                                    <TableCell align="center" style={{ width: '25%', fontWeight: 'bold' }}>Good Range</TableCell>
+                                    <TableCell align="center" style={{ width: '25%' }}>{'>=15%'}</TableCell>
+                                    <TableCell align="center" style={{ width: '25%', fontWeight: 'bold' }}>{'Bad Range'}</TableCell>
+                                    <TableCell align="center" style={{ width: '25%' }}>{'<=10%'}</TableCell>
+                                </TableRow>
                             </TableBody>
                         </Table>
                     </TableContainer>

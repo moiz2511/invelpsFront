@@ -490,7 +490,7 @@ const DAFinancials = () => {
                                 {...params} variant="standard" label="Quarter" />}
                         />
                     </Grid>} */}
-                    <Grid item sx={{ marginTop: 0.75 }}>
+                    <Grid item sx={{ marginTop: 1.2 }}>
                         {/* <TextField
                             id="fromFilter"
                             label="From"
@@ -500,19 +500,25 @@ const DAFinancials = () => {
                             onChange={(event) => setFromFilter(event.target.value)}
                             value={fromFilter}
                         /> */}
-                        from: {" "}
-                        <DatePicker
-                            selected={fromFilterVal}
-                            onChange={(date) => handleFromChange(date)}
-                            dateFormat="yyyy"
-                            placeholderText="Year"
-                            showYearPicker
-                            minDate={new Date(1950, 0, 1)}
-                            className="custom-datepicker"
+                        
+                        <label className="" style={{ color:'rgba(0, 0, 0, 0.6)',fontFamily:'"Roboto","Helvetica","Arial","sans-serif"'}}>
+                                from:
+                            </label>
+                            <DatePicker
+                                label="From"
+                                selected={fromFilterVal}
+                                onChange={(date) => handleFromChange(date)}
+                                dateFormat="yyyy"
+                                placeholderText="Year"
+                                showYearPicker
+                                minDate={new Date(1950, 0, 1)}
+                                className="custom-datepicker"
 
-                        />
+                            />
+                            
+                        
                     </Grid>
-                    <Grid item sx={{ marginTop: 0.75 }}>
+                    <Grid item sx={{ marginTop: 1.2 }}>
                         {/* <TextField
                             id="toFilter"
                             label="To"
@@ -522,7 +528,9 @@ const DAFinancials = () => {
                             onChange={(event) => setToFilter(event.target.value)}
                             value={toFilter}
                         /> */}
-                        to: {" "}
+                        <label style={{ color: 'rgba(0, 0, 0, 0.6)', fontFamily: '"Roboto","Helvetica","Arial","sans-serif"' }}>
+                            to:
+                        </label>
                         <DatePicker
                             selected={toFilterVal}
                             onChange={(date) => handleToChange(date)}
@@ -550,7 +558,7 @@ const DAFinancials = () => {
                         <CircularProgress />
                     </Backdrop>
                 </Box>}
-                {tableConentFetched && <CustomizedTable disablePagination={true} enableSorting={false} tableRows={tableContent} headCells={tableHeaderColumns} />}
+                {tableConentFetched && <CustomizedTable disablePagination={true} enableSorting={false} tableRows={tableContent} headCells={tableHeaderColumns} showTool={0} />}
             </Card>
         </React.Fragment>
     );

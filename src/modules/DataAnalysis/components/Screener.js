@@ -13,6 +13,7 @@ import TabContext from '@mui/lab/TabContext';
 import TabPanel from '@mui/lab/TabPanel';
 import { styled } from '@mui/material/styles';
 import AddMetricFilterDialog from './ScreenerDailog';
+import TabToolTip from './TabsToolTip';
 
 const headCells = {
     data: [
@@ -316,6 +317,9 @@ const DAScreener = () => {
     const [liquidityTableData, setLiquidityTableData] = useState([]);
     const [solvencyTableData, setSolvencyTableData] = useState([]);
     const [valuationTableData, setValuationTableData] = useState([]);
+    const [returnTableData, setReturnTableData] = useState([]);
+    const [allTableData, setAllTableData] = useState([]);
+
 
     const [performanceTableData, setPerformanceTableData] = useState([]);
     const [compainesCount, setCompaniesCount] = useState(0);
@@ -488,6 +492,72 @@ const DAScreener = () => {
             }]
     });
 
+    const [returnTableHeadCells, setReturnTableHeadCells] = useState({
+        data: [{
+            id: 'company_name',
+            label: 'Company',
+            isValueLink: false,
+            isDropDown: false,
+        },
+        {
+            id: 'exchange',
+            label: 'Exchange',
+            isValueLink: false,
+            isDropDown: false,
+        },
+        {
+            id: 'sector',
+            label: 'Sector',
+            isValueLink: false,
+            isDropDown: false,
+        },
+        {
+            id: 'industry',
+            label: 'Industry',
+            isValueLink: false,
+            isDropDown: false,
+        },
+        {
+            id: 'country',
+            label: 'Country',
+            isValueLink: false,
+            isDropDown: false,
+        }]
+    });
+
+    const [allTableHeadCells, setAllTableHeadCells] = useState({
+        data: [{
+            id: 'company_name',
+            label: 'Company',
+            isValueLink: false,
+            isDropDown: false,
+        },
+        {
+            id: 'exchange',
+            label: 'Exchange',
+            isValueLink: false,
+            isDropDown: false,
+        },
+        {
+            id: 'sector',
+            label: 'Sector',
+            isValueLink: false,
+            isDropDown: false,
+        },
+        {
+            id: 'industry',
+            label: 'Industry',
+            isValueLink: false,
+            isDropDown: false,
+        },
+        {
+            id: 'country',
+            label: 'Country',
+            isValueLink: false,
+            isDropDown: false,
+        }]
+    });
+
 
     useEffect(() => {
         getCountryDropDowns();
@@ -512,7 +582,9 @@ const DAScreener = () => {
         setSectorFilter("")
         setIndustryFilter("")
         console.log("Getting City Options")
-        getCityDropDowns(countryFilter.map((data) => data.country).join(","), exchanges.map((data) => data.exchange).join(","));
+        // getCityDropDowns(countryFilter.map((data) => data.country).join(","), exchanges.map((data) => data.exchange).join(","));
+        getSectorDropDowns(exchanges.map((data) => data.exchange).join(","));
+
     };
     const setCityFilterHandler = (cities) => {
         setCityFilter(cities)
@@ -548,33 +620,33 @@ const DAScreener = () => {
                             company.mktCap = filteredData[0].marketCap
                             company.pe = filteredData[0].pe
                             company.yearChange = filteredData[0].yearChange
-                            company['1D'] = filteredData[0]['1D']
-                            company['5D'] = filteredData[0]['5D']
-                            company['1M'] = filteredData[0]['1M']
-                            company['3M'] = filteredData[0]['3M']
-                            company['6M'] = filteredData[0]['6M']
-                            company['ytd'] = filteredData[0]['ytd']
-                            company['1Y'] = filteredData[0]['1Y']
-                            company['3Y'] = filteredData[0]['3Y']
-                            company['5Y'] = filteredData[0]['5Y']
-                            company['10Y'] = filteredData[0]['10Y']
-                            company['max'] = filteredData[0]['max']
+                            company['1D'] = filteredData[0]['1D'].toFixed(2) +'%'
+                            company['5D'] = filteredData[0]['5D'].toFixed(2) + '%'
+                            company['1M'] = filteredData[0]['1M'].toFixed(2) + '%'
+                            company['3M'] = filteredData[0]['3M'].toFixed(2) + '%'
+                            company['6M'] = filteredData[0]['6M'].toFixed(2) + '%'
+                            company['ytd'] = filteredData[0]['ytd'].toFixed(2) + '%'
+                            company['1Y'] = filteredData[0]['1Y'].toFixed(2) + '%'
+                            company['3Y'] = filteredData[0]['3Y'].toFixed(2) + '%'
+                            company['5Y'] = filteredData[0]['5Y'].toFixed(2) + '%'
+                            company['10Y'] = filteredData[0]['10Y'].toFixed(2) + '%'
+                            company['max'] = filteredData[0]['max'].toFixed(2) + '%'
                         } else {
                             company.price = 0
                             company.mktCap = 0.0
                             company.pe = 0.0
                             company.yearChange = 0
-                            company['1D'] = 0
-                            company['5D'] = 0
-                            company['1M'] = 0
-                            company['3M'] = 0
-                            company['6M'] = 0
-                            company['ytd'] = 0
-                            company['1Y'] = 0
-                            company['3Y'] = 0
-                            company['5Y'] = 0
-                            company['10Y'] = 0
-                            company['max'] = 0
+                            company['1D'] = '0%'
+                            company['5D'] = '0%'
+                            company['1M'] = '0%'
+                            company['3M'] = '0%'
+                            company['6M'] = '0%'
+                            company['ytd'] = '0%'
+                            company['1Y'] = '0%'
+                            company['3Y'] = '0%'
+                            company['5Y'] = '0%'
+                            company['10Y'] = '0%'
+                            company['max'] = '0%'
                         }
                     });
                     console.log(companies);
@@ -751,13 +823,82 @@ const DAScreener = () => {
                 isValueLink: false,
                 isDropDown: false,
             },]
+        var newReturn = [
+            {
+                id: 'company_name',
+                label: 'Company',
+                isValueLink: false,
+                isDropDown: false,
+            },
+            {
+                id: 'exchange',
+                label: 'Exchange',
+                isValueLink: false,
+                isDropDown: false,
+            },
+            {
+                id: 'sector',
+                label: 'Sector',
+                isValueLink: false,
+                isDropDown: false,
+            },
+            {
+                id: 'industry',
+                label: 'Industry',
+                isValueLink: false,
+                isDropDown: false,
+            },
+            {
+                id: 'country',
+                label: 'Country',
+                isValueLink: false,
+                isDropDown: false,
+            },]
+        var newAll = [
+            {
+                id: 'company_name',
+                label: 'Company',
+                isValueLink: false,
+                isDropDown: false,
+            },
+            {
+                id: 'exchange',
+                label: 'Exchange',
+                isValueLink: false,
+                isDropDown: false,
+            },
+            {
+                id: 'sector',
+                label: 'Sector',
+                isValueLink: false,
+                isDropDown: false,
+            },
+            {
+                id: 'industry',
+                label: 'Industry',
+                isValueLink: false,
+                isDropDown: false,
+            },
+            {
+                id: 'country',
+                label: 'Country',
+                isValueLink: false,
+                isDropDown: false,
+            },]
         tableContent.forEach((element) => {
             console.log(element.category)
+            var elementName=''
+            if(periodFilter!='1'){
+                elementName = 'Avg ' + element.metric +' ( '+periodFilter+'yr )'
+            }
+            else{
+                elementName = element.metric + ' Yr-1'
+            }
             if (element.category =='Efficiency'){
 
                 newEfficiency.push({
                     id: element.metric,
-                    label: element.metric,
+                    label: elementName,
                     isValueLink: false,
                     isDropDown: false,
                 })
@@ -766,7 +907,7 @@ const DAScreener = () => {
 
                 newProfability.push({
                     id: element.metric,
-                    label: element.metric,
+                    label: elementName,
                     isValueLink: false,
                     isDropDown: false,
                 })
@@ -775,7 +916,7 @@ const DAScreener = () => {
 
                 newValuation.push({
                     id: element.metric,
-                    label: element.metric,
+                    label: elementName,
                     isValueLink: false,
                     isDropDown: false,
                 })
@@ -784,7 +925,7 @@ const DAScreener = () => {
 
                 newLiquidity.push({
                     id: element.metric,
-                    label: element.metric,
+                    label: elementName,
                     isValueLink: false,
                     isDropDown: false,
                 })
@@ -793,12 +934,34 @@ const DAScreener = () => {
 
                 newSolvency.push({
                     id: element.metric,
-                    label: element.metric,
+                    label: elementName,
                     isValueLink: false,
                     isDropDown: false,
                 })
             }
+
+            if (element.category == 'Return') {
+
+                newReturn.push({
+                    id: element.metric,
+                    label: elementName,
+                    isValueLink: false,
+                    isDropDown: false,
+                })
+            }
+            newAll.push({
+                id: element.metric,
+                label: elementName,
+                isValueLink: false,
+                isDropDown: false,
+            })
             
+        });
+
+        setAllTableHeadCells((prevState) => {
+
+
+            return { ...prevState, data: newAll };
         });
 
         setEfficiencyTableHeadCells((prevState) => {
@@ -827,6 +990,12 @@ const DAScreener = () => {
             return { ...prevState, data: newValuation };
         });
 
+        setReturnTableHeadCells((prevState) => {
+
+
+            return { ...prevState, data: newReturn };
+        });
+
 
         // const [profibiliyTableHeadCells, setProfibiliyTableHeadCells] = useState({
         //     data: []
@@ -848,9 +1017,12 @@ const DAScreener = () => {
             .then((response) => {
                 console.log(response)
                 var resp = JSON.parse(response.data.companies_data[0])
+                var allResp = response.data.companies_all_data
                 console.log(resp)
+                console.log(allResp)
                 // getLivePricesAndMarketCap(response.data.companies_data);
                 // setCompaniesCount(response.data.companies_data.length);
+                setAllTableData(allResp)
                 if ("Efficiency" in resp) {
                     setEffciencyTableData(resp.Efficiency)
                 }
@@ -877,7 +1049,7 @@ const DAScreener = () => {
     async function getCompanies(industry) {
         setShowCompaniesDataProgress(true);
         setCircularProgress(true);
-        const body = { country: countryFilter.map((data => data.country)), exchange: exchangeFilter.map((data => data.exchange)), city: cityFilter.map((data => data.city)), sector: sectorFilter.map((data => data.sector)), industry: industry.map((data) => data.industry) }
+        const body = { country: countryFilter.map((data => data.country)), exchange: exchangeFilter.map((data => data.exchange)), sector: sectorFilter.map((data => data.sector)), industry: industry.map((data) => data.industry) }
         await restClient.getCompanies(body)
             .then((response) => {
                 console.log(response)
@@ -970,6 +1142,30 @@ const DAScreener = () => {
     const handleChange = (event, newValue) => {
         if (newValue !== undefined) {
             setValue(newValue);
+        }
+        if (newValue == 1 || newValue == 8){
+            setCompaniesCount(companiesTableData.length)
+        }
+        if (newValue == 2) {
+            setCompaniesCount(profibilityTableData.length)
+        }
+        if (newValue == 3) {
+            setCompaniesCount(effciencyTableData.length)
+        }
+        if (newValue == 4) {
+            setCompaniesCount(liquidityTableData.length)
+        }
+        if (newValue == 5) {
+            setCompaniesCount(solvencyTableData.length)
+        }
+        if (newValue == 6) {
+            setCompaniesCount(valuationTableData.length)
+        }
+        if (newValue == 7) {
+            setCompaniesCount(returnTableData.length)
+        }
+        if (newValue == 9) {
+            setCompaniesCount(allTableData.length)
         }
     };
     const getPerformanceDataHandler = () => {
@@ -1082,7 +1278,7 @@ const DAScreener = () => {
                             </MenuItem>
                         ))}
                     </TextField> */}
-                    <Autocomplete
+                    {/* <Autocomplete
                         limitTags={3}
                         multiple
                         size="small"
@@ -1097,7 +1293,7 @@ const DAScreener = () => {
                         value={cityFilter}
                         sx={{ minWidth: 240, mt: 0.4 }}
                         renderInput={(params) => <TextField SelectProps={{ autoWidth: true, displayEmpty: true, defaultOpen: true }} {...params} variant="standard" label="City" />}
-                    />
+                    /> */}
                 </Grid>
                 <Grid item>
                     {/* <TextField
@@ -1292,24 +1488,37 @@ const DAScreener = () => {
                             allowScrollButtonsMobile
                             onChange={handleChange} aria-label="screener-tabs"
                             value={value}
+                            TabIndicatorProps={{
+                                style: {
+                                    backgroundColor: "blue", height: 3,
+                                    borderRadius: "5px" } // Change this to your desired color
+                            }}
                         >
-                            <Tab label="Overview" value="1" />
+                           
+                            <Tab label="Overview" value="1" title="displays the result of macro criteria"/>
+                           
+                            
                             {categoryInMetricCheck('Profitability')?
-                                <Tab label="Profitability" value="2" />
+                                <Tab label="Profitability" value="2" title="displays the companies matching the macro criterias and Profitability criterias"  />
                             :null}
                             {categoryInMetricCheck('Efficiency') ?
-                                <Tab label="Efficiency" value="3" />
+                                <Tab label="Efficiency" value="3" title="displays the companies matching the macro criterias and Efficiency criterias" />
                                 : null}
                             {categoryInMetricCheck('Liquidity') ?
-                                <Tab label="Liquidity" value="4" />
+                                <Tab label="Liquidity" value="4" title="displays the companies matching the macro criterias and Liquidity criterias" />
                                 : null}
                             {categoryInMetricCheck('Solvency') ?
-                                <Tab label="Solvency" value="5" />
+                                <Tab label="Solvency" value="5" title="displays the companies matching the macro criterias and Solvency criterias" />
                                 : null}
                             {categoryInMetricCheck('Valuation') ?
-                                <Tab label="Valuation" value="6" />
+                                <Tab label="Valuation" value="6" title="displays the companies matching the macro criterias and Valuation criterias" />
                                 : null}
-                            <Tab label="Performance" value="7" />
+                            {categoryInMetricCheck('Return') ?
+                                <Tab label="Return" value="7" title="displays the companies matching the macro criterias and Return criterias" />
+                                : null}
+                            <Tab label="Performance" value="8" title="displays the companies matching the macro criterias and Performance criterias" />
+                            <Tab label="All Criterias" value="9" title="displays the companies matching all the criterias" />
+
                         </Tabs>
                     </div>
                     <TabPanel sx={{ width: '100%', padding: 0 }} value="1">
@@ -1329,7 +1538,7 @@ const DAScreener = () => {
                         }
                     </TabPanel>
                     {categoryInMetricCheck('Profitability') ?
-                        <TabPanel value="2">
+                        <TabPanel sx={{ width: '100%', padding: 0 }}  value="2">
                             {
                                 profibilityTableData &&
                                 <Card sx={{ width: '100%', position: 'relative' }}>
@@ -1348,7 +1557,7 @@ const DAScreener = () => {
                         : null}
 
                     {categoryInMetricCheck('Efficiency') ?
-                        <TabPanel value="3">
+                        <TabPanel sx={{ width: '100%', padding: 0 }}  value="3">
                             {
                                 effciencyTableData &&
                                 <Card sx={{ width: '100%', position: 'relative' }}>
@@ -1367,7 +1576,7 @@ const DAScreener = () => {
                         : null}
                     
                     {categoryInMetricCheck('Liquidity') ?
-                        <TabPanel value="4">
+                        <TabPanel sx={{ width: '100%', padding: 0 }} value="4">
                             {
                                 liquidityTableData &&
                                 <Card sx={{ width: '100%', position: 'relative' }}>
@@ -1386,7 +1595,7 @@ const DAScreener = () => {
                         : null}
                     
                     {categoryInMetricCheck('Solvency') ?
-                        <TabPanel value="5">
+                        <TabPanel sx={{ width: '100%', padding: 0 }} value="5">
                             {
                                 solvencyTableData &&
                                 <Card sx={{ width: '100%', position: 'relative' }}>
@@ -1405,7 +1614,7 @@ const DAScreener = () => {
                         : null}
                     
                     {categoryInMetricCheck('Valuation') ?
-                        <TabPanel value="6">
+                        <TabPanel sx={{ width: '100%', padding: 0 }} value="6">
                             {
                                 valuationTableData &&
                                 <Card sx={{ width: '100%', position: 'relative' }}>
@@ -1422,12 +1631,46 @@ const DAScreener = () => {
                             }
                         </TabPanel>
                         : null}
+                    {categoryInMetricCheck('Return') ?
+                        <TabPanel sx={{ width: '100%', padding: 0 }} value="7">
+                            {
+                                returnTableData &&
+                                <Card sx={{ width: '100%', position: 'relative' }}>
+                                    <CustomizedTable headCells={returnTableHeadCells} tableRows={returnTableData} />
+                                    {showCompaniesDataProgress && <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+                                        <Backdrop
+                                            sx={{ color: '#fff', position: 'absolute', zIndex: (theme) => theme.zIndex.drawer - 1, opacity: 0.5 }}
+                                            open={showCompaniesDataProgress}
+                                        >
+                                            <CircularProgress />
+                                        </Backdrop>
+                                    </Box>}
+                                </Card>
+                            }
+                        </TabPanel>
+                        : null}
                     
-                    <TabPanel value="7">
+                    <TabPanel sx={{ width: '100%', padding: 0 }} value="8">
                         {
                             displayScreenTable &&
                             <Card sx={{ width: '100%', position: 'relative' }}>
                                 <CustomizedTable headCells={performanceTableHeadCells} tableRows={companiesTableData} />
+                                {showCompaniesDataProgress && <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+                                    <Backdrop
+                                        sx={{ color: '#fff', position: 'absolute', zIndex: (theme) => theme.zIndex.drawer - 1, opacity: 0.5 }}
+                                        open={showCompaniesDataProgress}
+                                    >
+                                        <CircularProgress />
+                                    </Backdrop>
+                                </Box>}
+                            </Card>
+                        }
+                    </TabPanel>
+                    <TabPanel sx={{ width: '100%', padding: 0 }} value="9">
+                        {
+                            displayScreenTable &&
+                            <Card sx={{ width: '100%', position: 'relative' }}> 
+                                <CustomizedTable headCells={allTableHeadCells} tableRows={allTableData} />
                                 {showCompaniesDataProgress && <Box sx={{ display: 'flex', justifyContent: 'center' }}>
                                     <Backdrop
                                         sx={{ color: '#fff', position: 'absolute', zIndex: (theme) => theme.zIndex.drawer - 1, opacity: 0.5 }}
