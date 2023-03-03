@@ -41,6 +41,7 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 
 function CustomizedTable(props) {
     // const navigate = useNavigate();
+    console.log(props)
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(5);
 
@@ -245,7 +246,7 @@ function CustomizedTable(props) {
                                                     '& .MuiTextField-root': { minWidth: '20ch' },
                                                 }} >
                                                     {/* {console.log(item)} */}
-                                                    {!item.isValueLink && row[item.id]} {props.showTool==1 ? <BigBoxTooltip item={item} row={row} keyMatric={true} /> : props.showTool==0 ? <BigBoxTooltip item={item} keyMatric={false} row={row.details[0]} />:''} 
+                                                    {!item.isValueLink && row[item.id]} {props.showTool==1 && item.id=='field' ? <BigBoxTooltip item={item} row={row} keyMatric={true} /> : props.showTool==0 ? <BigBoxTooltip item={item} keyMatric={false} row={row.details[0]} />:''} 
                                                    {/* { console.log("x",item.id)} */}
                                                     {item.isValueLink &&
                                                         <Button

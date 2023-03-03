@@ -39,6 +39,9 @@ export default class ScreenerService {
     getAllCountries = () => {
         return this.init().get("/screener/company/countries")
     }
+    getAllExchanges = () => {
+        return this.init().get("/screener/company/exchanges")
+    }
 
     getExchangesByCountry = (country) => {
         return this.init().post("/screener/countries/exchange", {country});

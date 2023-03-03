@@ -560,7 +560,7 @@ const DAScreener = () => {
 
 
     useEffect(() => {
-        getCountryDropDowns();
+        getExchangeDropDownsValues();
     }, []);
     const setCountryFilterHandler = (countries) => {
         console.log("Set Country filter handler")
@@ -572,7 +572,26 @@ const DAScreener = () => {
         setIndustryFilter("")
         console.log("Getting exchnage dropdowns")
         getExchangeDropDowns(countries.map((data) => data.country).join(","));
+        getCompaniesByCountry(countries);
     };
+    async function getCompaniesByCountry(country) {
+        setShowCompaniesDataProgress(true);
+        setCircularProgress(true);
+        const body = { country: country.map((data => data.country)) }
+        await restClient.getCompanies(body)
+            .then((response) => {
+                console.log(response)
+                getLivePricesAndMarketCap(response.data.resp_data)
+                setCompaniesCount(response.data.resp_data.length);
+                setShowCompaniesDataProgress(false);
+                setCircularProgress(false);
+            })
+            .catch((err) => {
+                console.log(err);
+                setShowCompaniesDataProgress(false);
+                setCircularProgress(false);
+            });
+    }
 
     const setExchangeFilterHandler = (exchanges) => {
         console.log("Set Exchange Values", exchanges)
@@ -583,9 +602,28 @@ const DAScreener = () => {
         setIndustryFilter("")
         console.log("Getting City Options")
         // getCityDropDowns(countryFilter.map((data) => data.country).join(","), exchanges.map((data) => data.exchange).join(","));
+        getCompaniesByExchange(exchanges)
         getSectorDropDowns(exchanges.map((data) => data.exchange).join(","));
 
     };
+    async function getCompaniesByExchange(exchange) {
+        setShowCompaniesDataProgress(true);
+        setCircularProgress(true);
+        const body = { exchange: exchange.map((data => data.exchange)) }
+        await restClient.getCompanies(body)
+            .then((response) => {
+                console.log(response)
+                getLivePricesAndMarketCap(response.data.resp_data)
+                setCompaniesCount(response.data.resp_data.length);
+                setShowCompaniesDataProgress(false);
+                setCircularProgress(false);
+            })
+            .catch((err) => {
+                console.log(err);
+                setShowCompaniesDataProgress(false);
+                setCircularProgress(false);
+            });
+    }
     const setCityFilterHandler = (cities) => {
         setCityFilter(cities)
         setSectorFilter("")
@@ -595,8 +633,27 @@ const DAScreener = () => {
     const setSectorFilterHandler = (sectors) => {
         setSectorFilter(sectors)
         setIndustryFilter("")
+        getCompaniesByExchangeAndSector(sectors)
         getIndustryDropDowns(exchangeFilter.map((data) => data.exchange).join(","), sectors.map((data) => data.sector).join(","));
     };
+    async function getCompaniesByExchangeAndSector(sector) {
+        setShowCompaniesDataProgress(true);
+        setCircularProgress(true);
+        const body = { exchange: exchangeFilter.map((data => data.exchange)), sector: sector.map((data => data.sector)) }
+        await restClient.getCompanies(body)
+            .then((response) => {
+                console.log(response)
+                getLivePricesAndMarketCap(response.data.resp_data)
+                setCompaniesCount(response.data.resp_data.length);
+                setShowCompaniesDataProgress(false);
+                setCircularProgress(false);
+            })
+            .catch((err) => {
+                console.log(err);
+                setShowCompaniesDataProgress(false);
+                setCircularProgress(false);
+            });
+    }
     const setIndustryFilterHandler = (industries) => {
         setIndustryFilter(industries)
         getCompanies(industries);
@@ -941,7 +998,6 @@ const DAScreener = () => {
             }
 
             if (element.category == 'Return') {
-
                 newReturn.push({
                     id: element.metric,
                     label: elementName,
@@ -1038,6 +1094,9 @@ const DAScreener = () => {
                 if ("Valuation" in resp) {
                     setValuationTableData(resp.Valuation)
                 }
+                if ("Return" in resp) {
+                    setReturnTableData(resp.Return)
+                }
                 setShowCompaniesDataProgress(false);
             })
             .catch((err) => {
@@ -1070,6 +1129,16 @@ const DAScreener = () => {
             .then((response) => {
                 console.log(response)
                 setCountryDropDownValues(response.data.resp_data);
+            })
+            .catch((err) => {
+                console.log(err);
+            });
+    }
+    async function getExchangeDropDownsValues() {
+        await restClient.getAllExchanges()
+            .then((response) => {
+                console.log(response)
+                setExchangeDropDownValues(response.data.resp_data);
             })
             .catch((err) => {
                 console.log(err);
@@ -1211,7 +1280,7 @@ const DAScreener = () => {
                         ))}
                     </TextField> */}
 
-                    <Autocomplete
+                    {/* <Autocomplete
                         limitTags={3}
                         multiple
                         size="small"
@@ -1226,7 +1295,7 @@ const DAScreener = () => {
                         value={countryFilter}
                         sx={{ minWidth: 240, mt: 0.4 }}
                         renderInput={(params) => <TextField SelectProps={{ autoWidth: true, displayEmpty: true, defaultOpen: true }} {...params} variant="standard" label="Country" />}
-                    />
+                    /> */}
 
                 </Grid>
                 <Grid item>

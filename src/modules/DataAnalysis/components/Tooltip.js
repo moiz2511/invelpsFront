@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Tooltip, Box,Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from '@mui/material';
+import { HelpOutline } from '@mui/icons-material';
 
 const BigBoxTooltip = (props) => {
     const [isOpen, setIsOpen] = useState(false);
@@ -69,8 +70,9 @@ const BigBoxTooltip = (props) => {
             col4: 'Profability Ratios',
         }
     ];
-   
+
     return (
+        <>
         <Tooltip
 sx={{ width: "40rem" ,boxShadow:"none",border:"none"}}
             title={
@@ -80,9 +82,9 @@ sx={{ width: "40rem" ,boxShadow:"none",border:"none"}}
                         <Table>
                             <TableBody>
                                 <TableRow >
-                                    <TableCell align="center" style={{ width: '25%', fontWeight: 'bold' }}>Measure</TableCell>
+                                    <TableCell align="left" style={{ width: '25%', fontWeight: 'bold' }}>Measure:</TableCell>
                                     <TableCell align="center" style={{ width: '25%' }}>{props.keyMatric == true ? props.row.unit.measure : props.row.measure}</TableCell>
-                                    <TableCell align="center" style={{ width: '25%', fontWeight: 'bold' }}>{'Category'}</TableCell>
+                                    <TableCell align="left" style={{ width: '25%', fontWeight: 'bold' }}>{'Category:'}</TableCell>
                                     <TableCell align="center" style={{ width: '25%' }}>{props.keyMatric == true ? props.row.unit.category : props.row.category }</TableCell>
                                 </TableRow>
                             </TableBody>
@@ -92,19 +94,19 @@ sx={{ width: "40rem" ,boxShadow:"none",border:"none"}}
                         <Table>
                             <TableBody>
                                 <TableRow style={{ backgroundColor: '#f5f5f5' }}>
-                                    <TableCell align="center" style={{ width: '25%', fontWeight: 'bold' }}>Description</TableCell>
+                                    <TableCell align="left" style={{ width: '25%', fontWeight: 'bold' }}>Description:</TableCell>
                                     <TableCell style={{ width: '75%' }}>{props.keyMatric == true ? props.row.unit.description : props.row.description}</TableCell>
                                 </TableRow>
                                 <TableRow style={{ width: '100%' }}>
-                                    <TableCell align="center" style={{ width: '25%', fontWeight: 'bold' }}>Formula</TableCell>
+                                    <TableCell align="left" style={{ width: '25%', fontWeight: 'bold' }}>Formula:</TableCell>
                                     <TableCell style={{ width: '75%' }}>{props.keyMatric == true ? props.row.unit.description : props.row.description}</TableCell>
                                 </TableRow>
                                 <TableRow style={{ backgroundColor: '#f5f5f5' }}>
-                                    <TableCell align="center" style={{ width: '25%', fontWeight: 'bold' }}>Interpretation</TableCell>
+                                    <TableCell align="left" style={{ width: '25%', fontWeight: 'bold' }}>Interpretation:</TableCell>
                                     <TableCell style={{ width: '75%' }}>{props.keyMatric == true ? props.row.unit.description : props.row.description}</TableCell>
                                 </TableRow>
                                 <TableRow style={{ width: '100%' }}>
-                                    <TableCell align="center" style={{ width: '25%', fontWeight: 'bold' }}>Limitation</TableCell>
+                                    <TableCell align="left" style={{ width: '25%', fontWeight: 'bold' }}>Limitation:</TableCell>
                                     <TableCell style={{ width: '75%' }}>{props.keyMatric==true? props.row.unit.description:props.row.description}</TableCell>
                                 </TableRow>
 
@@ -115,9 +117,9 @@ sx={{ width: "40rem" ,boxShadow:"none",border:"none"}}
                         <Table>
                             <TableBody>
                                 <TableRow >
-                                    <TableCell align="center" style={{ width: '25%', fontWeight: 'bold' }}>Good Range</TableCell>
+                                    <TableCell align="left" style={{ width: '25%', fontWeight: 'bold' }}>Good Range:</TableCell>
                                     <TableCell align="center" style={{ width: '25%' }}>{'>=15%'}</TableCell>
-                                    <TableCell align="center" style={{ width: '25%', fontWeight: 'bold' }}>{'Bad Range'}</TableCell>
+                                    <TableCell align="left" style={{ width: '25%', fontWeight: 'bold' }}>{'Bad Range:'}</TableCell>
                                     <TableCell align="center" style={{ width: '25%' }}>{'<=10%'}</TableCell>
                                 </TableRow>
                             </TableBody>
@@ -132,8 +134,11 @@ sx={{ width: "40rem" ,boxShadow:"none",border:"none"}}
             open={isOpen}
             placement="bottom-end"
         >
-            <span>(?)</span>
+                <HelpOutline sx={{ color: 'blue' }} />
+            
         </Tooltip>
+            {/* <HelpOutline sx={{ color: 'blue' }} /> */}
+        </>
     );
 };
 
