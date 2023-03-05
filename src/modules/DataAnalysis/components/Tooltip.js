@@ -74,11 +74,18 @@ const BigBoxTooltip = (props) => {
     return (
         <>
         <Tooltip
-sx={{ width: "40rem" ,boxShadow:"none",border:"none"}}
+                sx={{
+                    width: "40rem", boxShadow: "none", borderRight: "1px solid black",
+                    borderLeft: "1px solid black",
+                    borderTop: "1px solid black"
+}}
             title={
 
                 <>
-                    <TableContainer component={Paper} sx={{ width: "40rem", boxShadow: "none", border: "none" }}>
+                    <TableContainer component={Paper} sx={{
+                        width: "40rem", boxShadow: "none", borderRight: "1px solid black",
+                        borderLeft: "1px solid black",
+                        borderTop: "1px solid black" }}>
                         <Table>
                             <TableBody>
                                 <TableRow >
@@ -90,7 +97,10 @@ sx={{ width: "40rem" ,boxShadow:"none",border:"none"}}
                             </TableBody>
                         </Table>
                     </TableContainer>
-                    <TableContainer component={Paper} sx={{ width: "40rem", boxShadow: "none", border: "none" }}>
+                    <TableContainer component={Paper} sx={{
+                        width: "40rem", boxShadow: "none", borderRight: "1px solid black",
+                        borderLeft: "1px solid black",
+                         }}>
                         <Table>
                             <TableBody>
                                 <TableRow style={{ backgroundColor: '#f5f5f5' }}>
@@ -113,7 +123,11 @@ sx={{ width: "40rem" ,boxShadow:"none",border:"none"}}
                             </TableBody>
                         </Table>
                     </TableContainer>
-                    <TableContainer component={Paper} sx={{ width: "40rem", boxShadow: "none", border: "none" }}>
+                    <TableContainer component={Paper} sx={{
+                        width: "40rem", boxShadow: "none", borderRight: "1px solid black",
+                        borderLeft: "1px solid black",
+                        borderBottom: "1px solid black"
+}}>
                         <Table>
                             <TableBody>
                                 <TableRow >
@@ -134,7 +148,7 @@ sx={{ width: "40rem" ,boxShadow:"none",border:"none"}}
             open={isOpen}
             placement="bottom-end"
         >
-                <HelpOutline sx={{ color: '#1976d2', fontSize: '1.2rem' }} />
+                <HelpOutline sx={{ color: '#1976d2', fontSize: '1rem' }} />
             
         </Tooltip>
             {/* <HelpOutline sx={{ color: 'blue' }} /> */}
