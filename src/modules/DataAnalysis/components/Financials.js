@@ -490,16 +490,7 @@ const DAFinancials = () => {
                                 {...params} variant="standard" label="Quarter" />}
                         />
                     </Grid>} */}
-                    <Grid item sx={{ marginTop: 1.2 }}>
-                        {/* <TextField
-                            id="fromFilter"
-                            label="From"
-                            placeholder='Year'
-                            helperText="Enter From Year Example: 2010"
-                            variant="standard"
-                            onChange={(event) => setFromFilter(event.target.value)}
-                            value={fromFilter}
-                        /> */}
+                    {/* <Grid item sx={{ marginTop: 1.2 }}>
                         
                         <label className="" style={{ color:'rgba(0, 0, 0, 0.6)',fontFamily:'"Roboto","Helvetica","Arial","sans-serif"'}}>
                                 from:
@@ -517,17 +508,9 @@ const DAFinancials = () => {
                             />
                             
                         
-                    </Grid>
-                    <Grid item sx={{ marginTop: 1.2 }}>
-                        {/* <TextField
-                            id="toFilter"
-                            label="To"
-                            placeholder='Year'
-                            helperText="Enter To Year Example: 2020"
-                            variant="standard"
-                            onChange={(event) => setToFilter(event.target.value)}
-                            value={toFilter}
-                        /> */}
+                    </Grid> */}
+                    {/* <Grid item sx={{ marginTop: 1.2 }}>
+                       
                         <label style={{ color: 'rgba(0, 0, 0, 0.6)', fontFamily: '"Roboto","Helvetica","Arial","sans-serif"' }}>
                             to:
                         </label>
@@ -541,6 +524,35 @@ const DAFinancials = () => {
                             className="custom-datepicker"
 
                         />
+                    </Grid> */}
+                     <Grid item sx={{ marginTop: 0.75 }}>
+                        <InputLabel> from:</InputLabel>
+                        <Box sx={{ marginTop: 0.45 }}>
+                            <DatePicker
+                                selected={fromFilterVal}
+                                onChange={(date) => handleFromChange(date)}
+                                dateFormat="yyyy"
+                                placeholderText="Year"
+                                showYearPicker
+                                minDate={new Date(1950, 0, 1)}
+                                className="custom-datepicker"
+                            />
+                        </Box>
+                    </Grid>
+                    <Grid item sx={{ marginTop: 0.75 }}>
+                        <InputLabel> to:</InputLabel>
+                        <Box sx={{ marginTop: 0.45 }}>
+                            <DatePicker
+                                
+                                selected={toFilterVal}
+                                onChange={(date) => handleToChange(date)}
+                                dateFormat="yyyy"
+                                placeholderText="Year"
+                                showYearPicker
+                                minDate={new Date(1950, 0, 1)}
+                                className="custom-datepicker"
+                            />
+                        </Box>
                     </Grid>
                     <Grid item sx={{ marginTop: 0.75 }}>
                         <Button id="daFinancialsSubmit" type="submit" variant="contained" size="medium" onClick={onSubmitHandler} sx={{ mt: 1.5 }} > Submit </Button>

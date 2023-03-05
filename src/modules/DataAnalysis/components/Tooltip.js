@@ -99,15 +99,15 @@ sx={{ width: "40rem" ,boxShadow:"none",border:"none"}}
                                 </TableRow>
                                 <TableRow style={{ width: '100%' }}>
                                     <TableCell align="left" style={{ width: '25%', fontWeight: 'bold' }}>Formula:</TableCell>
-                                    <TableCell style={{ width: '75%' }}>{props.keyMatric == true ? props.row.unit.description : props.row.description}</TableCell>
+                                    <TableCell style={{ width: '75%' }}>{props.keyMatric == true ? props.row.unit.function : props.row.function}</TableCell>
                                 </TableRow>
                                 <TableRow style={{ backgroundColor: '#f5f5f5' }}>
                                     <TableCell align="left" style={{ width: '25%', fontWeight: 'bold' }}>Interpretation:</TableCell>
-                                    <TableCell style={{ width: '75%' }}>{props.keyMatric == true ? props.row.unit.description : props.row.description}</TableCell>
+                                    <TableCell style={{ width: '75%' }}>{props.keyMatric == true ? props.row.unit.interpretation : props.row.interpretation}</TableCell>
                                 </TableRow>
                                 <TableRow style={{ width: '100%' }}>
                                     <TableCell align="left" style={{ width: '25%', fontWeight: 'bold' }}>Limitation:</TableCell>
-                                    <TableCell style={{ width: '75%' }}>{props.keyMatric==true? props.row.unit.description:props.row.description}</TableCell>
+                                    <TableCell style={{ width: '75%' }}>{props.keyMatric == true ? props.row.unit.limitation : props.row.limitation}</TableCell>
                                 </TableRow>
 
                             </TableBody>
@@ -118,9 +118,9 @@ sx={{ width: "40rem" ,boxShadow:"none",border:"none"}}
                             <TableBody>
                                 <TableRow >
                                     <TableCell align="left" style={{ width: '25%', fontWeight: 'bold' }}>Good Range:</TableCell>
-                                    <TableCell align="center" style={{ width: '25%' }}>{'>=15%'}</TableCell>
+                                    <TableCell align="center" style={{ width: '25%' }}>{'>='}{props.keyMatric == true ? props.row.unit.good_range : props.row.good_range}</TableCell>
                                     <TableCell align="left" style={{ width: '25%', fontWeight: 'bold' }}>{'Bad Range:'}</TableCell>
-                                    <TableCell align="center" style={{ width: '25%' }}>{'<=10%'}</TableCell>
+                                    <TableCell align="center" style={{ width: '25%' }}>{'<='}{props.keyMatric == true ? props.row.unit.bad_range : props.row.bad_range}</TableCell>
                                 </TableRow>
                             </TableBody>
                         </Table>
@@ -134,7 +134,7 @@ sx={{ width: "40rem" ,boxShadow:"none",border:"none"}}
             open={isOpen}
             placement="bottom-end"
         >
-                <HelpOutline sx={{ color: 'blue' }} />
+                <HelpOutline sx={{ color: '#1976d2', fontSize: '1.2rem' }} />
             
         </Tooltip>
             {/* <HelpOutline sx={{ color: 'blue' }} /> */}

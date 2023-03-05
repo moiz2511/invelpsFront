@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 
-import { Backdrop, Box, Button, Card, Chip, CircularProgress, Grid, Tooltip } from '@mui/material';
+import { Backdrop, Box, Button, Card, Chip, CircularProgress, Grid, Tooltip, InputLabel } from '@mui/material';
 
 import PropTypes from 'prop-types';
 import TextField from '@mui/material/TextField';
@@ -16,6 +16,8 @@ import DALinearRegressionService from '../services/LinearRegressionService';
 import ReactHighcharts from 'react-highcharts/ReactHighstock.src'
 import PageInfoBreadCrumbs from '../../Core/components/Layout/PageInfoBreadCrumbs';
 import moment from 'moment'
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
 
 const LISTBOX_PADDING = 8; // px
 
@@ -124,6 +126,8 @@ const DALinearRegression = () => {
     const [companyFilter, setCompanyFilter] = useState("");
     const [fromFilter, setFromFilter] = useState("");
     const [toFilter, setToFilter] = useState("");
+    const [fromFilterVal, setFromFilterVal] = useState("");
+    const [toFilterVal, setToFilterVal] = useState("");
     const [tableContent, setTableContent] = useState([]);
     const tableHeaderColumns = {
         data: [
@@ -358,6 +362,18 @@ const DALinearRegression = () => {
         getCompaniesDropDowns();
     }, []);
 
+    const handleFromChange = (date) => {
+        setFromFilterVal(date)
+        console.log(date)
+        var da = date.toString().split(' ')[3]
+        console.log(da)
+        setFromFilter(da);
+    }
+    const handleToChange = (date) => {
+        var da = date.toString().split(' ')[3]
+        setToFilterVal(date)
+        setToFilter(da);
+    }
     return (
         <React.Fragment>
             <Box sx={{ marginLeft: 1 }}>
@@ -397,7 +413,7 @@ const DALinearRegression = () => {
                             renderOption={(props, option) => [props, option]}
                         />
                     </Grid>
-                    <Grid item sx={{ marginTop: 0.75 }}>
+                    {/* <Grid item sx={{ marginTop: 0.75 }}>
                         <TextField
                             id="fromFilter"
                             label="From"
@@ -405,7 +421,7 @@ const DALinearRegression = () => {
                             variant="standard"
                             onChange={(event) => { setFromFilter(event.target.value) }}
                             value={fromFilter}
-                        />
+                        /> */}
                         {/* <LocalizationProvider dateAdapter={AdapterDateFns}>
                             <DesktopDatePicker
                                 label="From"
@@ -415,8 +431,8 @@ const DALinearRegression = () => {
                                 renderInput={(params) => <TextField {...params} variant="standard" />}
                             />
                         </LocalizationProvider> */}
-                    </Grid>
-                    <Grid item sx={{ marginTop: 0.75 }}>
+                    {/* </Grid> */}
+                    {/* <Grid item sx={{ marginTop: 0.75 }}>
                         <TextField
                             id="toFilter"
                             label="To"
@@ -425,6 +441,34 @@ const DALinearRegression = () => {
                             onChange={(event) => setToFilter(event.target.value)}
                             value={toFilter}
                         />
+                    </Grid> */}
+                    <Grid item sx={{ marginTop: 0.75 }}>
+                        <InputLabel> from:</InputLabel>
+                        <Box sx={{ marginTop: 0.45 }}>
+                            <DatePicker
+                                selected={fromFilterVal}
+                                onChange={(date) => handleFromChange(date)}
+                                dateFormat="yyyy"
+                                placeholderText="Year"
+                                showYearPicker
+                                minDate={new Date(1950, 0, 1)}
+                                className="custom-datepicker"
+                            />
+                        </Box>
+                    </Grid>
+                    <Grid item sx={{ marginTop: 0.75 }}>
+                        <InputLabel> to:</InputLabel>
+                        <Box sx={{ marginTop: 0.45 }}>
+                            <DatePicker
+                                selected={toFilterVal}
+                                onChange={(date) => handleToChange(date)}
+                                dateFormat="yyyy"
+                                placeholderText="Year"
+                                showYearPicker
+                                minDate={new Date(1950, 0, 1)}
+                                className="custom-datepicker"
+                            />
+                        </Box>
                     </Grid>
                     <Grid item sx={{ marginTop: 0.75 }}>
                         <Button id="daLinearRegressionSubmit" type="submit" variant="contained" size="medium" onClick={onSubmitHandler} sx={{ mt: 1.5 }} > Submit </Button>

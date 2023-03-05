@@ -108,7 +108,7 @@ const companyTableHeadCells = {
         },
         {
             id: 'yearChange',
-            label: 'Yr % Change',
+            label: '1 Yr % Change',
             isValueLink: false,
             isDropDown: false,
         },

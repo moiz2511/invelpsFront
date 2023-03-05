@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import Chart from '../../UIUtils/Charts/ChartComponent';
 import ColorConstants from '../../Core/constants/ColorConstants.json'
-import { Button, Grid, TextField, MenuItem, Card, Box, CircularProgress, Backdrop, Tooltip, Chip } from '@mui/material';
+import { Button, Grid, TextField, MenuItem, Card, Box, CircularProgress, Backdrop, Tooltip, Chip, InputLabel } from '@mui/material';
 
 // import CustomizedTable from '../../UIUtils/Table/TableContentComponent';
 import FundamentalChartService from '../services/FundamentalChartService';
@@ -25,6 +25,8 @@ import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import AnalysisModelService from '../../Context/services/AnalysisModelService';
 import PageInfoBreadCrumbs from '../../Core/components/Layout/PageInfoBreadCrumbs';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
 
 const compareFilters = [
   'industryAvg',
@@ -258,8 +260,12 @@ const DAFundamentalChart = () => {
   // const [categoryDropDownValues, setCategoryDropDownValues] = useState([]);
   const [metricsFilter, setMetricsFilter] = useState(metrics);
   const [metricsDropDownValues, setMetricsDropDownValues] = useState([]);
+  // const [fromFilter, setFromFilter] = useState(from);
+  // const [toFilter, setToFilter] = useState(to);
   const [fromFilter, setFromFilter] = useState(from);
   const [toFilter, setToFilter] = useState(to);
+  const [fromFilterVal, setFromFilterVal] = useState("");
+  const [toFilterVal, setToFilterVal] = useState("");
   const [rangesFilter, setRangesFilter] = useState(ranges);
   const [rangesDropDownValues, setRangesDropDownValues] = useState([]);
   const [chartInputData, setChartInputData] = useState({});
@@ -455,6 +461,18 @@ const DAFundamentalChart = () => {
 
   // const emptyRows =
   //   page > 0 ? Math.max(0, (1 + page) * rowsPerPage - resultItemsCount) : 0;
+  const handleFromChange = (date) => {
+    setFromFilterVal(date)
+    console.log(date)
+    var da = date.toString().split(' ')[3]
+    console.log(da)
+    setFromFilter(da);
+  }
+  const handleToChange = (date) => {
+    var da = date.toString().split(' ')[3]
+    setToFilterVal(date)
+    setToFilter(da);
+  }
   return (
     <React.Fragment>
       <Grid container>
@@ -570,7 +588,7 @@ const DAFundamentalChart = () => {
                 renderInput={(params) => <TextField SelectProps={{ autoWidth: true, displayEmpty: true, defaultOpen: true }} {...params} variant="standard" label="Metrics" />}
               />
             </Grid>
-            <Grid item sx={{ marginTop: 0.75 }}>
+            {/* <Grid item sx={{ marginTop: 0.75 }}>
               <TextField
                 // select
                 id="fromFilter"
@@ -589,6 +607,35 @@ const DAFundamentalChart = () => {
                 onChange={setToFilterHandler}
                 value={toFilter}
               />
+            </Grid> */}
+            <Grid item sx={{ marginTop: 0.75 }}>
+              <InputLabel> from:</InputLabel>
+              <Box sx={{ marginTop: 0.45 }}>
+                <DatePicker
+                  selected={fromFilterVal}
+                  onChange={(date) => handleFromChange(date)}
+                  dateFormat="yyyy"
+                  placeholderText="Year"
+                  showYearPicker
+                  minDate={new Date(1950, 0, 1)}
+                  className="custom-datepicker"
+                />
+              </Box>
+            </Grid>
+            <Grid item sx={{ marginTop: 0.75 }}>
+              <InputLabel> to:</InputLabel>
+              <Box sx={{ marginTop: 0.45 }}>
+                <DatePicker
+
+                  selected={toFilterVal}
+                  onChange={(date) => handleToChange(date)}
+                  dateFormat="yyyy"
+                  placeholderText="Year"
+                  showYearPicker
+                  minDate={new Date(1950, 0, 1)}
+                  className="custom-datepicker"
+                />
+              </Box>
             </Grid>
             {metricsFilter.length < 2 && <Grid item sx={{ marginTop: 0.75 }}>
               <TextField
