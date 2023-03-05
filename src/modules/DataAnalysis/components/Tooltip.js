@@ -118,9 +118,9 @@ sx={{ width: "40rem" ,boxShadow:"none",border:"none"}}
                             <TableBody>
                                 <TableRow >
                                     <TableCell align="left" style={{ width: '25%', fontWeight: 'bold' }}>Good Range:</TableCell>
-                                    <TableCell align="center" style={{ width: '25%' }}>{'>='}{props.keyMatric == true ? props.row.unit.good_range : props.row.good_range}</TableCell>
+                                    <TableCell align="center" style={{ width: '25%' }}>{props.keyMatric == true ? props.row.unit.good_range : props.row.good_range}</TableCell>
                                     <TableCell align="left" style={{ width: '25%', fontWeight: 'bold' }}>{'Bad Range:'}</TableCell>
-                                    <TableCell align="center" style={{ width: '25%' }}>{'<='}{props.keyMatric == true ? props.row.unit.bad_range : props.row.bad_range}</TableCell>
+                                    <TableCell align="center" style={{ width: '25%' }}>{props.keyMatric == true ? props.row.unit.bad_range : props.row.bad_range}</TableCell>
                                 </TableRow>
                             </TableBody>
                         </Table>
