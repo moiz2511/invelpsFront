@@ -504,8 +504,9 @@ const DAKeyMetrics = () => {
                     </Grid>}
                    
                     <Grid item sx={{ marginTop: 0.75 }}>
-                        <InputLabel> from:</InputLabel>
-                        <Box sx={{ marginTop: 0.45 }}>
+                        <InputLabel sx={{fontFamily: "Helvetica",
+                            fontSize: "12px", marginTop: '8px' }} > From:</InputLabel>
+                        {/* <Box sx={{ marginTop: 0.3 }}> */}
                             <DatePicker
                                 selected={fromFilterVal}
                                 onChange={(date) => handleFromChange(date)}
@@ -515,11 +516,14 @@ const DAKeyMetrics = () => {
                                 minDate={new Date(1950, 0, 1)}
                                 className="custom-datepicker"
                             />
-                        </Box>
+                        {/* </Box> */}
                     </Grid>
                     <Grid item sx={{ marginTop: 0.75 }}>
-                        <InputLabel> to:</InputLabel>
-                        <Box sx={{ marginTop: 0.45 }}>
+                        <InputLabel sx={{
+                            fontFamily: "Helvetica",
+                            fontSize: "12px", marginTop: '8px'
+                        }} > To:</InputLabel>
+                        {/* <Box sx={{ marginTop: 0.3 }}> */}
                             <DatePicker
                                 style={datePickerStyle}
                                 selected={toFilterVal}
@@ -530,7 +534,7 @@ const DAKeyMetrics = () => {
                                 minDate={new Date(1950, 0, 1)}
                                 className="custom-datepicker"
                             />
-                        </Box>
+                        {/* </Box> */}
                     </Grid>
                     <Grid item sx={{ marginTop: 0.75 }}>
                         <Button id="daFinancialsSubmit" type="submit" variant="contained" size="medium" onClick={onSubmitHandler} sx={{ mt: 1.5 }} > Submit </Button>

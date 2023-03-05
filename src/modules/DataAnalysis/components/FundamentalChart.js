@@ -609,8 +609,11 @@ const DAFundamentalChart = () => {
               />
             </Grid> */}
             <Grid item sx={{ marginTop: 0.75 }}>
-              <InputLabel> from:</InputLabel>
-              <Box sx={{ marginTop: 0.45 }}>
+              <InputLabel sx={{
+                fontFamily: "Helvetica",
+                fontSize: "12px", marginTop: '8px'
+              }} > From:</InputLabel>
+              {/* <Box sx={{ marginTop: 0.45 }}> */}
                 <DatePicker
                   selected={fromFilterVal}
                   onChange={(date) => handleFromChange(date)}
@@ -620,11 +623,14 @@ const DAFundamentalChart = () => {
                   minDate={new Date(1950, 0, 1)}
                   className="custom-datepicker"
                 />
-              </Box>
+              {/* </Box> */}
             </Grid>
             <Grid item sx={{ marginTop: 0.75 }}>
-              <InputLabel> to:</InputLabel>
-              <Box sx={{ marginTop: 0.45 }}>
+              <InputLabel sx={{
+                fontFamily: "Helvetica",
+                fontSize: "12px", marginTop: '8px'
+              }} > To:</InputLabel>
+              {/* <Box sx={{ marginTop: 0.45 }}> */}
                 <DatePicker
 
                   selected={toFilterVal}
@@ -635,7 +641,7 @@ const DAFundamentalChart = () => {
                   minDate={new Date(1950, 0, 1)}
                   className="custom-datepicker"
                 />
-              </Box>
+              {/* </Box> */}
             </Grid>
             {metricsFilter.length < 2 && <Grid item sx={{ marginTop: 0.75 }}>
               <TextField
