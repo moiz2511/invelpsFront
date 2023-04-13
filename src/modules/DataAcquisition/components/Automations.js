@@ -329,6 +329,7 @@ const DataAcquisitionAPi = () => {
 
     const onSubmitHandler = async (event) => {
         event.preventDefault();
+        console.log("recurrencePattern",recurrencePattern)
         // setCircularProgress(true);
         // console.log({ companies: companiesFilter.map((item) => item.symbol), type: typeFilter.type, years: nYearsFilter })
         // await restService.dataAcquisitionApi({ companies: companiesFilter.map((item) => item.symbol), type: typeFilter.type, years: nYearsFilter })
@@ -342,7 +343,7 @@ const DataAcquisitionAPi = () => {
         //         console.log(err);
         //     });
 
-        axios.post(`${Constants.BACKEND_SERVER_BASE_URL}/automation/register`, { name, description, isRecurring:isRecurring?'on':'off', recurrence_pattern: recurrencePattern, company_factors: companiesFilter.map((item) => item.symbol), type_factors: typeFilter.type, years: nYearsFilter })
+        axios.post(`${Constants.BACKEND_SERVER_BASE_URL}/automation/register`, { name, description, is_recurring: isRecurring ? 'on' : 'off', recurrence_pattern: recurrencePattern == "daily" ? "D" : recurrencePattern == "weekly" ? "W" : recurrencePattern == "monthly" ? "M" : recurrencePattern == "quarterly" ? "Q" : recurrencePattern == "half-yearly" ? "HY" : recurrencePattern =="yearly"?"Y":"No", company_factors: companiesFilter.map((item) => item.symbol), type_factors: typeFilter.type, years: nYearsFilter })
             .then(response => {
                 console.log(response)
                 setEvents(response?.data.events);
