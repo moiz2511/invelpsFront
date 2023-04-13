@@ -405,7 +405,6 @@ const DataAcquisitionAPi = () => {
                             }} onClick={()=>
                                 handleEventClick(event)
                             }>
-                                {event.name}
                                 <Container key={i}  name={event.name} description={event.description} isSuccess={true} lastOccurrence={event.last_occurrence?.toString()} >
 
                                 </Container>
