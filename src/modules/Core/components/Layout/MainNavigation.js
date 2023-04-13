@@ -81,6 +81,11 @@ const subNavItemsInitialData = [
                 id: 22,
                 label: 'File Import',
                 path: '/dataAcquisition/fileimport'
+            },
+            {
+                id: 23,
+                label: 'Automation',
+                path: '/dataAcquisition/automation'
             }
         ]
 

@@ -13,6 +13,7 @@ import DpInvestingStyle from './modules/DataProcessing/components/InvestingStyle
 import DpScreenModel from './modules/DataProcessing/components/ScreenModel';
 import DpAnalysisModel from './modules/DataProcessing/components/AnalysisModel';
 import DataAcquisitionAPi from './modules/DataAcquisition/components/DataAcquisition';
+import Automation from './modules/DataAcquisition/components/Automations'
 import DAFinancials from './modules/DataAnalysis/components/Financials';
 import DAMarketData from './modules/DataAnalysis/components/MarketData';
 import DAKeyMetrics from './modules/DataAnalysis/components/KeyMetrics';
@@ -81,7 +82,7 @@ function App() {
             <Route path='/dataprocessing/fundamentalchart' element={<DPFundamentalChart />} />
 
             <Route path='/dataacquisition/api' element={<DataAcquisitionAPi />} />
-            <Route path='/dataacquisition/api' element={<DataAcquisitionAPi />} />
+            <Route path='/dataacquisition/automation' element={<Automation />} />
             <Route path='/dataAcquisition/fileimport' element={<DataAcquisitionFileUpload />} />
 
             <Route path='/admin/manageUsers' element={<ManageUsers />} />
