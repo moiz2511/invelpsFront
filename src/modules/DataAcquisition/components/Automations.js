@@ -15,6 +15,7 @@ import DataAcquisitionService from '../services/DataAcquisitionService';
 import PageInfoBreadCrumbs from '../../Core/components/Layout/PageInfoBreadCrumbs';
 
 import Constants from "./../../../Constants.json"
+import MyTable from './TaskTable'
 
 const LISTBOX_PADDING = 8; // px
 
@@ -255,6 +256,7 @@ const DataAcquisitionAPi = () => {
 
 
     const [open, setOpen] = useState(false);
+    const [isDisable, setIsDisable] = useState(false);
     const [name, setName] = useState('');
     const [description, setDescription] = useState('');
     const [email, setEmail] = useState('');
@@ -330,30 +332,22 @@ const DataAcquisitionAPi = () => {
     const onSubmitHandler = async (event) => {
         event.preventDefault();
         console.log("recurrencePattern",recurrencePattern)
-        // setCircularProgress(true);
-        // console.log({ companies: companiesFilter.map((item) => item.symbol), type: typeFilter.type, years: nYearsFilter })
-        // await restService.dataAcquisitionApi({ companies: companiesFilter.map((item) => item.symbol), type: typeFilter.type, years: nYearsFilter })
-        //     .then((response) => {
-        //         setCircularProgress(false);
-        //         alert("Data Acquisition Successfull");
-        //     })
-        //     .catch((err) => {
-        //         setCircularProgress(false);
-        //         alert("Data Acquisition Failed", err);
-        //         console.log(err);
-        //     });
-
+        setIsDisable(true)
         axios.post(`${Constants.BACKEND_SERVER_BASE_URL}/automation/register`, { name, description, is_recurring: isRecurring ? 'on' : 'off', recurrence_pattern: recurrencePattern == "daily" ? "D" : recurrencePattern == "weekly" ? "W" : recurrencePattern == "monthly" ? "M" : recurrencePattern == "quarterly" ? "Q" : recurrencePattern == "half-yearly" ? "HY" : recurrencePattern =="yearly"?"Y":"No", company_factors: companiesFilter.map((item) => item.symbol), type_factors: typeFilter.type, years: nYearsFilter })
             .then(response => {
                 console.log(response)
-                setEvents(response?.data.events);
-
+                alert("Event registered successfully.");
+                setIsDisable(false)
+                setHandler(handler==true?false:true)
             })
             .catch(error => {
+                alert("An error occurred.");
+                setIsDisable(false)
                 console.error("Error in useEFFect events", error);
             });
     }
     const [events, setEvents] = useState([])
+    const [handler, setHandler] = useState(false)
 
     useEffect(() => {
         axios.get(`${Constants.BACKEND_SERVER_BASE_URL}/automation/getEvents`)
@@ -365,13 +359,19 @@ const DataAcquisitionAPi = () => {
             .catch(error => {
                 console.error("Error in useEFFect events", error);
             });
-    }, []);
+    }, [handler]);
     useEffect(() => {
         getDataAcquisitionTypes();
         getCompaniesDropDownByIndustry("All");
         getYearLimitsDropDown();
     }, []);
 
+    const extractLogs=(selectedEvent)=>{
+       const value =  selectedEvent.factors?.map((f) => f.logs?.split(',').join("\n"))?.join('\n') 
+       const myLogs = selectedEvent.logs.split(',')
+
+        return `${myLogs.length > 0 && myLogs[0]}\n${value}\n${myLogs.length > 0 && myLogs[1]}`
+    }
     return (
         <>
             <Box>
@@ -381,12 +381,14 @@ const DataAcquisitionAPi = () => {
                     component="form"
                     sx={{
                         '& .MuiTextField-root': { minWidth: '20ch' },
+                        justifyContent: "end",
+    padding: "1rem",
                     }}
                     noValidate
                     autoComplete="off">
-                        <Grid item sx={{ marginTop: 1.2 }}>
-                            <Button variant="contained" onClick={handleOpen}>
-                                Create New
+                        <Grid item sx={{ marginTop: 1.2,marginRight:"10%" }}>
+                            <Button variant="contained" onClick={handleOpen} >
+                            ADD A NEW TASK
                             </Button>
                         </Grid>
                 </Grid>
@@ -394,7 +396,7 @@ const DataAcquisitionAPi = () => {
                             alignItems: "center",
                             display: "flex",flexDirection:"column" }}>
                                 {console.log(events)}
-                    {events?.map((event,i)=>{
+                    {/* {events?.map((event,i)=>{
                         console.log(event)
                         return(
                             <div style={{
@@ -410,7 +412,10 @@ const DataAcquisitionAPi = () => {
                                 </Container>
                             </div>
                         )
-                    })}
+                    })} */}
+                    <MyTable data={events} handleEventClick={handleEventClick} handler={handler} setHandler={setHandler} />
+
+
                 </Box>
                 <Modal
                     open={open}
@@ -582,7 +587,7 @@ const DataAcquisitionAPi = () => {
                                 </Box>}
                             </Grid>
                             <Grid item sx={{ marginTop: 0.75 }}>
-                                <Button id="dataAcquisitionSubmit" type="submit" variant="contained" size="medium" onClick={onSubmitHandler} sx={{ mt: 1.5 }} > Submit </Button>
+                                <Button id="dataAcquisitionSubmit" type="submit" variant="contained" disabled={isDisable} size="medium" onClick={onSubmitHandler} sx={{ mt: 1.5 }} > Submit </Button>
                             </Grid>
                             {/* <Button variant="contained" onClick={handleClose}>
                                 Close Modal
@@ -612,7 +617,8 @@ const DataAcquisitionAPi = () => {
                                 </Paper> */}
                                 <Paper >
                                     <TextareaAutosize
-                                        value={selectedEvent.factors?.map((f) => f.logs?.split(',').join("\n"))?.join('\n')}
+                                        // value={selectedEvent.factors?.map((f) => f.logs?.split(',').join("\n"))?.join('\n')}
+                                        value={extractLogs(selectedEvent)}
                                         rows={10}
                                         style={{
                                             width: '100%',
