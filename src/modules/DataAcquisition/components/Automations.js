@@ -333,7 +333,7 @@ const DataAcquisitionAPi = () => {
         event.preventDefault();
         console.log("recurrencePattern",recurrencePattern)
         setIsDisable(true)
-        axios.post(`${Constants.BACKEND_SERVER_BASE_URL}/automation/register`, { name, description, is_recurring: isRecurring ? 'on' : 'off', recurrence_pattern: recurrencePattern == "daily" ? "D" : recurrencePattern == "weekly" ? "W" : recurrencePattern == "monthly" ? "M" : recurrencePattern == "quarterly" ? "Q" : recurrencePattern == "half-yearly" ? "HY" : recurrencePattern =="yearly"?"Y":"No", company_factors: companiesFilter.map((item) => item.symbol), type_factors: typeFilter.type, years: nYearsFilter })
+        axios.post(`${Constants.BACKEND_SERVER_BASE_URL}/automation/register`, { name, description, email: email, is_recurring: isRecurring ? 'on' : 'off', recurrence_pattern: recurrencePattern == "daily" ? "D" : recurrencePattern == "weekly" ? "W" : recurrencePattern == "monthly" ? "M" : recurrencePattern == "quarterly" ? "Q" : recurrencePattern == "half-yearly" ? "HY" : recurrencePattern =="yearly"?"Y":"No", company_factors: companiesFilter.map((item) => item.symbol), type_factors: typeFilter.type, years: nYearsFilter })
             .then(response => {
                 console.log(response)
                 alert("Event registered successfully.");
