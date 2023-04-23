@@ -32,11 +32,11 @@ function renderRow(props) {
         fontSize: 12,
         width: '100%'
     };
-
+    // console.log(data)
 
     return (
         <Typography component="li" {...dataSet[0]} style={inlineStyle}>
-            {dataSet[1].company_name}
+            {dataSet[1]?.company_name || 'Select All'}
         </Typography>
     );
 }
@@ -245,6 +245,8 @@ const DataAcquisitionAPi = () => {
     const restService = new DataAcquisitionService();
     const [exchangeFilter, setExchangeFilter] = useState({ exchange: "All" });
     const [sectorFilter, setSectorFilter] = useState({ sector: "All" });
+    const [industryFilter, setIndustryFilter] = useState({ industry: "All" });
+
     const [companiesFilter, setCompaniesFilter] = useState([]);
     const [typeFilter, setTypeFilter] = useState({ type: "All" });
     const [nYearsFilter, setNYearsFilter] = useState("1");
@@ -253,11 +255,15 @@ const DataAcquisitionAPi = () => {
     const [companiesDropDownValues, setCompaniesDropDownValues] = useState([]);
     const [typeDropDownValues, setTypeDropDownValues] = useState([{ type: "All" }]);
     const [nYearsDropDownValues, setNYearsDropDownValues] = useState([{ limit: "1" }]);
+    const [industryDropDownValues, setIndustryDropDownValues] = useState([{ industry: "All" }]);
+    const [sectorDropDownValues, setSectorDropDownValues] = useState([{ sector: "All" }]);
+    const [exchangeDropDownValues, setExchangeDropDownValues] = useState([{ exchange: "All" }]);
 
 
     const [open, setOpen] = useState(false);
     const [isDisable, setIsDisable] = useState(false);
     const [name, setName] = useState('');
+    const [checked, setChecked] = useState(false);
     const [description, setDescription] = useState('');
     const [email, setEmail] = useState('');
     const [isRecurring, setIsRecurring] = useState(false);
@@ -308,6 +314,35 @@ const DataAcquisitionAPi = () => {
             });
 
     }
+    const getExchangesDropDown = async () => {
+        await restService.getExchangeValues()
+            .then((response) => {
+                setExchangeDropDownValues([{ exchange: "All" }].concat(response.data.exchanges));
+            })
+            .catch((err) => {
+                console.log(err);
+            });
+    }
+    const getSectorsDropDownByExchange = async (exchange) => {
+        await restService.GetSectorsByExchnage({ exchange })
+            .then((response) => {
+                setSectorDropDownValues([{ sector: "All" }].concat(response.data.sectors));
+            })
+            .catch((err) => {
+                console.log(err);
+            });
+
+    }
+
+    const getIndustriesDropDownBySector = async (sector) => {
+        await restService.getIndustryByExchangeAndSector({ exchange: exchangeFilter.exchange, sector })
+            .then((response) => {
+                setIndustryDropDownValues([{ industry: "All" }].concat(response.data.industries));
+            })
+            .catch((err) => {
+                console.log(err);
+            });
+    }
 
     const getCompaniesDropDownByIndustry = async (industry) => {
         await restService.getCompaniesByIndustryExchangeAndSector({ exchange: exchangeFilter.exchange, sector: sectorFilter.sector, industry })
@@ -332,8 +367,9 @@ const DataAcquisitionAPi = () => {
     const onSubmitHandler = async (event) => {
         event.preventDefault();
         console.log("recurrencePattern",recurrencePattern)
+        console.log(companiesDropDownValues)
         setIsDisable(true)
-        axios.post(`${Constants.BACKEND_SERVER_BASE_URL}/automation/register`, { name, description, email: email, is_recurring: isRecurring ? 'on' : 'off', recurrence_pattern: recurrencePattern == "daily" ? "D" : recurrencePattern == "weekly" ? "W" : recurrencePattern == "monthly" ? "M" : recurrencePattern == "quarterly" ? "Q" : recurrencePattern == "half-yearly" ? "HY" : recurrencePattern =="yearly"?"Y":"No", company_factors: companiesFilter.map((item) => item.symbol), type_factors: typeFilter.type, years: nYearsFilter })
+        axios.post(`${Constants.BACKEND_SERVER_BASE_URL}/automation/register`, { name, description, email: email, is_recurring: isRecurring ? 'on' : 'off', recurrence_pattern: recurrencePattern == "daily" ? "D" : recurrencePattern == "weekly" ? "W" : recurrencePattern == "monthly" ? "M" : recurrencePattern == "quarterly" ? "Q" : recurrencePattern == "half-yearly" ? "HY" : recurrencePattern == "yearly" ? "Y" : "No", company_factors: checked ? companiesDropDownValues.map((item) => item.symbol) :companiesFilter.map((item) => item.symbol), type_factors: typeFilter.type, years: nYearsFilter })
             .then(response => {
                 console.log(response)
                 alert("Event registered successfully.");
@@ -360,8 +396,16 @@ const DataAcquisitionAPi = () => {
                 console.error("Error in useEFFect events", error);
             });
     }, [handler]);
+    // useEffect(() => {
+    //     getDataAcquisitionTypes();
+    //     getCompaniesDropDownByIndustry("All");
+    //     getYearLimitsDropDown();
+    // }, []);
     useEffect(() => {
+        getExchangesDropDown();
         getDataAcquisitionTypes();
+        getSectorsDropDownByExchange("All");
+        getIndustriesDropDownBySector("All");
         getCompaniesDropDownByIndustry("All");
         getYearLimitsDropDown();
     }, []);
@@ -371,6 +415,22 @@ const DataAcquisitionAPi = () => {
        const myLogs = selectedEvent.logs.split(',')
 
         return `${myLogs.length > 0 && myLogs[0]}\n${value}\n${myLogs.length > 0 && myLogs[1]}`
+    }
+    const handleSelectAll = (event, values) => {
+        if (event.target.checked) {
+            setCompaniesFilter(options.filter((option) => option !== 'Select All'))
+        } else {
+            setCompaniesFilter([])
+        }
+    }
+
+    const options = [
+        { company_name: 'Select All' },
+        ...companiesDropDownValues
+    ];
+
+    const handleCheckChange=(event)=>{
+        setChecked(event.target.checked);
     }
     return (
         <>
@@ -509,9 +569,73 @@ const DataAcquisitionAPi = () => {
                                 noValidate
                                 autoComplete="off">
 
+                                <Grid item sx={{ marginTop: 0.75 }}>
+                                    <Autocomplete
+                                        size="small"
+                                        disablePortal
+                                        id="exchangeFilter"
+                                        getOptionLabel={(option) => option.exchange}
+                                        isOptionEqualToValue={(option, value) => option.exchange === value.exchange}
+                                        options={exchangeDropDownValues}
+                                        onChange={(event, newValue) => {
+                                            setExchangeFilter(newValue);
+                                            getSectorsDropDownByExchange(newValue.exchange);
+                                        }}
+                                        value={exchangeFilter}
+                                        sx={{ minWidth: 240, mt: 0.4 }}
+                                        renderInput={(params) => <TextField
+                                            SelectProps={{ autoWidth: true, displayEmpty: true, defaultOpen: true }}
+                                            {...params} variant="standard" label="Exchange" />}
+                                    />
+                                </Grid>
 
+                                <Grid item sx={{ marginTop: 0.75 }}>
+                                    <Autocomplete
+                                        size="small"
+                                        disablePortal
+                                        id="sectorFilter"
+                                        getOptionLabel={(option) => option.sector}
+                                        isOptionEqualToValue={(option, value) => option.sector === value.sector}
+                                        options={sectorDropDownValues}
+                                        onChange={(event, newValue) => {
+                                            setSectorFilter(newValue);
+                                            getIndustriesDropDownBySector(newValue.sector);
+                                        }}
+                                        value={sectorFilter}
+                                        sx={{ minWidth: 240, mt: 0.4 }}
+                                        renderInput={(params) => <TextField
+                                            SelectProps={{ autoWidth: true, displayEmpty: true, defaultOpen: true }}
+                                            {...params} variant="standard" label="Sector" />}
+                                    />
+                                </Grid>
 
+                                <Grid item sx={{ marginTop: 0.75 }}>
+                                    <Autocomplete
+                                        size="small"
+                                        disablePortal
+                                        id="industryFilter"
+                                        getOptionLabel={(option) => option.industry}
+                                        isOptionEqualToValue={(option, value) => option.industry === value.industry}
+                                        options={industryDropDownValues}
+                                        onChange={(event, newValue) => {
+                                            setIndustryFilter(newValue);
+                                            getCompaniesDropDownByIndustry(newValue.industry);
+                                        }}
+                                        value={industryFilter}
+                                        sx={{ minWidth: 240, mt: 0.4 }}
+                                        renderInput={(params) => <TextField
+                                            SelectProps={{ autoWidth: true, displayEmpty: true, defaultOpen: true }}
+                                            {...params} variant="standard" label="Industry" />}
+                                    />
+                                </Grid>
                                 <Grid item sx={{ marginTop: 1.2 }}>
+                                    <FormControlLabel
+                                        control={<Checkbox checked={checked} onChange={handleCheckChange} />}
+                                        label="All Companies"
+                                    />
+                                    </Grid>
+                                <Grid item sx={{ marginTop: 1.2 }}>
+                                    
                                     <Autocomplete
                                         limitTags={1}
                                         multiple
@@ -541,6 +665,7 @@ const DataAcquisitionAPi = () => {
                                             {...params} label="Companies" variant='standard' />}
                                         renderOption={(props, option) => [props, option]}
                                     />
+
                                 </Grid>
                                 <Grid item sx={{ marginTop: 0.75 }}>
                                     <Autocomplete
@@ -615,7 +740,12 @@ const DataAcquisitionAPi = () => {
                                         <Typography key={index}>{log}</Typography>
                                     ))}
                                 </Paper> */}
-                                <Paper >
+                                <Paper
+                                    style={{
+                                        height: '400px', // set a fixed height for the container
+                                        overflow: 'scroll', // make the container scrollable
+                                    }}
+                                 >
                                     <TextareaAutosize
                                         // value={selectedEvent.factors?.map((f) => f.logs?.split(',').join("\n"))?.join('\n')}
                                         value={extractLogs(selectedEvent)}

@@ -9,6 +9,9 @@ import TableRow from '@mui/material/TableRow';
 import Button from '@mui/material/Button';
 import Checkbox from '@mui/material/Checkbox';
 import Constants from "./../../../Constants.json"
+import { DoneOutline, CancelOutlined } from '@mui/icons-material';
+import { green, red } from '@mui/material/styles';
+
 
 import * as axios from "axios";
 
@@ -77,8 +80,15 @@ const MyTable = (props) => {
 
     const renderStatusCell = (row) => {
         return (
+            // <TableCell>
+            //     <Checkbox checked={row.error&&row?.error=='no'? true:false} color="primary" />
+            // </TableCell>
             <TableCell>
-                <Checkbox checked={true} color="primary" />
+                {row.error && row.error === 'no' ? (
+                   <DoneOutline sx={{ color: '#4CAF50' }} /> 
+                ) : (
+                        <CancelOutlined sx={{ color: '#f44336' }} /> 
+                )}
             </TableCell>
         );
     };
