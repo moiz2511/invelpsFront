@@ -413,8 +413,9 @@ const DataAcquisitionAPi = () => {
     const extractLogs=(selectedEvent)=>{
        const value =  selectedEvent.factors?.map((f) => f.logs?.split(',').join("\n"))?.join('\n') 
        const myLogs = selectedEvent.logs.split(',')
-
-        return `${myLogs.length > 0 && myLogs[0]}\n${value}\n${myLogs.length > 0 && myLogs[1]}`
+       const firstLog = myLogs.shift();
+       const remainingLogs = myLogs.join('\n');
+        return `${myLogs.length > 0 && firstLog}\n${value}\n${myLogs.length > 0 && remainingLogs} `
     }
     const handleSelectAll = (event, values) => {
         if (event.target.checked) {
