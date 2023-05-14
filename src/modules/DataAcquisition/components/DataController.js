@@ -4,8 +4,10 @@ import {
   Backdrop,
   Box,
   Button,
+  Checkbox,
   Chip,
   CircularProgress,
+  FormControlLabel,
   Grid,
   MenuItem,
   Tooltip,
@@ -152,6 +154,8 @@ const DataController = () => {
   const [nYearsFilter, setNYearsFilter] = useState('1');
   const [showCircularProgress, setCircularProgress] = useState(false);
 
+  const [checked, setChecked] = useState(false);
+
   const [misData, setMisData] = useState([]);
 
   const [exchangeDropDownValues, setExchangeDropDownValues] = useState([
@@ -170,6 +174,10 @@ const DataController = () => {
   const [nYearsDropDownValues, setNYearsDropDownValues] = useState([
     { limit: '1' },
   ]);
+
+  const handleCheckChange = (event) => {
+    setChecked(event.target.checked);
+  };
 
   const getDataAcquisitionTypes = async () => {
     await restService
@@ -256,7 +264,9 @@ const DataController = () => {
     event.preventDefault();
     setCircularProgress(true);
     console.log({
-      companies: companiesFilter.map((item) => item.symbol),
+      companies: checked
+        ? companiesDropDownValues.map((item) => item.symbol)
+        : companiesFilter.map((item) => item.symbol),
       type: typeFilter.type,
       years: nYearsFilter,
     });
@@ -264,7 +274,9 @@ const DataController = () => {
       .post(
         `${Constants.BACKEND_SERVER_BASE_URL}/dataAcquisition/dataControl`,
         {
-          companies: companiesFilter.map((item) => item.symbol),
+          companies: checked
+            ? companiesDropDownValues.map((item) => item.symbol)
+            : companiesFilter.map((item) => item.symbol),
           typeFactor: typeFilter.type,
           // years: nYearsFilter,
         }
@@ -412,6 +424,14 @@ const DataController = () => {
           />
         </Grid>
         <Grid item sx={{ marginTop: 1.2 }}>
+          <FormControlLabel
+            control={
+              <Checkbox checked={checked} onChange={handleCheckChange} />
+            }
+            label='All Companies'
+          />
+        </Grid>
+        <Grid item sx={{ marginTop: 1.2 }}>
           <Autocomplete
             limitTags={1}
             multiple
@@ -478,7 +498,7 @@ const DataController = () => {
             )}
           />
         </Grid>
-        <Grid item sx={{ marginTop: 0.75 }}>
+        {/* <Grid item sx={{ marginTop: 0.75 }}>
           <TextField
             select
             id='numYears'
@@ -493,7 +513,7 @@ const DataController = () => {
               </MenuItem>
             ))}
           </TextField>
-        </Grid>
+        </Grid> */}
         <Grid item sx={{ marginTop: 0.75 }}>
           <Button
             id='dataAcquisitionSubmit'

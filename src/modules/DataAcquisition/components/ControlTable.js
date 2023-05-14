@@ -13,10 +13,10 @@ const ControlTable = ({ data }) => {
   console.log(data);
   console.log(data?.data);
   return (
-    <TableContainer component={Paper}>
+    <TableContainer component={Paper} sx={{ marginTop: 5 }}>
       <Table>
         <TableHead>
-          <TableRow sx={{ backgroundColor: '#FF4500' }}>
+          <TableRow sx={{ backgroundColor: '#CB6843' }}>
             <TableCell sx={{ color: '#fff', fontWeight: 'bold' }}>
               Symbol
             </TableCell>
@@ -59,18 +59,37 @@ const ControlTable = ({ data }) => {
                 key={item.company.symbol}
                 sx={{ backgroundColor: i % 2 == 0 ? '#fff' : '#ddd' }}
               >
-                <TableCell>{item.company.symbol}</TableCell>
+                {typeof item.company === 'string' ? (
+                  <TableCell colSpan={11} sx={{ fontWeight: 'bold' }}>
+                    {item.company}
+                  </TableCell>
+                ) : (
+                  <>
+                    <TableCell>{item.company.symbol}</TableCell>
+                    <TableCell>{item.company.name}</TableCell>
+                    <TableCell>{item.company.sector}</TableCell>
+                    <TableCell>{item.company.industry}</TableCell>
+                    <TableCell>{item.company.max_api_year}</TableCell>
+                    <TableCell>{item.company.min_api_year}</TableCell>
+                    <TableCell>{item.company.min_db_year}</TableCell>
+                    <TableCell>{item.company.max_db_year}</TableCell>
+                    <TableCell>{item.company.availableInAPI}</TableCell>
+                    <TableCell>{item.company.availableInDB}</TableCell>
+                    <TableCell>{item.company.missing_years}</TableCell>
+                  </>
+                )}
+                {/* <TableCell>{item.company.symbol}</TableCell>
                 <TableCell>{item.company.name}</TableCell>
                 <TableCell>{item.company.sector}</TableCell>
                 <TableCell>{item.company.industry}</TableCell>
                 <TableCell>{item.company.max_api_year}</TableCell>
                 <TableCell>{item.company.min_api_year}</TableCell>
-                <TableCell>{item.company.max_db_year}</TableCell>
                 <TableCell>{item.company.min_db_year}</TableCell>
+                <TableCell>{item.company.max_db_year}</TableCell>
 
                 <TableCell>{item.company.availableInAPI}</TableCell>
                 <TableCell>{item.company.availableInDB}</TableCell>
-                <TableCell>{item.company.missing_years}</TableCell>
+                <TableCell>{item.company.missing_years}</TableCell> */}
               </TableRow>
             ))}
         </TableBody>
