@@ -261,6 +261,14 @@ const DataAcquisitionAPi = () => {
   const [sectorFilter, setSectorFilter] = useState({ sector: 'All' });
   const [industryFilter, setIndustryFilter] = useState({ industry: 'All' });
 
+  const [exchnageNameDropValues, setExchnageNameDropValues] = useState([
+    { exchangeShortName: '' },
+  ]);
+
+  const [selectedExchange, setSelectedExchange] = useState({
+    exchangeShortName: '',
+  });
+
   const [companiesFilter, setCompaniesFilter] = useState([]);
   const [typeFilter, setTypeFilter] = useState({ type: 'All' });
   const [nYearsFilter, setNYearsFilter] = useState('1');
@@ -407,6 +415,17 @@ const DataAcquisitionAPi = () => {
       });
   };
 
+  const getUniqueExchanges = async () => {
+    await restService
+      .getUniqueExchanges()
+      .then((response) => {
+        setExchnageNameDropValues(response.data.exchanges);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
   const onSubmitHandler = async (event) => {
     event.preventDefault();
     console.log('recurrencePattern', recurrencePattern);
@@ -437,6 +456,7 @@ const DataAcquisitionAPi = () => {
           : companiesFilter.map((item) => item.symbol),
         type_factors: typeFilter.type,
         years: nYearsFilter,
+        exchange: selectedExchange.exchangeShortName,
       })
       .then((response) => {
         console.log(response);
@@ -476,6 +496,7 @@ const DataAcquisitionAPi = () => {
     getIndustriesDropDownBySector('All');
     getCompaniesDropDownByIndustry('All');
     getYearLimitsDropDown();
+    getUniqueExchanges();
   }, []);
 
   const extractLogs = (selectedEvent) => {
@@ -844,6 +865,55 @@ const DataAcquisitionAPi = () => {
                       </MenuItem>
                     ))}
                   </TextField>
+                </Grid>
+
+                {/* <Grid item sx={{ marginTop: 0.75 }}>
+                  <TextField
+                    select
+                    id='Exchange Name'
+                    label='Exchange Name'
+                    variant='standard'
+                    onChange={(event) =>
+                      setSelectedExchange(event.target.value)
+                    }
+                    value={nYearsFilter}
+                  >
+                    {exchnageNameDropValues.map((item) => (
+                      <MenuItem key={item} value={item.exchangeShortName}>
+                        {item.exchangeShortName}
+                      </MenuItem>
+                    ))}
+                  </TextField>
+                </Grid> */}
+
+                <Grid item sx={{ marginTop: 0.75 }}>
+                  <Autocomplete
+                    size='small'
+                    disablePortal
+                    id='exchangeNameFilter'
+                    getOptionLabel={(option) => option.exchangeShortName}
+                    isOptionEqualToValue={(option, value) =>
+                      option.exchangeShortName === value.exchangeShortName
+                    }
+                    options={exchnageNameDropValues}
+                    onChange={(event, newValue) => {
+                      setSelectedExchange(newValue);
+                    }}
+                    value={selectedExchange}
+                    sx={{ minWidth: 240, mt: 0.4 }}
+                    renderInput={(params) => (
+                      <TextField
+                        SelectProps={{
+                          autoWidth: true,
+                          displayEmpty: true,
+                          defaultOpen: true,
+                        }}
+                        {...params}
+                        variant='standard'
+                        label='Exchnage short Name'
+                      />
+                    )}
+                  />
                 </Grid>
 
                 {showCircularProgress && (
