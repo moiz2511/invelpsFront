@@ -34,6 +34,7 @@ import ContactsManagement from './modules/Core/components/ContactedMembersmanage
 import ContextFundamentalChart from './modules/Context/components/FundamentalChart';
 import DAScreener from './modules/DataAnalysis/components/Screener';
 import DataController from './modules/DataAcquisition/components/DataController';
+import Dashboard from './modules/Profile/compoenents/Dashboard';
 // import Virtualize from './modules/UIUtils/CustomSelect';
 
 function App() {
@@ -82,6 +83,11 @@ function App() {
               <Route
                 path='/context/chartanalysis'
                 element={<ContextFundamentalChart />}
+              />
+              {/* Tabs */}
+              <Route
+                path='/profile/dashboard'
+                element={<Dashboard />}
               />
 
               <Route

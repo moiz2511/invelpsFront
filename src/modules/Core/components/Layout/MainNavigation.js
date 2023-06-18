@@ -33,6 +33,7 @@ const pages = [
   { label: 'Applications', link: '/#applications' },
   { label: 'About us', link: '/#aboutus' },
   { label: 'Contact', link: '/contact' },
+  { label: 'Profile', link: '/profile/dashboard' },
 ];
 
 const StyledListItemButton = styled(ListItemButton)(() => ({
@@ -334,7 +335,7 @@ const MainNavigation = () => {
                   aria-controls='menu-appbar'
                   aria-haspopup='true'
                   onClick={tooggleSideNavMenu}
-                  // color="inherit"
+                // color="inherit"
                 >
                   <MenuIcon />
                 </IconButton>
@@ -382,6 +383,12 @@ const MainNavigation = () => {
                 <RouterLink to='/contact' style={achorStyle}>
                   <li>Contact</li>
                 </RouterLink>
+                {isUserLoggeIn && (
+                  <RouterLink to='/profile/dashboard' style={achorStyle}>
+                    <li>Profile</li>
+                  </RouterLink>
+                )}
+
                 {!isUserLoggeIn && (
                   <React.Fragment>
                     <RouterLink to='/login' style={achorStyle}>
