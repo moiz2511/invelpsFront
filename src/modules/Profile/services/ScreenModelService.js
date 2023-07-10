@@ -132,4 +132,7 @@ export default class ScreenModelService {
     getUserScreenerTasks = () => {
         return this.init().post("/profile/getUserScreenerTasks")   
     }
+    runUserScreenerTask = (body) => {
+        return this.init().post("/profile/runUserScreenerTaskNow",body)   
+    }
 }

@@ -92,7 +92,7 @@ const Sidebar = () => {
           Screeners
         </Button>
         <Button
-          variant={activeButton === 'Screeners' ? 'contained' : 'text'}
+          variant={activeButton === 'User Screener Tasks' ? 'contained' : 'text'}
           onClick={() => handleButtonClick('User Screener Tasks')}
           style={{ marginBottom: 8 }}
         >

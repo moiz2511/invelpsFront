@@ -71,25 +71,25 @@ const UserScreenTasks = (props) => {
 
         return (
             <TableCell>
-                <Button variant="contained" color={buttonColor} onClick={() => name == 'Details' ? details(row) : null} >{name}</Button>
+                <Button variant="contained" color={buttonColor} onClick={() => name == 'Details' ? details(row) : executeEvent(row.id)} >{name}</Button>
             </TableCell>
         );
     };
 
     const executeEvent = async (task_id) => {
         // setIsDisable(true)
-        // const body={
-        //     'task_id':task_id
-        // }
-        // await restClient.runScreener(body)
-        //     .then((response) => {
-        //         console.log(response)
-        //         alert(response.data.message)
-        //     })
-        //     .catch((err) => {
-        //         console.log(err);
-        //         alert('Network Error occurred')
-        //     });
+        const body={
+            'task_id':task_id
+        }
+        await restClient.runUserScreenerTask(body)
+            .then((response) => {
+                console.log(response)
+                alert(response.data.message)
+            })
+            .catch((err) => {
+                console.log(err);
+                alert('Network Error occurred')
+            });
 
     }
     const deleteEvent = async (task_id) => {
@@ -180,6 +180,12 @@ const UserScreenTasks = (props) => {
                         </DialogContentText>
                         <DialogContentText>
                             <strong>isRecurring:</strong> {renderBooleanIcon(currentTask.isRecurring)}
+                        </DialogContentText>
+                        <DialogContentText>
+                            <strong>Last Occurrence</strong> {currentTask.lastRunTime}
+                        </DialogContentText>
+                        <DialogContentText>
+                            <strong>Last Runtime Status:</strong> {renderBooleanIcon(currentTask.lastRunStatus)}
                         </DialogContentText>
                     </DialogContent>
                 </Dialog>}
