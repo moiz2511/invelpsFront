@@ -1,4 +1,4 @@
-import { TextField, Button, Grid } from '@mui/material';
+import { TextField, Button, Grid, Typography } from '@mui/material';
 import React, { useState, useEffect } from 'react'
 import ScreenModelService from '../services/ScreenModelService';
 import { async } from 'q';
@@ -51,6 +51,9 @@ const BasicSettings = () => {
 
     return (
         <Grid container>
+            <Typography variant="h6" gutterBottom>
+              Settings
+            </Typography>
             <Grid container
                 spacing={1}
                 component="form"

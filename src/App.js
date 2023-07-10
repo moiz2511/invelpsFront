@@ -33,6 +33,8 @@ import ContactPage from './modules/Core/components/ContactPage/ContactPage';
 import ContactsManagement from './modules/Core/components/ContactedMembersmanagement/ContactsManagement';
 import ContextFundamentalChart from './modules/Context/components/FundamentalChart';
 import DAScreener from './modules/DataAnalysis/components/Screener';
+import SavedScreener from './modules/DataAnalysis/components/SavedScreener';
+
 import DataController from './modules/DataAcquisition/components/DataController';
 import Dashboard from './modules/Profile/compoenents/Dashboard';
 // import Virtualize from './modules/UIUtils/CustomSelect';
@@ -116,6 +118,7 @@ function App() {
                 element={<DALinearRegression />}
               />
               <Route path='/dataanalysis/screener' element={<DAScreener />} />
+              <Route path='/dataanalysis/screener/:id' element={<SavedScreener />} />
               {/* <Route path='/dataanalysis/reportedfinancials' element={<DAReportedFinancials />} />
             <Route path='/dataanalysis/financialnotes' element={<DAFinancialNotes />} /> */}
               {/* <Route path='/dataanalysis/rates' element={<DARates />} />

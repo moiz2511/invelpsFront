@@ -123,4 +123,13 @@ export default class ScreenModelService {
     deleteScreener = (body) => {
         return this.init().post("/profile/deleteScreenerTask",body)
     }
+    getMyScreeners = () => {
+        return this.init().post("/profile/getUserScreeners")   
+    }
+    createScreenerTask = (body) => {
+        return this.init().post("/profile/CreateUserScreenerTask",body)   
+    }
+    getUserScreenerTasks = () => {
+        return this.init().post("/profile/getUserScreenerTasks")   
+    }
 }

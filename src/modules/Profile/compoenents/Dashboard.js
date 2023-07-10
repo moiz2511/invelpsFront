@@ -4,6 +4,9 @@ import ScreenModel from './ScreenerModelTasks';
 import BasicSettings from './BasicSettings';
 import AllScreenTasks from './AllScreenModelTasks';
 import SocialAuth from './SocialAuth';
+import Profile from './Profile';
+import MyData from './MyData';
+import Billing from './Billing';
 
 const Dashboard = () => {
   const [tabValue, setTabValue] = useState(0);
@@ -14,6 +17,7 @@ const Dashboard = () => {
   const [isFacebookConnected, setIsFacebookConnected] = useState(false);
 
   const handleTabChange = (event, newValue) => {
+    console.log("Tab value --------->", tabValue);
     setTabValue(newValue);
   };
 
@@ -37,19 +41,32 @@ const Dashboard = () => {
   return (
     <Box sx={{ flexGrow: 1 }}>
       <Tabs value={tabValue} onChange={handleTabChange} centered>
-        <Tab label="Social Networks" />
-        <Tab label="Screener Automation" />
+        <Tab label="Profile" />
+        <Tab label="My data" />
         <Tab label="Settings" />
+        <Tab label="Plans & Billing" />
+        {/* <Tab label="Social Networks" /> */}
+        {/* <Tab label="Screener Automation" /> */}
 
 
         {/* Add more tabs here */}
       </Tabs>
       <Box sx={{ p: 2 }}>
-        {tabValue === 0 && (
+      {tabValue === 0 && (
+          <Box>
+            <Profile />
+          </Box>
+        )}
+         {tabValue === 1 && (
+          <Box>
+            <MyData />
+          </Box>
+        )}
+        {/* {tabValue === 1 && (
           <Box>
             <Typography variant="h6" gutterBottom>
               Connect to Social Networks
-            </Typography>
+            </Typography> */}
             {/* <Box sx={{ display: 'flex', justifyContent: 'center', my: 2 }}>
               <Button
                 variant="contained"
@@ -76,16 +93,16 @@ const Dashboard = () => {
                 {isFacebookConnected ? 'Disconnect' : 'Connect'} to Facebook
               </Button>
             </Box> */}
-            <SocialAuth />
+            {/* <SocialAuth /> */}
             {/* <Typography variant="body1" sx={{ textAlign: 'center' }}>
               {isTwitterConnected || isInstagramConnected || isFacebookConnected
                 ? 'Connected'
                 : 'Not connected'}
             </Typography> */}
-          </Box>
+          {/* </Box>
         )}
 
-        {tabValue === 1 && (
+        {tabValue === 2 && (
           <Box>
             <Tabs value={tab2Value} onChange={handleTab2Change} centered>
               <Tab label="Create Screener Automation" />
@@ -113,16 +130,16 @@ const Dashboard = () => {
             )}
 
           </Box>
-        )}
+        )} */}
 
         {tabValue === 2 && (
           <Box>
-            <Typography variant="h6" gutterBottom>
-              Settings
-            </Typography>
-            <Box sx={{ display: 'flex', justifyContent: 'center', my: 2 }}>
-              <BasicSettings />
-            </Box>
+            <BasicSettings />
+          </Box>
+        )}
+        {tabValue === 3 && (
+          <Box>
+            <Billing /> 
           </Box>
         )}
         {/* Add content for other tabs here */}

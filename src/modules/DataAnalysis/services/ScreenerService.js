@@ -76,4 +76,10 @@ export default class ScreenerService {
     getCompaniesDataWithMetricFilters = (body) => {
         return this.init().post("screener/filter/companies", body)
     }
+    saveScreener = (body) => {
+        return this.init().post("screener/automation/saveScreener", body)
+    }
+    getScreener = (body) => {
+        return this.init().post("screener/automation/getScreener", body)
+    }
 }

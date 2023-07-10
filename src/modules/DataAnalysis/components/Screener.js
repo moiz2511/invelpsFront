@@ -13,7 +13,10 @@ import TabContext from '@mui/lab/TabContext';
 import TabPanel from '@mui/lab/TabPanel';
 import { styled } from '@mui/material/styles';
 import AddMetricFilterDialog from './ScreenerDailog';
+import SaveScreener from './SaveScreener';
 import TabToolTip from './TabsToolTip';
+import { useParams } from 'react-router-dom';
+
 
 const headCells = {
     data: [
@@ -329,6 +332,8 @@ const DAScreener = () => {
 
     const [eventType, setEventType] = useState("add");
     const [isDialogOpen, setIsDialogOpen] = useState(false);
+    const [isDialogOpen2, setIsDialogOpen2] = useState(false);
+
     const [clickedRowData, setclickedRowData] = useState("");
     const [value, setValue] = useState('1');
     const [efficiencyTableHeadCells, setEfficiencyTableHeadCells] = useState({
@@ -1254,6 +1259,44 @@ const DAScreener = () => {
     const categoryInMetricCheck = (category)=>{
         return tableContent.some(obj => obj.category === category);
     }
+
+    const saveScreener = () => {
+        console.log('metrics=> ',tableContent)
+        console.log('exchange=> ',exchangeFilter)
+        console.log('sector=> ',sectorFilter)
+        console.log('industry=> ',industryFilter)
+        console.log('period=> ',periodFilter)
+        setIsDialogOpen2(true)
+    }
+    const { id } = useParams();
+
+    useEffect(()=>{
+        console.log(id)
+        const getScreenerById = async(_id) => {
+            const body = {
+                "id" : _id
+            }
+            await restClient.getScreener(body)
+            .then((response) => {
+                console.log(response)
+                // setMessage(response.data.authorization_url)
+                setTableContent(response.data.screener.metricFilter)
+                setExchangeFilter(response.data.screener.exchangeFilter)
+                setSectorFilter(response.data.screener.sectorFilter)
+                setIndustryFilter(response.data.screener.industryFilter)
+                setPeriodFilter(response.data.screener.periodFilter)
+                getCompanies(response.data.screener.industryFilter)
+                const event = new Event('submit')
+                onSubmitHandler(event)
+            })
+            .catch((err) => {
+                console.log(err);
+            });
+        }
+        if (id){
+            getScreenerById(id)
+        }
+    },[])
     return (
         <Grid container>
             <PageInfoBreadCrumbs data={pageLoc} />
@@ -1451,6 +1494,8 @@ const DAScreener = () => {
             <Card sx={{ width: '100%', m: 1, position: 'relative' }}>
                 <Box sx={{ width: '100%' }}>
                     <Box spacing={1} sx={{ textAlign: 'end', mt: 0.5 }}>
+                        <Button id="save" variant="outlined" size="medium" startIcon={<AddIcon />} sx={{marginLeft: 1}} onClick={saveScreener}> Save </Button>
+                        <Button id="tweet" variant="outlined" size="medium" startIcon={<AddIcon />} sx={{marginLeft: 1, marginRight : 1}} > Tweet </Button>
                         <Button id="addMetricFilters" onClick={handleOnAddRowClick} variant="outlined" size="medium" startIcon={<AddIcon />}> New Metric Filter </Button>
                         <Button sx={{marginLeft: 1}} id="screenModelButton" type="submit" onClick={onSubmitHandler} variant="contained" size="medium"> Screen </Button>
                     </Box>
@@ -1541,6 +1586,17 @@ const DAScreener = () => {
                     type={eventType}
                     setTableContent={setTableContent}
                     counter={counter}
+                />
+                }
+                {isDialogOpen2 && <SaveScreener
+                    isDialogOpened={isDialogOpen2}
+                    handleCloseDialog={() => setIsDialogOpen2(false)}
+                    metricFilter={tableContent}
+                    exchangeFilter={exchangeFilter}
+                    sectorFilter={sectorFilter}
+                    industryFilter={industryFilter}
+                    periodFilter={periodFilter}
+
                 />
                 }
             </Card>
