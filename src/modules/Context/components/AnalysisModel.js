@@ -151,7 +151,7 @@ const ListboxComponent = React.forwardRef(function ListboxComponent(props, ref) 
         noSsr: true,
     });
 
-    const itemCount = itemData.length;
+    const itemCount = itemData?.length;
     const itemSize = smUp ? 36 : 48;
 
     const getChildSize = () => {
@@ -714,7 +714,7 @@ const AnalysisModel = () => {
                                 </Grid> */}
                                 <Grid item>
                                     <Box sx={{ mr: 1 }}>
-                                        <Button variant='outlined' disabled={getResultsCheckedItems.length < 1} onClick={handleOnClickOfGetResults} sx={{ mt: 0.5, textTransform: 'none' }} >Get Results</Button>
+                                        <Button variant='outlined' disabled={getResultsCheckedItems?.length < 1} onClick={handleOnClickOfGetResults} sx={{ mt: 0.5, textTransform: 'none' }} >Get Results</Button>
                                     </Box>
                                 </Grid>
                             </Grid>

@@ -13,6 +13,7 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
 }));
 
 const AnalysisModelGetResults = ({ isDialogOpened, handleCloseDialog, selectedData, fetchedData, company, analysisModel }) => {
+    console.log(isDialogOpened,selectedData,fetchedData,company,analysisModel)
     let selectedRestructuredData = {}
     let selectedDataIds = []
     let fetchedRestructuredData = {}
@@ -27,9 +28,9 @@ const AnalysisModelGetResults = ({ isDialogOpened, handleCloseDialog, selectedDa
         fetchedRestructuredData.hasOwnProperty(obj.measure) ? fetchedRestructuredData[obj.measure].push(obj) : fetchedRestructuredData[obj.measure] = [obj]
     })
     Object.keys(fetchedRestructuredData).map(measure => {
-        displayData[measure] = { countResult: { value: String(selectedRestructuredData[measure].length) + "/" + String(fetchedRestructuredData[measure].length), result: (selectedRestructuredData[measure].length / fetchedRestructuredData[measure].length) * 100 } }
+        displayData[measure] = { countResult: { value: String(selectedRestructuredData[measure]?.length || 0) + "/" + String(fetchedRestructuredData[measure]?.length), result: (selectedRestructuredData[measure] ? (selectedRestructuredData[measure].length / fetchedRestructuredData[measure]?.length) : 0) * 100 } }
         fetchedRestructuredData[measure].map((obj) => {
-            displayData[measure].hasOwnProperty(obj.category) ? displayData[measure][obj.category].push(obj) : displayData[measure][obj.category] = [obj]
+            displayData[measure].hasOwnProperty(obj.category) ? displayData[measure][obj.category].push(obj) : displayData[measure][obj.category] = [obj]   
         })
     });
 

@@ -188,6 +188,7 @@ const StyledPopper = styled(Popper)({
 const FormatTableContent = (data, unit, dateRange) => {
   let response = []
   for (let record of data) {
+    let trendVal = 0
     let mean = 1;
     let cagr = 1;
     for (let year of dateRange) {
@@ -198,6 +199,22 @@ const FormatTableContent = (data, unit, dateRange) => {
         mean = mean * record[year]
       }
     }
+    let prevVal = null
+    for (let year of dateRange) {
+      if (prevVal==null){
+        prevVal = parseFloat(record[year])
+      }
+      else{
+        if(parseFloat(record[year])>prevVal){
+          trendVal +=1
+        }
+        if(parseFloat(record[year])<prevVal){
+          trendVal -=1
+        }
+        prevVal= parseFloat(record[year])
+      }
+    }
+    record['trendVal'] = trendVal
     if (unit === "percent") {
       mean = ((mean ** (1 / dateRange.length)) / 100);
       if(cagr < 0) {
@@ -209,7 +226,8 @@ const FormatTableContent = (data, unit, dateRange) => {
       mean = ((mean ** (1 / dateRange.length)) / 100);
       cagr = ((parseFloat(record[dateRange.slice(-1)]) / parseFloat(record[dateRange[0]])) ** (1 / dateRange.length)) - 1
     }
-    record['mean'] = parseFloat(mean*100).toFixed(2);
+    // record['mean'] = parseFloat(mean*100).toFixed(2);
+    console.log("here is mean=> ",record)
     record['cagr'] = parseFloat(cagr*100).toFixed(2);
     response.push(record);
   }
@@ -250,6 +268,8 @@ const DAFundamentalChart = () => {
   }, []
   );
   const [headCellsData, setHeadCellsData] = useState({});
+  const [yUnitC, setyUnitC] = useState("");
+
   const [companiesDropDownValues, setCompaniesDropDownValues] = useState([{ company_name: company }]);
   const [companyFilter, setCompanyFilter] = useState({ company_name: company });
   const [toolFilter, setToolFilter] = useState(tool);
@@ -373,6 +393,7 @@ const DAFundamentalChart = () => {
         const localHeadCells = await buildTableHeadCells(response.data);
         setChartApiResponse(response.data);
         const tableRecords = FormatTableContent(response.data.return_list, response.data.yUnit, response.data.date_range)
+        setyUnitC(response.data.yUnit)
         setChartTableContent(tableRecords);
         setHeadCellsData(localHeadCells);
         setChartInputData(data);
@@ -444,6 +465,11 @@ const DAFundamentalChart = () => {
     localHeadCells.data.push({
       id: "n_years",
       label: "NbrOfYears",
+      isValueLink: false
+    })
+    localHeadCells.data.push({
+      id: "trend_value",
+      label: "Trend",
       isValueLink: false
     })
     localHeadCells.data.push({
@@ -772,13 +798,18 @@ const DAFundamentalChart = () => {
                             {row.cagr + "%"}
                           </StyledTableCell>
                           <StyledTableCell>
-                            {row.sd}
+                            {row.sd} {yUnitC == 'percent' ? '%' : yUnitC}
                           </StyledTableCell>
                           <StyledTableCell>
                             {row.rsd}
                           </StyledTableCell>
                           <StyledTableCell>
                             {row.n_years}
+                          </StyledTableCell>
+                          <StyledTableCell>
+                            {row.trendVal > 0 ? <div style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap' }}><span style={{ color: row.condition ? "#00B050" : "#FF0000", fontSize: 10, fontWeight: "bold" }}>{row.trendVal}</span><ArrowUpwardIcon sx={{ color: row.condition ? "#00B050" : "#FF0000" }} /></div> :
+                              row.trendVal < 0 ? <div style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap' }}><span style={{ color: row.condition ? "#00B050" : "#FF0000", fontSize: 10, fontWeight: "bold" }}>{row.trendVal}</span><ArrowDownwardIcon sx={{ color: row.condition ? "#00B050" : "#FF0000" }} /></div> :
+                                <span style={{ color: "#00B050", fontWeight: "bold" }}>{row.trendVal}</span>}
                           </StyledTableCell>
                           <StyledTableCell>
                             {chartInputData.yUnit === "percent" ? row.range + "%" : row.range}
