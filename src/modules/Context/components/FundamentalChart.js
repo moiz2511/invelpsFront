@@ -452,6 +452,11 @@ const ContextFundamentalChart = () => {
       isValueLink: false
     })
     localHeadCells.data.push({
+      id: "trend_value",
+      label: "Trend",
+      isValueLink: false
+    })
+    localHeadCells.data.push({
       id: "range",
       label: "Range",
       isValueLink: false
@@ -466,6 +471,25 @@ const ContextFundamentalChart = () => {
 
   // const emptyRows =
   //   page > 0 ? Math.max(0, (1 + page) * rowsPerPage - resultItemsCount) : 0;
+
+  const findTrend = (row) =>{
+    let trendVal = 0
+    let prevVal = null
+    for(let record of chartInputData.labels){
+      if (prevVal == null){
+        prevVal = parseFloat(row[record])
+      }
+      if(parseFloat(row[record])>prevVal){
+        trendVal +=1
+      }
+      if(parseFloat(row[record])<prevVal){
+        trendVal -=1
+      }
+      prevVal = parseFloat(row[record])
+    
+    }
+    return trendVal
+  }
   return (
     <React.Fragment>
       <Grid container>
@@ -740,6 +764,8 @@ const ContextFundamentalChart = () => {
                   {chartTableContent
                     // .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                     .map((row, index) => {
+                      console.log(row);
+                      let trend = findTrend(row);
                       return (
                         <StyledTableRow
                           hover
@@ -767,7 +793,8 @@ const ContextFundamentalChart = () => {
                             })
                           }
                           <StyledTableCell>
-                            {row.mean}
+                            
+                            {row.mean.toFixed(2)}{row.rsd.includes('%') ? '%' : ''}
                           </StyledTableCell>
                           <StyledTableCell>
                             {row.sd}
@@ -777,6 +804,15 @@ const ContextFundamentalChart = () => {
                           </StyledTableCell>
                           <StyledTableCell>
                             {row.n_years}
+                          </StyledTableCell>
+                          <StyledTableCell>
+                            {trend > 0 ? <div style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap' }}><span style={{ color: row.condition ? "#00B050" : "#FF0000", fontSize: 10, fontWeight: "bold" }}></span><ArrowUpwardIcon sx={{ color: "#00B050" }} /></div> :
+                              trend < 0 ? <div style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap' }}><span style={{ color: row.condition ? "#00B050" : "#FF0000", fontSize: 10, fontWeight: "bold" }}></span><ArrowDownwardIcon sx={{ color: "#FF0000"  }} /></div> :
+                                (<div style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap' }}>
+                                  <span style={{ color: "#00B050", fontWeight: "bold" }}></span>
+                                  <div style={{ width: 40, height: 3, backgroundColor: "#00B050" }} />
+                                </div>
+                                )}
                           </StyledTableCell>
                           <StyledTableCell>
                             {row.range}

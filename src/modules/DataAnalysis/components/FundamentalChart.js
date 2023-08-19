@@ -201,34 +201,34 @@ const FormatTableContent = (data, unit, dateRange) => {
     }
     let prevVal = null
     for (let year of dateRange) {
-      if (prevVal==null){
+      if (prevVal == null) {
         prevVal = parseFloat(record[year])
       }
-      else{
-        if(parseFloat(record[year])>prevVal){
-          trendVal +=1
+      else {
+        if (parseFloat(record[year]) > prevVal) {
+          trendVal += 1
         }
-        if(parseFloat(record[year])<prevVal){
-          trendVal -=1
+        if (parseFloat(record[year]) < prevVal) {
+          trendVal -= 1
         }
-        prevVal= parseFloat(record[year])
+        prevVal = parseFloat(record[year])
       }
     }
     record['trendVal'] = trendVal
     if (unit === "percent") {
       mean = ((mean ** (1 / dateRange.length)) / 100);
-      if(cagr < 0) {
-        cagr =  ((0-cagr) ** (1 / dateRange.length)) -1;
+      if (cagr < 0) {
+        cagr = ((0 - cagr) ** (1 / dateRange.length)) - 1;
       } else {
-        cagr = ((cagr) ** (1 / dateRange.length)) -1;
+        cagr = ((cagr) ** (1 / dateRange.length)) - 1;
       }
     } else {
       mean = ((mean ** (1 / dateRange.length)) / 100);
       cagr = ((parseFloat(record[dateRange.slice(-1)]) / parseFloat(record[dateRange[0]])) ** (1 / dateRange.length)) - 1
     }
     // record['mean'] = parseFloat(mean*100).toFixed(2);
-    console.log("here is mean=> ",record)
-    record['cagr'] = parseFloat(cagr*100).toFixed(2);
+    console.log("here is mean=> ", record)
+    record['cagr'] = parseFloat(cagr * 100).toFixed(2);
     response.push(record);
   }
   return response;
@@ -640,15 +640,15 @@ const DAFundamentalChart = () => {
                 fontSize: "12px", marginTop: '8px'
               }} > From:</InputLabel>
               {/* <Box sx={{ marginTop: 0.45 }}> */}
-                <DatePicker
-                  selected={fromFilterVal}
-                  onChange={(date) => handleFromChange(date)}
-                  dateFormat="yyyy"
-                  placeholderText="Year"
-                  showYearPicker
-                  minDate={new Date(1950, 0, 1)}
-                  className="custom-datepicker"
-                />
+              <DatePicker
+                selected={fromFilterVal}
+                onChange={(date) => handleFromChange(date)}
+                dateFormat="yyyy"
+                placeholderText="Year"
+                showYearPicker
+                minDate={new Date(1950, 0, 1)}
+                className="custom-datepicker"
+              />
               {/* </Box> */}
             </Grid>
             <Grid item sx={{ marginTop: 0.75 }}>
@@ -657,16 +657,16 @@ const DAFundamentalChart = () => {
                 fontSize: "12px", marginTop: '8px'
               }} > To:</InputLabel>
               {/* <Box sx={{ marginTop: 0.45 }}> */}
-                <DatePicker
+              <DatePicker
 
-                  selected={toFilterVal}
-                  onChange={(date) => handleToChange(date)}
-                  dateFormat="yyyy"
-                  placeholderText="Year"
-                  showYearPicker
-                  minDate={new Date(1950, 0, 1)}
-                  className="custom-datepicker"
-                />
+                selected={toFilterVal}
+                onChange={(date) => handleToChange(date)}
+                dateFormat="yyyy"
+                placeholderText="Year"
+                showYearPicker
+                minDate={new Date(1950, 0, 1)}
+                className="custom-datepicker"
+              />
               {/* </Box> */}
             </Grid>
             {metricsFilter.length < 2 && <Grid item sx={{ marginTop: 0.75 }}>
@@ -756,6 +756,7 @@ const DAFundamentalChart = () => {
                     .map((row, index) => {
                       let mean = row.mean
                       if (chartInputData.yUnit === "percent") {
+                        mean = parseFloat(mean).toFixed(2)
                         mean = String(mean) + "%";
                       } else if (chartInputData.yUnit === "millions") {
                         mean = parseFloat(mean).toLocaleString();
@@ -798,7 +799,7 @@ const DAFundamentalChart = () => {
                             {row.cagr + "%"}
                           </StyledTableCell>
                           <StyledTableCell>
-                            {row.sd} {yUnitC == 'percent' ? '%' : yUnitC}
+                            {row.sd} {yUnitC == 'percent' ? '%' : ''}
                           </StyledTableCell>
                           <StyledTableCell>
                             {row.rsd}
@@ -807,9 +808,13 @@ const DAFundamentalChart = () => {
                             {row.n_years}
                           </StyledTableCell>
                           <StyledTableCell>
-                            {row.trendVal > 0 ? <div style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap' }}><span style={{ color: row.condition ? "#00B050" : "#FF0000", fontSize: 10, fontWeight: "bold" }}>{row.trendVal}</span><ArrowUpwardIcon sx={{ color: row.condition ? "#00B050" : "#FF0000" }} /></div> :
-                              row.trendVal < 0 ? <div style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap' }}><span style={{ color: row.condition ? "#00B050" : "#FF0000", fontSize: 10, fontWeight: "bold" }}>{row.trendVal}</span><ArrowDownwardIcon sx={{ color: row.condition ? "#00B050" : "#FF0000" }} /></div> :
-                                <span style={{ color: "#00B050", fontWeight: "bold" }}>{row.trendVal}</span>}
+                            {row.trendVal > 0 ? <div style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap' }}><span style={{ color: row.condition ? "#00B050" : "#FF0000", fontSize: 10, fontWeight: "bold" }}></span><ArrowUpwardIcon sx={{ color: "#00B050" }} /></div> :
+                              row.trendVal < 0 ? <div style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap' }}><span style={{ color: row.condition ? "#00B050" : "#FF0000", fontSize: 10, fontWeight: "bold" }}></span><ArrowDownwardIcon sx={{ color: "#FF0000"  }} /></div> :
+                                (<div style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap' }}>
+                                  <span style={{ color: "#00B050", fontWeight: "bold" }}></span>
+                                  <div style={{ width: 40, height: 3, backgroundColor: "#00B050" }} />
+                                </div>
+                                )}
                           </StyledTableCell>
                           <StyledTableCell>
                             {chartInputData.yUnit === "percent" ? row.range + "%" : row.range}
