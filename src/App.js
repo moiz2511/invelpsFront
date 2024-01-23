@@ -34,6 +34,7 @@ import ContactsManagement from './modules/Core/components/ContactedMembersmanage
 import ContextFundamentalChart from './modules/Context/components/FundamentalChart';
 import DAScreener from './modules/DataAnalysis/components/Screener';
 import SavedScreener from './modules/DataAnalysis/components/SavedScreener';
+import InvestorsScreener from './modules/DataAnalysis/components/InvestorsScreener';
 
 import DataController from './modules/DataAcquisition/components/DataController';
 import Dashboard from './modules/Profile/compoenents/Dashboard';
@@ -118,6 +119,7 @@ function App() {
                 element={<DALinearRegression />}
               />
               <Route path='/dataanalysis/screener' element={<DAScreener />} />
+              <Route path='/dataanalysis/investorscreeners' element={<InvestorsScreener />} />
               <Route path='/dataanalysis/screener/:id' element={<SavedScreener />} />
               {/* <Route path='/dataanalysis/reportedfinancials' element={<DAReportedFinancials />} />
             <Route path='/dataanalysis/financialnotes' element={<DAFinancialNotes />} /> */}

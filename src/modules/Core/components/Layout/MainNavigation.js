@@ -174,11 +174,11 @@ const subNavItemsInitialData = [
         label: 'Financials',
         path: '/dataanalysis/financials',
       },
-      // {
-      //     id: 43,
-      //     label: 'Reported Financials',
-      //     path: '/dataanalysis/reportedfinancials'
-      // },
+      {
+          id: 43,
+          label: 'Investors Screeners',
+          path: '/dataanalysis/investorscreeners'
+      },
       // {
       //     id: 44,
       //     label: 'Financial Notes',
