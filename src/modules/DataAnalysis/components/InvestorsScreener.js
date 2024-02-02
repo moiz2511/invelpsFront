@@ -25,6 +25,7 @@ import PieChart from "./PieChart";
 import ColorConstants from "../../Core/constants/ColorConstants.json";
 import BACKEND_SERVER_BASE_URL from "../../../Constants.json";
 import AuthContext from "../../Core/store/auth-context";
+import VerticalBarChart from "./VerticalBarChart";
 
 import { styled } from "@mui/material/styles";
 
@@ -573,33 +574,65 @@ const InvestorsScreener = () => {
                           <StyledTableCell> {data.exchange} </StyledTableCell>
                           <StyledTableCell> {data.sector} </StyledTableCell>
                           <StyledTableCell> {data.industry} </StyledTableCell>
-                          <StyledTableCell sx={{color: data.total_return >= 0 ? 'green' : 'red'}} >
+                          <StyledTableCell
+                            sx={{
+                              color: data.total_return >= 0 ? "green" : "red",
+                            }}
+                          >
                             {" "}
                             {data.total_return}{" "}
                           </StyledTableCell>
-                          <StyledTableCell sx={{color: data.annualized_return >= 0 ? 'green' : 'red'}} >
+                          <StyledTableCell
+                            sx={{
+                              color:
+                                data.annualized_return >= 0 ? "green" : "red",
+                            }}
+                          >
                             {" "}
                             {data.annualized_return}{" "}
                           </StyledTableCell>
-                          <StyledTableCell sx={{color: data.rolling_return >= 0 ? 'green' : 'red'}} >
+                          <StyledTableCell
+                            sx={{
+                              color: data.rolling_return >= 0 ? "green" : "red",
+                            }}
+                          >
                             {" "}
                             {data.rolling_return}{" "}
                           </StyledTableCell>
-                          <StyledTableCell sx={{color: data.stdev_excess_return >= 0 ? 'green' : 'red'}} >
+                          <StyledTableCell
+                            sx={{
+                              color:
+                                data.stdev_excess_return >= 0 ? "green" : "red",
+                            }}
+                          >
                             {" "}
                             {data.stdev_excess_return}{" "}
                           </StyledTableCell>
-                          <StyledTableCell sx={{color: data.max_drawdown >= 0 ? 'green' : 'red'}} >
+                          <StyledTableCell
+                            sx={{
+                              color: data.max_drawdown >= 0 ? "green" : "red",
+                            }}
+                          >
                             {" "}
                             {data.max_drawdown}{" "}
                           </StyledTableCell>
-                          <StyledTableCell sx={{color: data.sharpe_ratio >= 0 ? 'green' : 'red'}} >
+                          <StyledTableCell
+                            sx={{
+                              color: data.sharpe_ratio >= 0 ? "green" : "red",
+                            }}
+                          >
                             {" "}
                             {data.sharpe_ratio}{" "}
                           </StyledTableCell>
-                          <StyledTableCell sx={{color: data.sortino_ratio >= 0 ? 'green' : 'red'}} >
+                          <StyledTableCell
+                            sx={{
+                              color: data.sortino_ratio >= 0 ? "green" : "red",
+                            }}
+                          >
                             {" "}
-                            {data.sortino_ratio ? data.sortino_ratio: 'N/A'}{" "}
+                            {data.sortino_ratio
+                              ? data.sortino_ratio
+                              : "N/A"}{" "}
                           </StyledTableCell>
                         </StyledTableRow>
                       );
@@ -647,6 +680,39 @@ const InvestorsScreener = () => {
         </>
       ) : (
         <>
+          <Card sx={{ m: 1, position: "relative" }}>
+            <Box p={3}>
+              <Box spacing={1} sx={{ mt: 0.5 }}>
+                <text
+                  style={{
+                    padding: "5px",
+                    fontSize: "27px",
+                    fontWeight: "bold",
+                  }}
+                >
+                  Strategies Performances and
+                  <br /> Risks (10 years)
+                </text>
+              </Box>
+
+              <Box
+                sx={{
+                  display: "flex",
+                  flexDirection: "row",
+                  gap: 3,
+                  marginTop: 6,
+                }}
+              >
+                <VerticalBarChart
+                  chartId={"bar-chart-1"}
+                  graphData={allStrategies}
+                />
+                <VerticalBarChart chartId={"bar-chart-2"} />
+
+                <VerticalBarChart chartId={"bar-chart-3"} />
+              </Box>
+            </Box>
+          </Card>
           <Card sx={{ m: 1, position: "relative" }}>
             <Box>
               <Box
@@ -708,31 +774,60 @@ const InvestorsScreener = () => {
                             {" "}
                             {data.name}{" "}
                           </StyledTableCell>
-                          <StyledTableCell sx={{color: data.total_return >= 0 ? 'green' : 'red'}} >
+                          <StyledTableCell
+                            sx={{
+                              color: data.total_return >= 0 ? "green" : "red",
+                            }}
+                          >
                             {" "}
                             {data.total_return}{" "}
                           </StyledTableCell>
-                          <StyledTableCell sx={{color: data.annualized_return >= 0 ? 'green' : 'red'}} >
+                          <StyledTableCell
+                            sx={{
+                              color:
+                                data.annualized_return >= 0 ? "green" : "red",
+                            }}
+                          >
                             {" "}
                             {data.annualized_return}{" "}
                           </StyledTableCell>
-                          <StyledTableCell sx={{color: data.rolling_return >= 0 ? 'green' : 'red'}} >
+                          <StyledTableCell
+                            sx={{
+                              color: data.rolling_return >= 0 ? "green" : "red",
+                            }}
+                          >
                             {" "}
                             {data.rolling_return}{" "}
                           </StyledTableCell>
-                          <StyledTableCell sx={{color: data.stdev_return >= 0 ? 'green' : 'red'}} >
+                          <StyledTableCell
+                            sx={{
+                              color: data.stdev_return >= 0 ? "green" : "red",
+                            }}
+                          >
                             {" "}
                             {data.stdev_return}{" "}
                           </StyledTableCell>
-                          <StyledTableCell sx={{color: data.max_drawdown >= 0 ? 'green' : 'red'}} >
+                          <StyledTableCell
+                            sx={{
+                              color: data.max_drawdown >= 0 ? "green" : "red",
+                            }}
+                          >
                             {" "}
                             {data.max_drawdown}{" "}
                           </StyledTableCell>
-                          <StyledTableCell sx={{color: data.sharpe_ratio >= 0 ? 'green' : 'red'}} >
+                          <StyledTableCell
+                            sx={{
+                              color: data.sharpe_ratio >= 0 ? "green" : "red",
+                            }}
+                          >
                             {" "}
                             {data.sharpe_ratio}{" "}
                           </StyledTableCell>
-                          <StyledTableCell sx={{color: data.sortino_ratio >= 0 ? 'green' : 'red'}} >
+                          <StyledTableCell
+                            sx={{
+                              color: data.sortino_ratio >= 0 ? "green" : "red",
+                            }}
+                          >
                             {" "}
                             {data.sortino_ratio}{" "}
                           </StyledTableCell>
