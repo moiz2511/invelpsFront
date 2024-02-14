@@ -265,6 +265,8 @@ const DAFinancials = () => {
 
     };
 
+    console.log(tableContent)
+
     const onSubmitHandler = async (event) => {
         event.preventDefault();
         setTableContentFetched(false);

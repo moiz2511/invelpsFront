@@ -184,7 +184,7 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   },
 }));
 
-const OverviewTab = () => {
+const OverviewTab = ({ setSelectedCompany, setCompanyDetails }) => {
   let pageLoc = window.location.pathname;
 
   const [searchValue, setSearchValue] = useState("");
@@ -503,7 +503,15 @@ const OverviewTab = () => {
                   <TableBody>
                     {graphTableData.map((data, index) => {
                       return (
-                        <StyledTableRow hover key={index}>
+                        <StyledTableRow
+                          hover
+                          key={index}
+                          onClick={() => {
+                            setSelectedCompany(data);
+                            setCompanyDetails(true);
+                          }}
+                          style={{ cursor: "pointer" }}
+                        >
                           <StyledTableCell>
                             {" "}
                             {data.strategy_name}{" "}

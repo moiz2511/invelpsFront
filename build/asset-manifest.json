@@ -1,0 +1,23 @@
+{
+  "files": {
+    "main.css": "/static/css/main.a2c14a43.css",
+    "main.js": "/static/js/main.229d64b9.js",
+    "static/media/Our solutions.jpg": "/static/media/Our solutions.c5ade12227818ee23218.jpg",
+    "static/media/Our mission.jpg": "/static/media/Our mission.06b9c712356d5e956612.jpg",
+    "static/media/Invelps screen.jpg": "/static/media/Invelps screen.7835678002f0c9d67daf.jpg",
+    "static/media/instagram.png": "/static/media/instagram.79535458a8a6d88f81d4.png",
+    "static/media/analytics.png": "/static/media/analytics.8f5e467afe5f020ba81c.png",
+    "static/media/Original.svg": "/static/media/Original.afcd8e82ecfa265bbe91f80fd0b176c6.svg",
+    "static/media/facebook.png": "/static/media/facebook.01a470d813915c298403.png",
+    "static/media/twitter.png": "/static/media/twitter.894988327f8d68209e91.png",
+    "static/media/financial-statements.png": "/static/media/financial-statements.5735f078b5640356cf95.png",
+    "static/media/filtering.png": "/static/media/filtering.d3a12022969582b0814d.png",
+    "index.html": "/index.html",
+    "main.a2c14a43.css.map": "/static/css/main.a2c14a43.css.map",
+    "main.229d64b9.js.map": "/static/js/main.229d64b9.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.a2c14a43.css",
+    "static/js/main.229d64b9.js"
+  ]
+}

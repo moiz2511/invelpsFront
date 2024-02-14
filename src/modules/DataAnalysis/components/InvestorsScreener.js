@@ -34,6 +34,13 @@ import VerticalBarChart from "./VerticalBarChart";
 import { styled } from "@mui/material/styles";
 import OverviewTab from "./OverviewTab";
 import ReturnsTab from "./ReturnsTab";
+import RisksTab from "./RisksTab";
+import BackTestTab from "./BackTestTab";
+import DAFinancials from "./Financials";
+import BackTest from "./BackTest";
+
+import CompanyReturnTab from "./CompanyReturnTab";
+import CompanyRiskTab from "./CompanyRiskTab";
 
 const headCells = {
   data: [
@@ -283,34 +290,95 @@ function a11yProps(index) {
 
 const InvestorsScreener = () => {
   const [value, setValue] = useState(0);
+  const [valueCompanyDetails, setValueCompanyDetails] = useState(0);
+  const [selectedCompany, setSelectedCompany] = useState(null);
+  const [companyDetails, setCompanyDetails] = useState(false);
 
   const handleChange = (event, newValue) => {
-    setValue(newValue);
+    if (companyDetails) {
+      setValueCompanyDetails(newValue);
+    } else {
+      setValue(newValue);
+    }
   };
 
+  console.log(selectedCompany);
+
   return (
-    <Box sx={{ width: "100%" }}>
-      <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
-        <Tabs
-          value={value}
-          onChange={handleChange}
-          aria-label="basic tabs example"
-        >
-          <Tab label="Overview" {...a11yProps(0)} />
-          <Tab label="Item Two" {...a11yProps(1)} />
-          <Tab label="Item Three" {...a11yProps(2)} />
-        </Tabs>
-      </Box>
-      <CustomTabPanel value={value} index={0}>
-        <OverviewTab />
-      </CustomTabPanel>
-      <CustomTabPanel value={value} index={1}>
-        <ReturnsTab />
-      </CustomTabPanel>
-      <CustomTabPanel value={value} index={2}>
-        Item Three
-      </CustomTabPanel>
-    </Box>
+    <>
+      {companyDetails ? (
+        <Box sx={{ display: "flex", flexDirection: "column", p: 1, gap: 2 }}>
+          <Button
+            onClick={() => setCompanyDetails(false)}
+            sx={{
+              alignSelf: "flex-start",
+              backgroundColor: "#407879",
+              color: "rgb(204, 191, 144)",
+            }}
+          >
+            Go Back
+          </Button>
+          <text> {selectedCompany.company_name} </text>
+          <Box sx={{ width: "100%" }}>
+            <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
+              <Tabs
+                value={valueCompanyDetails}
+                onChange={handleChange}
+                aria-label="basic tabs example"
+              >
+                <Tab label="Financials" {...a11yProps(0)} />
+                <Tab label="Returns" {...a11yProps(1)} />
+                <Tab label="Risks" {...a11yProps(2)} />
+                <Tab label="Backtest" {...a11yProps(3)} />
+              </Tabs>
+            </Box>
+            <CustomTabPanel value={valueCompanyDetails} index={0}>
+              <DAFinancials/>
+            </CustomTabPanel>
+            <CustomTabPanel value={valueCompanyDetails} index={1}>
+              <CompanyReturnTab companySymbol={selectedCompany.symbol} companyName={selectedCompany.company_name} />
+            </CustomTabPanel>
+            <CustomTabPanel value={valueCompanyDetails} index={2}>
+            <CompanyRiskTab companySymbol={selectedCompany.symbol} companyName={selectedCompany.company_name} />
+            </CustomTabPanel>
+            <CustomTabPanel value={valueCompanyDetails} index={3}>
+              <BackTest companySymbol={selectedCompany.symbol} />
+            </CustomTabPanel>
+          </Box>
+        </Box>
+      ) : (
+        <Box sx={{ width: "100%" }}>
+          <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
+            <Tabs
+              value={value}
+              onChange={handleChange}
+              aria-label="basic tabs example"
+            >
+              <Tab label="Overview" {...a11yProps(0)} />
+              <Tab label="Returns" {...a11yProps(1)} />
+              <Tab label="Backtest" {...a11yProps(2)} />
+              <Tab label="Risks" {...a11yProps(3)} />
+            </Tabs>
+          </Box>
+          <CustomTabPanel value={value} index={0}>
+            <OverviewTab
+              setSelectedCompany={setSelectedCompany}
+              setCompanyDetails={setCompanyDetails}
+            />
+          </CustomTabPanel>
+          <CustomTabPanel value={value} index={1}>
+            <ReturnsTab />
+          </CustomTabPanel>
+          <CustomTabPanel value={value} index={2}>
+            <BackTestTab />
+          </CustomTabPanel>
+          <CustomTabPanel value={value} index={3}>
+            <RisksTab />
+          </CustomTabPanel>
+        </Box>
+      )}
+    </>
   );
 };
+
 export default InvestorsScreener;
