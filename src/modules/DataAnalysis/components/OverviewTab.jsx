@@ -16,6 +16,8 @@ import {
   Button,
   IconButton,
   Typography,
+  Tooltip,
+  Modal,
 } from "@mui/material";
 
 import { ArrowBack, ArrowForward } from "@mui/icons-material";
@@ -28,6 +30,8 @@ import ColorConstants from "../../Core/constants/ColorConstants.json";
 import BACKEND_SERVER_BASE_URL from "../../../Constants.json";
 import AuthContext from "../../Core/store/auth-context";
 import VerticalBarChart from "./VerticalBarChart";
+import Fade from "@mui/material/Fade";
+import InvestorModal from "./InvestorModal";
 
 import { styled } from "@mui/material/styles";
 
@@ -40,8 +44,14 @@ const headCells = {
       isDropDown: false,
     },
     {
+      id: "investor",
+      label: "Investors",
+      isValueLink: false,
+      isDropDown: false,
+    },
+    {
       id: "totalreturn",
-      label: "Total Return",
+      label: "Total Return %",
       isValueLink: false,
       isDropDown: false,
     },
@@ -65,7 +75,7 @@ const headCells = {
     },
     {
       id: "maxDrawdown",
-      label: "Max Drawdown",
+      label: "Max Drawdown %",
       isValueLink: false,
       isDropDown: false,
     },
@@ -103,6 +113,11 @@ const passingHeadCells = {
       isDropDown: false,
     },
     {
+      label: "Logo",
+      isValueLink: false,
+      isDropDown: false,
+    },
+    {
       label: "Ticker",
       isValueLink: false,
       isDropDown: false,
@@ -123,27 +138,27 @@ const passingHeadCells = {
       isDropDown: false,
     },
     {
-      label: "Total Return",
+      label: "Total Return (%)",
       isValueLink: false,
       isDropDown: false,
     },
     {
-      label: "Annualized Return",
+      label: "Annualized Return (%)",
       isValueLink: false,
       isDropDown: false,
     },
     {
-      label: "Rolling Return",
+      label: "Rolling Return (%)",
       isValueLink: false,
       isDropDown: false,
     },
     {
-      label: "Standard Deviation",
+      label: "Standard Deviation (%)",
       isValueLink: false,
       isDropDown: false,
     },
     {
-      label: "Max Drawdown",
+      label: "Max Drawdown (%)",
       isValueLink: false,
       isDropDown: false,
     },
@@ -204,6 +219,9 @@ const OverviewTab = ({ setSelectedCompany, setCompanyDetails }) => {
   const [totalPages, setTotalPages] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [currentRowsPerPage, setCurrentRowsPerPage] = useState(3);
+  const [passingCriteria, setPassingCriteria] = useState(null);
+  const [selectedInvestor, setSelectedInvestor] = useState(null);
+  const [showInvestor, setShowInvestor] = useState(false);
 
   const rowsPerPageOptions = [3, 5, 10];
 
@@ -231,7 +249,7 @@ const OverviewTab = ({ setSelectedCompany, setCompanyDetails }) => {
     setSearchValue(event.target.value);
   };
 
-  const filteredStrategies = allStrategies.filter((strategy) =>
+  const filteredStrategies = allStrategies?.filter((strategy) =>
     strategy.name.toLowerCase().includes(searchValue.toLowerCase())
   );
 
@@ -246,6 +264,15 @@ const OverviewTab = ({ setSelectedCompany, setCompanyDetails }) => {
   const handleDataVisualization = (strategy) => {
     setShowVisualData(!showVisualData);
     setSelectedStrategy(strategy);
+  };
+
+  const handleInvestorVisualization = (investor) => {
+    setShowInvestor(!showInvestor);
+    setSelectedInvestor(investor);
+  };
+
+  const closeInvestorModal = () => {
+    setShowInvestor(!showInvestor);
   };
 
   console.log(selectedStrategy);
@@ -350,6 +377,7 @@ const OverviewTab = ({ setSelectedCompany, setCompanyDetails }) => {
           console.log(data);
           setGraphTableData(data.data);
           setTotalPages(data.paginator.total_pages);
+          setPassingCriteria(data.companies_passing_criteris);
         } else {
           console.log("Unexpected status code:", response.status);
         }
@@ -364,6 +392,7 @@ const OverviewTab = ({ setSelectedCompany, setCompanyDetails }) => {
 
   console.log(perExchangeKPI);
   console.log(totalPages);
+  console.log(passingCriteria);
 
   return (
     <Grid
@@ -404,7 +433,7 @@ const OverviewTab = ({ setSelectedCompany, setCompanyDetails }) => {
               padding: 2,
             }}
           >
-            <text style={{ fontSize: 20, fontWeight: "bold" }}>
+            <text style={{ fontSize: 25, fontWeight: "bold" }}>
               {" "}
               {selectedStrategy.name}{" "}
             </text>
@@ -430,7 +459,7 @@ const OverviewTab = ({ setSelectedCompany, setCompanyDetails }) => {
                     gap: 4,
                   }}
                 >
-                  <text> Companies Per Exchanges KPI </text>
+                  <text> Companies Per Exchanges (%) </text>
                   <PieChart
                     graphData={perExchangeKPI}
                     nameData={(item) => item.exchange}
@@ -445,7 +474,7 @@ const OverviewTab = ({ setSelectedCompany, setCompanyDetails }) => {
                     gap: 4,
                   }}
                 >
-                  <text> Companies Per Sector KPI </text>
+                  <text> Companies Per Sector (%) </text>
                   <PieChart
                     graphData={perSectorKPI}
                     nameData={(item) => item.sector}
@@ -460,7 +489,7 @@ const OverviewTab = ({ setSelectedCompany, setCompanyDetails }) => {
                     gap: 4,
                   }}
                 >
-                  <text> Companies Per Market Cap KPI </text>
+                  <text> Companies Per Market Cap (%) </text>
                   <PieChart
                     graphData={perMarketKPI}
                     nameData={(item) => item.market_cap_class}
@@ -477,7 +506,7 @@ const OverviewTab = ({ setSelectedCompany, setCompanyDetails }) => {
             >
               <Box justifyContent={"space-between"} display={"flex"}>
                 <text style={{ fontSize: 20, fontWeight: "bold" }}>
-                  Companies Passing Criterias
+                  Companies Passing Criterias: : {passingCriteria}
                 </text>
                 {/* <input
                   style={{ borderRadius: 10, padding: 12 }}
@@ -503,88 +532,103 @@ const OverviewTab = ({ setSelectedCompany, setCompanyDetails }) => {
                   <TableBody>
                     {graphTableData.map((data, index) => {
                       return (
-                        <StyledTableRow
-                          hover
+                        <Tooltip
                           key={index}
-                          onClick={() => {
-                            setSelectedCompany(data);
-                            setCompanyDetails(true);
-                          }}
-                          style={{ cursor: "pointer" }}
+                          TransitionComponent={Fade}
+                          TransitionProps={{ timeout: 600 }}
+                          title="Click to analyze the company"
                         >
-                          <StyledTableCell>
-                            {" "}
-                            {data.strategy_name}{" "}
-                          </StyledTableCell>
-                          <StyledTableCell>
-                            {" "}
-                            {data.company_name}{" "}
-                          </StyledTableCell>
-                          <StyledTableCell> {data.symbol} </StyledTableCell>
-                          <StyledTableCell> {data.exchange} </StyledTableCell>
-                          <StyledTableCell> {data.sector} </StyledTableCell>
-                          <StyledTableCell> {data.industry} </StyledTableCell>
-                          <StyledTableCell
-                            sx={{
-                              color: data.total_return >= 0 ? "green" : "red",
+                          <StyledTableRow
+                            hover
+                            onClick={() => {
+                              setSelectedCompany(data);
+                              setCompanyDetails(true);
                             }}
+                            style={{ cursor: "pointer" }}
                           >
-                            {" "}
-                            {data.total_return}{" "}
-                          </StyledTableCell>
-                          <StyledTableCell
-                            sx={{
-                              color:
-                                data.annualized_return >= 0 ? "green" : "red",
-                            }}
-                          >
-                            {" "}
-                            {data.annualized_return}{" "}
-                          </StyledTableCell>
-                          <StyledTableCell
-                            sx={{
-                              color: data.rolling_return >= 0 ? "green" : "red",
-                            }}
-                          >
-                            {" "}
-                            {data.rolling_return}{" "}
-                          </StyledTableCell>
-                          <StyledTableCell
-                            sx={{
-                              color:
-                                data.stdev_excess_return >= 0 ? "green" : "red",
-                            }}
-                          >
-                            {" "}
-                            {data.stdev_excess_return}{" "}
-                          </StyledTableCell>
-                          <StyledTableCell
-                            sx={{
-                              color: data.max_drawdown >= 0 ? "green" : "red",
-                            }}
-                          >
-                            {" "}
-                            {data.max_drawdown}{" "}
-                          </StyledTableCell>
-                          <StyledTableCell
-                            sx={{
-                              color: data.sharpe_ratio >= 0 ? "green" : "red",
-                            }}
-                          >
-                            {" "}
-                            {data.sharpe_ratio}{" "}
-                          </StyledTableCell>
-                          <StyledTableCell
-                            sx={{
-                              color: data.sortino_ratio >= 0 ? "green" : "red",
-                            }}
-                          >
-                            {" "}
-                            {data.sortino_ratio
-                              ? data.sortino_ratio
-                              : "N/A"}{" "}
-                          </StyledTableCell>
-                        </StyledTableRow>
+                            <StyledTableCell>
+                              {" "}
+                              {data.strategy_name}
+                            </StyledTableCell>
+                            <StyledTableCell>
+                              {data.company_name}
+                            </StyledTableCell>
+                            <StyledTableCell>
+                              <img
+                                src={data.image}
+                                style={{ height: "30px", width: "35px" }}
+                              />
+                            </StyledTableCell>
+                            <StyledTableCell> {data.symbol} </StyledTableCell>
+                            <StyledTableCell> {data.exchange} </StyledTableCell>
+                            <StyledTableCell> {data.sector} </StyledTableCell>
+                            <StyledTableCell> {data.industry} </StyledTableCell>
+                            <StyledTableCell
+                              sx={{
+                                color: data.total_return >= 0 ? "green" : "red",
+                              }}
+                            >
+                              {" "}
+                              {data.total_return}{" "}
+                            </StyledTableCell>
+                            <StyledTableCell
+                              sx={{
+                                color:
+                                  data.annualized_return >= 0 ? "green" : "red",
+                              }}
+                            >
+                              {" "}
+                              {data.annualized_return}{" "}
+                            </StyledTableCell>
+                            <StyledTableCell
+                              sx={{
+                                color:
+                                  data.rolling_return >= 0 ? "green" : "red",
+                              }}
+                            >
+                              {" "}
+                              {data.rolling_return}{" "}
+                            </StyledTableCell>
+                            <StyledTableCell
+                              sx={{
+                                color:
+                                  data.stdev_excess_return >= 0
+                                    ? "green"
+                                    : "red",
+                              }}
+                            >
+                              {" "}
+                              {data.stdev_excess_return}{" "}
+                            </StyledTableCell>
+                            <StyledTableCell
+                              sx={{
+                                color: data.max_drawdown >= 0 ? "green" : "red",
+                              }}
+                            >
+                              {" "}
+                              {data.max_drawdown}{" "}
+                            </StyledTableCell>
+                            <StyledTableCell
+                              sx={{
+                                color: data.sharpe_ratio >= 0 ? "green" : "red",
+                              }}
+                            >
+                              {" "}
+                              {data.sharpe_ratio}{" "}
+                            </StyledTableCell>
+                            <StyledTableCell
+                              sx={{
+                                color:
+                                  data.sortino_ratio >= 0 ? "green" : "red",
+                              }}
+                            >
+                              {" "}
+                              {data.sortino_ratio
+                                ? data.sortino_ratio
+                                : "N/A"}{" "}
+                            </StyledTableCell>
+                          </StyledTableRow>
+                        </Tooltip>
                       );
                     })}
                   </TableBody>
@@ -640,8 +684,7 @@ const OverviewTab = ({ setSelectedCompany, setCompanyDetails }) => {
                     fontWeight: "bold",
                   }}
                 >
-                  Strategies Performances and
-                  <br /> Risks (10 years)
+                  Strategies Performances and Risks (10 years)
                 </text>
               </Box>
 
@@ -735,7 +778,21 @@ const OverviewTab = ({ setSelectedCompany, setCompanyDetails }) => {
                             }}
                           >
                             {" "}
-                            {data.name}{" "}
+                            {data.name}
+                          </StyledTableCell>
+                          <StyledTableCell
+                            onClick={() =>
+                              handleInvestorVisualization(data.investors)
+                            }
+                            sx={{
+                              cursor: "pointer",
+                              ":hover": {
+                                textDecoration: "underline",
+                                color: "blue",
+                              },
+                            }}
+                          >
+                            {data.investors}
                           </StyledTableCell>
                           <StyledTableCell
                             sx={{
@@ -804,6 +861,13 @@ const OverviewTab = ({ setSelectedCompany, setCompanyDetails }) => {
             </Box>
           </Card>
         </>
+      )}
+      {showInvestor && (
+        <InvestorModal
+          showInvestor={showInvestor}
+          closeInvestorModal={closeInvestorModal}
+          investor={selectedInvestor}
+        />
       )}
     </Grid>
   );

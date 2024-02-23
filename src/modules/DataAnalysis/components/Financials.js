@@ -249,6 +249,11 @@ const DAFinancials = () => {
             });
     }
 
+    console.log(tableContent)
+
+    console.log(companyFilter)
+    console.log(exchangeFilter)
+
     const GetCompanyCurrency = async (respData) => {
         await companiesService.getProfileDataByCompanyAndTableName(companyFilter.company_name, exchangeFilter)
             .then((response) => {

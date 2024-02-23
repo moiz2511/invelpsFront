@@ -100,8 +100,7 @@ const RisksTab = () => {
                 fontWeight: "bold",
               }}
             >
-              Risk Adjusted
-              <br /> return
+              Risk Adjusted Return
             </text>
           </Box>
 
@@ -151,10 +150,10 @@ const RisksTab = () => {
                   Strategy
                 </TableCell>
                 <TableCell sx={{ fontFamily: "Montserrat" }}>
-                  Annualized Return
+                  Annualized Return %
                 </TableCell>
                 <TableCell sx={{ fontFamily: "Montserrat" }}>
-                  Standard Deviation
+                  Standard Deviation %
                 </TableCell>
                 <TableCell sx={{ fontFamily: "Montserrat" }}>
                   Duration

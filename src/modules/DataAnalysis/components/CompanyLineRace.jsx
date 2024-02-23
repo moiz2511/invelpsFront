@@ -1,66 +1,72 @@
-import React, { useEffect } from "react";
-import * as echarts from "echarts";
+import React, { useEffect, useState } from "react";
+import { Line } from "react-chartjs-2";
+import { Chart, registerables } from "chart.js";
 
 const CompanyLineRace = ({ chartId, chartData, years }) => {
-    useEffect(() => {
-        const run = () => {
-          const datasetWithFilters = [];
-          const seriesList = [];
-    
-          chartData.forEach((data, index) => {
-            const datasetId = "dataset_" + index;
-            const strategyName = data.symbol; // Assuming symbol represents the strategy name
-    
-            // Construct the array of data points for the current strategy
-            const filteredData = chartData.map(({ date_year, annual_return }) => ({
-              Year: date_year,
-              Return: parseFloat(annual_return) || 0,
-            }));
-    
-            datasetWithFilters.push({
-              id: datasetId,
-              source: filteredData,
-            });
-    
-            seriesList.push({
-              type: "line",
-              datasetId: datasetId,
-              showSymbol: false,
-              name: strategyName,
-              encode: {
-                x: "Year",
-                y: "Return",
+  Chart.register(...registerables);
+  const [graphData, setGraphData] = useState(null);
+
+  useEffect(() => {
+    if (chartData && chartData.length > 0) {
+      const strategyName = chartData[0].symbol;
+
+      const filteredData = chartData.map(({ date_year, annual_return }) => ({
+        Year: date_year,
+        Return: parseFloat(annual_return) || 0,
+      }));
+
+      const data = {
+        labels: filteredData.map(item => item.Year),
+        datasets: [{
+          label: strategyName,
+          data: filteredData.map(item => item.Return),
+          fill: false,
+          borderColor: '#427878',
+          tension: 0.1
+        }]
+      };
+
+      setGraphData(data);
+    }
+  }, [chartData]);
+
+  return (
+    <div style={{ width: "70%", height: "auto" }}>
+      {graphData && (
+        <Line
+          data={graphData}
+          options={{
+            responsive: true,
+            plugins: {
+              legend: {
+                position: 'top',
               },
-              // Define the value key here
-              value: "Return"
-            });
-          });
-    
-          const option = {
-            tooltip: {
-              trigger: "axis",
+              tooltip: {
+                bodyFontFamily: "Montserrat",
+              },
             },
-            xAxis: {
-              type: "category",
-              data: years,
+            scales: {
+              y: {
+                type: 'linear',
+                display: true,
+                title: {
+                  display: true,
+                  text: 'Return',
+                },
+              },
+              x: {
+                display: true,
+                title: {
+                  display: true,
+                  text: 'Year',
+                },
+              },
             },
-            yAxis: {
-              type: "value",
-            },
-            dataset: datasetWithFilters,
-            series: seriesList,
-          };
-    
-          const chartContainer = document.getElementById(chartId);
-          const myChart = echarts.init(chartContainer);
-          myChart.setOption(option);
-    
-          console.log(datasetWithFilters)
-        };
-    
-        run();
-      }, [chartData, chartId, years]);
-  return <div id={chartId} style={{ width: "100%", height: "400px" }} />;
+          }}
+        />
+      )}
+    </div>
+  );
 };
 
 export default CompanyLineRace;

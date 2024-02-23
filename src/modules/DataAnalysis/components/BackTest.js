@@ -20,8 +20,9 @@ import {
 import { MdCheckCircle } from "react-icons/md";
 import BackTestGraph from "./BackTestGraph";
 import AuthContext from "../../Core/store/auth-context";
+import BannerImage from "../../../assets/images/Banner.png";
 
-const BackTest = ({ companySymbol }) => {
+const BackTest = ({ companySymbol, companyLogo }) => {
   const authCtx = useContext(AuthContext);
   const [authToken, setAuthToken] = useState(null);
   const [strategyBackTest, setStrategyBackTest] = useState(null);
@@ -42,8 +43,7 @@ const BackTest = ({ companySymbol }) => {
           symbol: companySymbol,
         };
         const response = await fetch(
-          `
-              https://api.invelps.com/api/strategies/getBackTestDataAgainstCompany`,
+          `https://api.invelps.com/api/strategies/getBackTestDataAgainstCompany`,
           {
             method: "POST",
             headers: {
@@ -81,9 +81,20 @@ const BackTest = ({ companySymbol }) => {
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
-            fontFamily: "Helvetica"
+            fontFamily: "Helvetica",
+            position: "relative",
           }}
         >
+          <div
+            style={{
+              height: "200px",
+              width: "100%",
+              backgroundImage: `url(${BannerImage})`,
+              backgroundSize: "cover",
+              backgroundPosition: "center",
+            }}
+          ></div>
+
           <Card
             sx={{
               p: 3,
@@ -91,6 +102,8 @@ const BackTest = ({ companySymbol }) => {
               flexDirection: "column",
               fontFamily: "Montserrat",
               maxWidth: "950px",
+              position: "absolute",
+              top: 80,
             }}
           >
             <Box
@@ -101,7 +114,7 @@ const BackTest = ({ companySymbol }) => {
                 justifyContent: "space-between",
               }}
             >
-              <text>Logo</text>
+              <img src={companyLogo} width={40} height={40} />
               <img
                 src={require("../../../assets/images/4Dots.png")}
                 width={70}
@@ -122,11 +135,11 @@ const BackTest = ({ companySymbol }) => {
               <Box sx={{ p: 3 }}>
                 <div
                   style={{
-                    width: 'auto',
-                    paddingLeft: '30px',
-                    paddingRight: '30px',
+                    width: "auto",
+                    paddingLeft: "30px",
+                    paddingRight: "30px",
                     height: 50,
-                    backgroundColor: "#CB6843",
+                    background: "linear-gradient(to left,#CC6656, #F26800)",
                     position: "relative",
                     transform: "skew(20deg)",
                     textAlign: "center",
@@ -147,11 +160,15 @@ const BackTest = ({ companySymbol }) => {
             </Box>
             <text style={{ fontWeight: 600 }}>
               If you&apos;d invested{" "}
-              <span style={{ color: "#407879" }}>$ {strategyBackTest.investment_capital_usd}</span> in{" "}
-              <span style={{ color: "#CB6843" }}>
-                {strategyBackTest.company_name}{companySymbol}
+              <span style={{ color: "#407879" }}>
+                $ {strategyBackTest.investment_capital_usd}
               </span>{" "}
-              on {strategyBackTest.starting_price_date}, 3 years later your investment would be worth :
+              in{" "}
+              <span style={{ color: "#CB6843" }}>
+                {strategyBackTest.company_name} ({companySymbol})
+              </span>{" "}
+              on {strategyBackTest.starting_price_date}, {strategyBackTest.duration} 10 years later your
+              investment would be worth :
             </text>
             <Box sx={{ display: "flex", flexDirection: "row" }}>
               <Box sx={{ flex: 1 }}>
@@ -168,7 +185,14 @@ const BackTest = ({ companySymbol }) => {
                     {strategyBackTest.exchange}
                   </text>
                 </Box>
-                <Box sx={{ display: "flex", flexDirection: "row", gap: 3,  justifyContent: 'space-between' }}>
+                <Box
+                  sx={{
+                    display: "flex",
+                    flexDirection: "row",
+                    gap: 3,
+                    justifyContent: "space-between",
+                  }}
+                >
                   <Box
                     sx={{
                       display: "flex",
@@ -196,7 +220,14 @@ const BackTest = ({ companySymbol }) => {
                     </text>
                   </Box>
                 </Box>
-                <Box sx={{ display: "flex", flexDirection: "row", gap: 3,  justifyContent: 'space-between' }}>
+                <Box
+                  sx={{
+                    display: "flex",
+                    flexDirection: "row",
+                    gap: 3,
+                    justifyContent: "space-between",
+                  }}
+                >
                   <Box
                     sx={{
                       display: "flex",
@@ -224,7 +255,14 @@ const BackTest = ({ companySymbol }) => {
                     </text>
                   </Box>
                 </Box>
-                <Box sx={{ display: "flex", flexDirection: "row", gap: 3, justifyContent: 'space-between' }}>
+                <Box
+                  sx={{
+                    display: "flex",
+                    flexDirection: "row",
+                    gap: 3,
+                    justifyContent: "space-between",
+                  }}
+                >
                   <Box
                     sx={{
                       display: "flex",
@@ -252,7 +290,14 @@ const BackTest = ({ companySymbol }) => {
                     </text>
                   </Box>
                 </Box>
-                <Box sx={{ display: "flex", flexDirection: "row", gap: 3,  justifyContent: 'space-between' }}>
+                <Box
+                  sx={{
+                    display: "flex",
+                    flexDirection: "row",
+                    gap: 3,
+                    justifyContent: "space-between",
+                  }}
+                >
                   <Box
                     sx={{
                       display: "flex",
@@ -263,7 +308,7 @@ const BackTest = ({ companySymbol }) => {
                     <MdCheckCircle color="#407879" size={27} />
                     <text style={{ fontWeight: 600 }}>Country:</text>
                     <text style={{ fontWeight: 600, color: "#407879" }}>
-                      Bourse australienne des valeurs mobilières
+                      {strategyBackTest.country}
                     </text>
                   </Box>
                   <Box
@@ -276,11 +321,18 @@ const BackTest = ({ companySymbol }) => {
                     <MdCheckCircle color="#407879" size={27} />
                     <text style={{ fontWeight: 600 }}>Duration:</text>
                     <text style={{ fontWeight: 600, color: "#407879" }}>
-                      Bourse australienne des valeurs mobilières
+                    {strategyBackTest.duration}
                     </text>
                   </Box>
                 </Box>
-                <Box sx={{ display: "flex", flexDirection: "row", gap: 3,  justifyContent: 'space-between' }}>
+                <Box
+                  sx={{
+                    display: "flex",
+                    flexDirection: "row",
+                    gap: 3,
+                    justifyContent: "space-between",
+                  }}
+                >
                   <Box
                     sx={{
                       display: "flex",
@@ -294,7 +346,6 @@ const BackTest = ({ companySymbol }) => {
                       {strategyBackTest.total_shares}
                     </text>
                   </Box>
-                 
                 </Box>
               </Box>
               <Box sx={{ flex: 1 }}>
@@ -304,7 +355,6 @@ const BackTest = ({ companySymbol }) => {
                     flexDirection: "row",
                     gap: 3,
                     alignItems: "center",
-                    marginTop: "70px",
                   }}
                 >
                   <img
@@ -315,7 +365,7 @@ const BackTest = ({ companySymbol }) => {
                       style={{
                         width: 200,
                         height: 50,
-                        backgroundColor: "#CB6843",
+                        background: "linear-gradient(to left,#CC6656, #F26800)",
                         position: "relative",
                         transform: "skew(-10deg)",
                         textAlign: "center",
@@ -348,7 +398,7 @@ const BackTest = ({ companySymbol }) => {
                       style={{
                         width: 400,
                         height: 80,
-                        backgroundColor: "#CB6843",
+                        background: "linear-gradient(to left,#CC6656, #F26800)",
                         position: "relative",
                         transform: "skew(-10deg)",
                         textAlign: "center",
@@ -363,7 +413,8 @@ const BackTest = ({ companySymbol }) => {
                           fontSize: "22px",
                         }}
                       >
-                        TOTAL RATE OF RETURN {strategyBackTest.total_investment_value_usd}
+                        TOTAL RETURN{" "}
+                        {strategyBackTest.total_investment_value_usd} %
                       </div>
                     </div>
                   </Box>
@@ -374,27 +425,29 @@ const BackTest = ({ companySymbol }) => {
                       style={{
                         width: 400,
                         height: 80,
-                        backgroundColor: "#CB6843",
+                        background: "linear-gradient(#CC6656, #F26800)",
                         color: "#ffffff",
                         borderRadius: "30px",
                         display: "flex",
                         flexDirection: "row",
                         alignItems: "center",
                         padding: "20px",
+                        justifyContent: "space-between",
                       }}
                     >
                       <div
                         style={{
                           fontWeight: "bold",
-                          fontSize: "25px",
+                          fontSize: "23px",
                         }}
                       >
-                        ANNUALIZED RATE OF RETURN
+                        ANNUALIZED
+                        <br /> RETURN
                       </div>
                       <div
                         style={{
                           fontWeight: "bold",
-                          fontSize: "25px",
+                          fontSize: "50px",
                         }}
                       >
                         {strategyBackTest.investment_total_return}%
@@ -402,6 +455,11 @@ const BackTest = ({ companySymbol }) => {
                     </div>
                   </Box>
                 </Box>
+                <BackTestGraph
+                  dividendTotal={strategyBackTest.dividend_income_usd}
+                  montantInvesti={strategyBackTest.invested_capital}
+                  gainPerteEnCapital={strategyBackTest.invested_capital}
+                />
               </Box>
             </Box>
             <Box
@@ -429,15 +487,16 @@ const BackTest = ({ companySymbol }) => {
               >
                 IS THIS A GOOD
                 <br /> OPPORTUNITY?
-                <Button sx={{ backgroundColor: "#CB6843", color: "white" }}>
+                <Button
+                  sx={{
+                    background: "linear-gradient(to left,#CC6656, #F26800)",
+                    color: "white",
+                    fontFamily: "Helvetica",
+                  }}
+                >
                   Click here to find out!
                 </Button>
               </Box>
-              <BackTestGraph
-                dividendTotal={strategyBackTest.dividend_income_usd}
-                montantInvesti={strategyBackTest.invested_capital}
-                gainPerteEnCapital={strategyBackTest.invested_capital}
-              />
             </Box>
           </Card>
           {/* <Card>

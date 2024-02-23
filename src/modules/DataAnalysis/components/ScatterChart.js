@@ -63,6 +63,11 @@ const ScatterChart = ({ chartId, data }) => {
       type: 'scatter'
     }];
 
+    const legendData = data.map(entry => ({
+      name: entry.name,
+      icon: symbolMapping[entry.name] ? symbolMapping[entry.name].symbol : 'circle',
+    })); // Extract legend data with appropriate symbols
+
     const option = {
       xAxis: xAxis,
       yAxis: yAxis,
@@ -71,7 +76,16 @@ const ScatterChart = ({ chartId, data }) => {
         formatter: function(params) {
           const data = params.data;
           return `Strategy: ${data.name}<br />Standard Deviation: ${data.value[0]}<br />Annualized Return: ${data.value[1]}`;
-        }
+        },
+      },
+      legend: {
+        data: legendData,
+        textStyle: {
+          color: '#272727',
+          fontFamily: "Montserrat",
+          fontSize: 16
+        },
+        show: true
       }
     };
 

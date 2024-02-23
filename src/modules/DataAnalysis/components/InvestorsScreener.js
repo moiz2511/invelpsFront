@@ -38,6 +38,7 @@ import RisksTab from "./RisksTab";
 import BackTestTab from "./BackTestTab";
 import DAFinancials from "./Financials";
 import BackTest from "./BackTest";
+import CompanyFinancials from "./CompanyFinancials";
 
 import CompanyReturnTab from "./CompanyReturnTab";
 import CompanyRiskTab from "./CompanyRiskTab";
@@ -318,7 +319,6 @@ const InvestorsScreener = () => {
           >
             Go Back
           </Button>
-          <text> {selectedCompany.company_name} </text>
           <Box sx={{ width: "100%" }}>
             <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
               <Tabs
@@ -327,22 +327,24 @@ const InvestorsScreener = () => {
                 aria-label="basic tabs example"
               >
                 <Tab label="Financials" {...a11yProps(0)} />
-                <Tab label="Returns" {...a11yProps(1)} />
-                <Tab label="Risks" {...a11yProps(2)} />
-                <Tab label="Backtest" {...a11yProps(3)} />
+                <Tab label="Returns and Risks" {...a11yProps(1)} />
+                <Tab label="Backtest" {...a11yProps(2)} />
               </Tabs>
             </Box>
             <CustomTabPanel value={valueCompanyDetails} index={0}>
-              <DAFinancials/>
+              <CompanyFinancials companyName={selectedCompany.company_name} />
             </CustomTabPanel>
             <CustomTabPanel value={valueCompanyDetails} index={1}>
-              <CompanyReturnTab companySymbol={selectedCompany.symbol} companyName={selectedCompany.company_name} />
+              <CompanyReturnTab
+                companySymbol={selectedCompany.symbol}
+                companyName={selectedCompany.company_name}
+                companyImage={selectedCompany.image}
+              />
             </CustomTabPanel>
-            <CustomTabPanel value={valueCompanyDetails} index={2}>
-            <CompanyRiskTab companySymbol={selectedCompany.symbol} companyName={selectedCompany.company_name} />
-            </CustomTabPanel>
-            <CustomTabPanel value={valueCompanyDetails} index={3}>
-              <BackTest companySymbol={selectedCompany.symbol} />
+            <CustomTabPanel value={valueCompanyDetails} index={2}  >
+              <div style={{backgroundColor: '#DEDEDE', height: '200vh'}} >
+              <BackTest companySymbol={selectedCompany.symbol} companyLogo={selectedCompany.image} />
+              </div>
             </CustomTabPanel>
           </Box>
         </Box>
@@ -356,8 +358,8 @@ const InvestorsScreener = () => {
             >
               <Tab label="Overview" {...a11yProps(0)} />
               <Tab label="Returns" {...a11yProps(1)} />
-              <Tab label="Backtest" {...a11yProps(2)} />
-              <Tab label="Risks" {...a11yProps(3)} />
+              <Tab label="Risks" {...a11yProps(2)} />
+              <Tab label="Historical Prices" {...a11yProps(3)} />
             </Tabs>
           </Box>
           <CustomTabPanel value={value} index={0}>
@@ -370,10 +372,10 @@ const InvestorsScreener = () => {
             <ReturnsTab />
           </CustomTabPanel>
           <CustomTabPanel value={value} index={2}>
-            <BackTestTab />
+            <RisksTab />
           </CustomTabPanel>
           <CustomTabPanel value={value} index={3}>
-            <RisksTab />
+            <BackTestTab />
           </CustomTabPanel>
         </Box>
       )}

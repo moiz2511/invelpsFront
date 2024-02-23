@@ -34,7 +34,11 @@ const BarChart = ({ chartId, chartTitle = 'Bar Chart', chartData }) => {
 
     const option = {
       title: {
-        text: chartTitle
+        text: chartTitle,
+      },
+      legend: {
+        data: ["Best Return", "Worst Return"], 
+        itemGap: 20,
       },
       tooltip: {
         trigger: 'axis',
@@ -72,7 +76,8 @@ const BarChart = ({ chartId, chartTitle = 'Bar Chart', chartData }) => {
             show: true,
             formatter: '{b}'
           },
-          data: bestSeriesData
+          data: bestSeriesData,
+          color: 'blue'
         },
         {
           name: 'Worst Return',
@@ -82,7 +87,8 @@ const BarChart = ({ chartId, chartTitle = 'Bar Chart', chartData }) => {
             show: true,
             formatter: '{b}'
           },
-          data: worstSeriesData
+          data: worstSeriesData,
+          color: 'orange'
         }
       ]
     };

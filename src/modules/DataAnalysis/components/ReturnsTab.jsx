@@ -19,6 +19,9 @@ import NegativeBarChart from "./NegativeBarChart";
 import TableCell, { tableCellClasses } from "@mui/material/TableCell";
 import ColorConstants from "../../Core/constants/ColorConstants.json";
 
+import { IoArrowDown } from "react-icons/io5";
+import { IoArrowUpOutline } from "react-icons/io5";
+
 const headYears = [
   2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023,
 ];
@@ -59,7 +62,7 @@ const ReturnsTab = () => {
   const [authToken, setAuthToken] = useState(null);
   const [strategyData, setStrategyData] = useState([]);
   const [years, setYears] = useState([]);
-  const [bestWorstData, setBestWorstData] = useState([]); 
+  const [bestWorstData, setBestWorstData] = useState([]);
 
   useEffect(() => {
     const CheckUserSession = () => {
@@ -114,7 +117,7 @@ const ReturnsTab = () => {
         const data = await response.json();
 
         if (response.status === 200) {
-          console.log("Data:", data)
+          console.log("Data:", data);
           setBestWorstData(data.data);
         } else {
           console.log("Unexpected status code:", response.status);
@@ -126,7 +129,7 @@ const ReturnsTab = () => {
 
     if (authToken) {
       fetchStrategyAnnualPerformance();
-      fetchStrategyBestWorstPerformance()
+      fetchStrategyBestWorstPerformance();
     }
   }, [authToken]);
 
@@ -134,14 +137,15 @@ const ReturnsTab = () => {
     if (strategyData && strategyData.length > 0) {
       const firstStrategy = strategyData[0];
       const strategyKeys = Object.keys(firstStrategy);
-      const filteredYears = strategyKeys.filter((key) => key !== "strategy_name_here");
+      const filteredYears = strategyKeys.filter(
+        (key) => key !== "strategy_name_here"
+      );
       setYears(filteredYears);
     }
   }, [strategyData]);
 
   console.log(years);
   console.log(bestWorstData);
-
 
   console.log(strategyData);
 
@@ -157,8 +161,7 @@ const ReturnsTab = () => {
                 fontWeight: "bold",
               }}
             >
-              Annual Returns (10
-              <br /> years)
+              Annual Returns (10 years)
             </text>
           </Box>
 
@@ -170,7 +173,11 @@ const ReturnsTab = () => {
               marginTop: 6,
             }}
           >
-            <LineRaceChart chartId={"LR-chart-1"} chartData={strategyData} years={years} />
+            <LineRaceChart
+              chartId={"LR-chart-1"}
+              chartData={strategyData}
+              years={years}
+            />
           </Box>
         </Box>
 
@@ -193,6 +200,7 @@ const ReturnsTab = () => {
                 >
                   Strategy Models
                 </TableCell>
+
                 <TableCell
                   padding="normal"
                   colSpan={12}
@@ -204,7 +212,7 @@ const ReturnsTab = () => {
                     fontFamily: "Montserrat",
                   }}
                 >
-                  Annual Returns (%)
+                  Annual Prices (USD)
                 </TableCell>
               </TableRow>
             </TableHead>
@@ -220,6 +228,7 @@ const ReturnsTab = () => {
                 <TableCell sx={{ fontFamily: "Montserrat" }}>
                   Strategy
                 </TableCell>
+                <TableCell sx={{ fontFamily: "Montserrat" }}>Trends</TableCell>
                 {years.map((year, index) => (
                   <TableCell
                     key={index}
@@ -245,6 +254,15 @@ const ReturnsTab = () => {
                   >
                     {strategy.strategy_name_here}
                   </StyledTableCell>
+                  <StyledTableCell>
+                    {(strategy[years[years.length - 1]]?.anual_return -
+                      strategy[years[1]]?.anual_return) /
+                      (years[years.length - 1] - years[1]) >=
+                    0
+                      ? <IoArrowUpOutline color="green" size={18} />
+                      : <IoArrowDown color="red" size={18} />}
+                  </StyledTableCell>
+
                   {years.map((year, index) => (
                     <StyledTableCell
                       key={index}
@@ -255,7 +273,9 @@ const ReturnsTab = () => {
                             : "red",
                       }}
                     >
-                      {strategy[year].anual_return ? strategy[year].anual_return : 'N/A'}
+                      {strategy[year].anual_return
+                        ? strategy[year].anual_return
+                        : "-"}
                     </StyledTableCell>
                   ))}
                 </StyledTableRow>
@@ -287,7 +307,10 @@ const ReturnsTab = () => {
               marginTop: 6,
             }}
           >
-            <NegativeBarChart chartId={"Neg-chart-1"} chartData={bestWorstData} />
+            <NegativeBarChart
+              chartId={"Neg-chart-1"}
+              chartData={bestWorstData}
+            />
           </Box>
         </Box>
 
@@ -357,9 +380,7 @@ const ReturnsTab = () => {
                   <StyledTableCell
                     sx={{
                       color:
-                        parseFloat(data.rolling_return) >= 0
-                          ? "green"
-                          : "red",
+                        parseFloat(data.rolling_return) >= 0 ? "green" : "red",
                     }}
                   >
                     {data.rolling_return}
@@ -367,9 +388,7 @@ const ReturnsTab = () => {
                   <StyledTableCell
                     sx={{
                       color:
-                        parseFloat(data.best_return) >= 0
-                          ? "green"
-                          : "red",
+                        parseFloat(data.best_return) >= 0 ? "green" : "red",
                     }}
                   >
                     {data.best_return}
@@ -377,9 +396,7 @@ const ReturnsTab = () => {
                   <StyledTableCell
                     sx={{
                       color:
-                        parseFloat(data.worst_return) >= 0
-                          ? "green"
-                          : "red",
+                        parseFloat(data.worst_return) >= 0 ? "green" : "red",
                     }}
                   >
                     {data.worst_return}
@@ -394,7 +411,6 @@ const ReturnsTab = () => {
                   >
                     {data.negative_annual_returns}
                   </StyledTableCell>
-                  
                 </StyledTableRow>
               ))}
             </TableBody>

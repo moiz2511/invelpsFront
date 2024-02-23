@@ -147,8 +147,7 @@ const BackTestTab = () => {
                 fontWeight: "bold",
               }}
             >
-              Annual Returns (10
-              <br /> years)
+              Annual Returns (10 years)
             </text>
           </Box>
 
@@ -194,7 +193,7 @@ const BackTestTab = () => {
                     fontFamily: "Montserrat",
                   }}
                 >
-                  Annual Returns (%)
+                  Annual Price ($)
                 </TableCell>
               </TableRow>
             </TableHead>

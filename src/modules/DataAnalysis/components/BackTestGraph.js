@@ -1,56 +1,87 @@
-import React, { useEffect, useRef } from 'react';
-import * as echarts from 'echarts';
+import React, { useEffect, useRef } from "react";
+import * as echarts from "echarts";
 
-const ReusablePieChart = ({ dividendTotal, montantInvesti, gainPerteEnCapital }) => {
+const ReusablePieChart = ({
+  dividendTotal,
+  montantInvesti,
+  gainPerteEnCapital,
+}) => {
   const chartRef = useRef(null);
 
   useEffect(() => {
     const myChart = echarts.init(chartRef.current);
 
+    const total = dividendTotal + montantInvesti + gainPerteEnCapital;
+
     const options = {
       tooltip: {
-        trigger: 'item'
+        trigger: "item",
       },
       legend: {
-        top: '5%',
-        left: 'center'
+        show: true,
+        orient: "vertical",
+        bottom: 0, // Adjust bottom position
+        left: 0, // Adjust left position
+        textStyle: {
+          fontFamily: 'Montserrat' // Specify the desired font family
+        }
       },
       series: [
         {
-          name: 'Access From',
-          type: 'pie',
-          radius: ['40%', '70%'],
+          type: "pie",
+          radius: ["60%", "80%"],
           avoidLabelOverlap: false,
           label: {
-            show: false,
-            position: 'left'
-          },
-          emphasis: {
-            label: {
-              fontSize: 40,
-              fontWeight: 'bold'
-            }
+            show: true,
+            position: "outside",
+            formatter: "$ {c} ",
+            textStyle: {
+              fontSize: "19",
+              fontFamily: "Montserrat",
+              fontWeight: "bold",
+              color: "auto",
+            },
           },
           labelLine: {
-            show: false
+            show: true,
+          },
+          itemStyle: {
+            borderRadius: 7,
           },
           data: [
-            { value: dividendTotal, name: 'Dividend Total', itemStyle: { color: '#407879' } },
-            { value: montantInvesti, name: 'Montant Investi', itemStyle: { color: '#D36748' } },
-            { value: gainPerteEnCapital, name: 'Gain/Perte en capital', itemStyle: { color: '#DBDBDB' } }
-          ]    
-        }
-      ]
+            {
+              value: dividendTotal,
+              name: "Dividend Total",
+              itemStyle: { color: "#407879" },
+            },
+            {
+              value: montantInvesti,
+              name: "Montant Investi",
+              itemStyle: { color: "#D36748" },
+            },
+            {
+              value: gainPerteEnCapital,
+              name: "Gain/Perte en capital",
+              itemStyle: { color: "#ACABAB" },
+            },
+          ],
+        },
+      ],
     };
 
     options && myChart.setOption(options);
 
     return () => {
-      myChart.dispose(); // Dispose the chart when component unmounts
+      myChart.dispose();
     };
   }, [dividendTotal, montantInvesti, gainPerteEnCapital]);
 
-  return <div ref={chartRef} style={{ width: '50%', height: '250px' }} />;
+  return (
+    <div
+      ref={chartRef}
+      style={{ width: "100%", height: "300px", alignSelf: "center" }}
+    />
+  );
 };
 
 export default ReusablePieChart;

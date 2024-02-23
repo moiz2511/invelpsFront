@@ -125,109 +125,112 @@ const CompanyRiskTab = ({ companySymbol, companyName }) => {
                   fontWeight: "bold",
                 }}
               >
-                Risk Adjusted
-                <br /> return
+                Risk Adjusted Return
               </text>
-            </Box>
-
-            <Box
-              sx={{
-                display: "flex",
-                flexDirection: "row",
-                gap: 3,
-                marginTop: 6,
-              }}
-            >
-              <CompanyScatterChart
-                chartId="companyScatterChart"
-                data={riskReturn}
-              />
             </Box>
           </Box>
 
-          <TableContainer>
-            <Box
-              sx={{
-                backgroundColor: "black",
-                padding: 3,
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-            >
-              <text style={{ color: "#fff", textAlign: "center" }}>
-                {" "}
-                Strategy Models{" "}
-              </text>
-            </Box>
-            <Table
-              sx={{ minWidth: "100%", maxWidth: "100%", mt: 1 }}
-              size="medium"
-            >
-              <TableHead>
-                <TableRow
-                  sx={{
-                    backgroundColor: "#e7ecef",
-                    color: "#272727",
-                    fontSize: 14,
-                  }}
-                >
-                  {/* <TableCell sx={{ fontFamily: "Montserrat" }}>
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "row",
+              gap: 3,
+              alignItems: "center",
+            }}
+          >
+             <CompanyScatterChart
+              chartId="companyScatterChart"
+              data={riskReturn}
+            />
+            <TableContainer>
+              <Box
+                sx={{
+                  backgroundColor: "black",
+                  padding: 3,
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                <text style={{ color: "#fff", textAlign: "center" }}>
+                  {" "}
+                  Risk Adjusted Return{" "}
+                </text>
+              </Box>
+              <Table
+                sx={{ minWidth: "100%", maxWidth: "100%", mt: 1 }}
+                size="medium"
+              >
+                <TableHead>
+                  <TableRow
+                    sx={{
+                      backgroundColor: "#e7ecef",
+                      color: "#272727",
+                      fontSize: 14,
+                    }}
+                  >
+                    {/* <TableCell sx={{ fontFamily: "Montserrat" }}>
                   Investor
                 </TableCell> */}
-                  <TableCell sx={{ fontFamily: "Montserrat" }}>
-                    Company Name
-                  </TableCell>
-                  <TableCell sx={{ fontFamily: "Montserrat" }}>
-                    Exchange
-                  </TableCell>
-                  <TableCell sx={{ fontFamily: "Montserrat" }}>
-                    Sector
-                  </TableCell>
-                  <TableCell sx={{ fontFamily: "Montserrat" }}>
-                    Industry
-                  </TableCell>
-                  <TableCell sx={{ fontFamily: "Montserrat" }}>
-                    Annualized Return
-                  </TableCell>
-                  <TableCell sx={{ fontFamily: "Montserrat" }}>
-                    Standard Deviation
-                  </TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                <StyledTableRow hover sx={{ ml: 3 }}>
-                  <StyledTableCell> {riskReturn.company_name} </StyledTableCell>
-                  <StyledTableCell> {riskReturn.exchange} </StyledTableCell>
-                  <StyledTableCell> {riskReturn.sector} </StyledTableCell>
-                  <StyledTableCell> {riskReturn.industry} </StyledTableCell>
-                  <StyledTableCell
-                    sx={{
-                      color:
-                        parseFloat(riskReturn.annualized_return) >= 0
-                          ? "green"
-                          : "red",
-                    }}
-                  >
-                    {" "}
-                    {riskReturn.annualized_return}{" "}
-                  </StyledTableCell>
+                    <TableCell sx={{ fontFamily: "Montserrat" }}>
+                      Company Name
+                    </TableCell>
+                    <TableCell sx={{ fontFamily: "Montserrat" }}>
+                      Exchange
+                    </TableCell>
+                    <TableCell sx={{ fontFamily: "Montserrat" }}>
+                      Sector
+                    </TableCell>
+                    <TableCell sx={{ fontFamily: "Montserrat" }}>
+                      Industry
+                    </TableCell>
+                    <TableCell sx={{ fontFamily: "Montserrat" }}>
+                      Annualized Return
+                    </TableCell>
+                    <TableCell sx={{ fontFamily: "Montserrat" }}>
+                      Standard Deviation
+                    </TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  <StyledTableRow hover sx={{ ml: 3 }}>
+                    <StyledTableCell>
+                      {" "}
+                      {riskReturn.company_name}{" "}
+                    </StyledTableCell>
+                    <StyledTableCell> {riskReturn.exchange} </StyledTableCell>
+                    <StyledTableCell> {riskReturn.sector} </StyledTableCell>
+                    <StyledTableCell> {riskReturn.industry} </StyledTableCell>
+                    <StyledTableCell
+                      sx={{
+                        color:
+                          parseFloat(riskReturn.annualized_return) >= 0
+                            ? "green"
+                            : "red",
+                      }}
+                    >
+                      {" "}
+                      {riskReturn.annualized_return}{" "}
+                    </StyledTableCell>
 
-                  <StyledTableCell
-                    sx={{
-                      color:
-                        parseFloat(riskReturn.standard_deviation) >= 0
-                          ? "green"
-                          : "red",
-                    }}
-                  >
-                    {" "}
-                    {riskReturn.standard_deviation}{" "}
-                  </StyledTableCell>
-                </StyledTableRow>
-              </TableBody>
-            </Table>
-          </TableContainer>
+                    <StyledTableCell
+                      sx={{
+                        color:
+                          parseFloat(riskReturn.standard_deviation) >= 0
+                            ? "green"
+                            : "red",
+                      }}
+                    >
+                      {" "}
+                      {riskReturn.standard_deviation}{" "}
+                    </StyledTableCell>
+                  </StyledTableRow>
+                </TableBody>
+              </Table>
+            </TableContainer>
+           
+            
+          </Box>
         </Card>
       )}
     </>
