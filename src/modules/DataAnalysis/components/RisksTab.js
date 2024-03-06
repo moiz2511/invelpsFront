@@ -100,7 +100,7 @@ const RisksTab = () => {
                 fontWeight: "bold",
               }}
             >
-              Risk Adjusted Return
+              Risk Adjusted Return ({riskReturn[0]?.duration} years)
             </text>
           </Box>
 

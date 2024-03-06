@@ -52,7 +52,7 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   },
 }));
 
-const headCategories = ["Avg", "Best", "Worst", "Negative Periods"];
+const headCategories = ["Avg", "Best", "Worst", "Negative Periods", "Duration"];
 const CompanyReturnTab = ({ companySymbol, companyName, companyImage }) => {
   // const strategyNames = [
   //   "Buffett: Hangstrom",
@@ -228,21 +228,22 @@ const CompanyReturnTab = ({ companySymbol, companyName, companyImage }) => {
                     fontFamily: "Montserrat",
                   }}
                 >
-                  Screener
+                  Company
                 </TableCell>
-                {annualReturn.map((ann, index) => (
                   <TableCell
-                    key={index}
+                  colSpan={12}
                     padding="normal"
                     sx={{
                       fontFamily: "Montserrat",
-                      color: "#427878",
+                      color: "#fff",
                       backgroundColor: "#427878",
+                      fontSize: 18,
+                      textAlign: "center"
                     }}
                   >
-                    {ann.date_year}
+                    Annual Returns %
                   </TableCell>
-                ))}
+                
               </TableRow>
               <TableRow>
                 <TableCell
@@ -255,7 +256,7 @@ const CompanyReturnTab = ({ companySymbol, companyName, companyImage }) => {
                     fontFamily: "Montserrat",
                   }}
                 >
-                  Screener
+                  Company
                 </TableCell>
                 {annualReturn.map((ann, index) => (
                   <TableCell
@@ -365,7 +366,7 @@ const CompanyReturnTab = ({ companySymbol, companyName, companyImage }) => {
                       fontFamily: "Montserrat",
                     }}
                   >
-                    Screener
+                    Company
                   </TableCell>
                   <TableCell
                     padding="normal"
@@ -393,7 +394,7 @@ const CompanyReturnTab = ({ companySymbol, companyName, companyImage }) => {
                   }}
                 >
                   <TableCell sx={{ fontFamily: "Montserrat" }}>
-                    Screener
+                    Company
                   </TableCell>
                   {headCategories.map((category, index) => (
                     <TableCell
@@ -410,11 +411,6 @@ const CompanyReturnTab = ({ companySymbol, companyName, companyImage }) => {
                 <StyledTableRow hover sx={{ ml: 3 }}>
                   <StyledTableCell
                     sx={{
-                      cursor: "pointer",
-                      ":hover": {
-                        textDecoration: "underline",
-                        color: "blue",
-                      },
                       fontFamily: "Montserrat",
                     }}
                   >
@@ -453,6 +449,16 @@ const CompanyReturnTab = ({ companySymbol, companyName, companyImage }) => {
                     }}
                   >
                     {rollingReturn.worst_return}
+                  </StyledTableCell>
+                  <StyledTableCell
+                    sx={{
+                      color:
+                        parseFloat(rollingReturn.negative_returns) >= 0
+                          ? "green"
+                          : "red",
+                    }}
+                  >
+                    {rollingReturn.negative_returns}
                   </StyledTableCell>
                   <StyledTableCell
                     sx={{

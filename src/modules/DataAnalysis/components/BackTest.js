@@ -167,8 +167,9 @@ const BackTest = ({ companySymbol, companyLogo }) => {
               <span style={{ color: "#CB6843" }}>
                 {strategyBackTest.company_name} ({companySymbol})
               </span>{" "}
-              on {strategyBackTest.starting_price_date}, {strategyBackTest.duration} 10 years later your
-              investment would be worth :
+              on {strategyBackTest.starting_price_date},{" "}
+              {strategyBackTest.duration} 10 years later your investment would
+              be worth :
             </text>
             <Box sx={{ display: "flex", flexDirection: "row" }}>
               <Box sx={{ flex: 1 }}>
@@ -185,155 +186,61 @@ const BackTest = ({ companySymbol, companyLogo }) => {
                     {strategyBackTest.exchange}
                   </text>
                 </Box>
-                <Box
-                  sx={{
-                    display: "flex",
-                    flexDirection: "row",
-                    gap: 3,
-                    justifyContent: "space-between",
-                  }}
-                >
-                  <Box
-                    sx={{
-                      display: "flex",
-                      flexDirection: "column",
-                      marginTop: 4,
-                    }}
-                  >
-                    <MdCheckCircle color="#407879" size={27} />
-                    <text style={{ fontWeight: 600 }}>Industrie:</text>
-                    <text style={{ fontWeight: 600, color: "#407879" }}>
-                      {strategyBackTest.industry}
-                    </text>
-                  </Box>
-                  <Box
-                    sx={{
-                      display: "flex",
-                      flexDirection: "column",
-                      marginTop: 4,
-                    }}
-                  >
-                    <MdCheckCircle color="#407879" size={27} />
-                    <text style={{ fontWeight: 600 }}>Sector:</text>
-                    <text style={{ fontWeight: 600, color: "#407879" }}>
-                      {strategyBackTest.sector}
-                    </text>
-                  </Box>
-                </Box>
-                <Box
-                  sx={{
-                    display: "flex",
-                    flexDirection: "row",
-                    gap: 3,
-                    justifyContent: "space-between",
-                  }}
-                >
-                  <Box
-                    sx={{
-                      display: "flex",
-                      flexDirection: "column",
-                      marginTop: 4,
-                    }}
-                  >
-                    <MdCheckCircle color="#407879" size={27} />
-                    <text style={{ fontWeight: 600 }}>Initial Price:</text>
-                    <text style={{ fontWeight: 600, color: "#407879" }}>
-                      {strategyBackTest.starting_price}
-                    </text>
-                  </Box>
-                  <Box
-                    sx={{
-                      display: "flex",
-                      flexDirection: "column",
-                      marginTop: 4,
-                    }}
-                  >
-                    <MdCheckCircle color="#407879" size={27} />
-                    <text style={{ fontWeight: 600 }}>Ending Price:</text>
-                    <text style={{ fontWeight: 600, color: "#407879" }}>
-                      {strategyBackTest.ending_price}
-                    </text>
-                  </Box>
-                </Box>
-                <Box
-                  sx={{
-                    display: "flex",
-                    flexDirection: "row",
-                    gap: 3,
-                    justifyContent: "space-between",
-                  }}
-                >
-                  <Box
-                    sx={{
-                      display: "flex",
-                      flexDirection: "column",
-                      marginTop: 4,
-                    }}
-                  >
-                    <MdCheckCircle color="#407879" size={27} />
-                    <text style={{ fontWeight: 600 }}>Initial Date:</text>
-                    <text style={{ fontWeight: 600, color: "#407879" }}>
-                      {strategyBackTest.starting_price_date}
-                    </text>
-                  </Box>
-                  <Box
-                    sx={{
-                      display: "flex",
-                      flexDirection: "column",
-                      marginTop: 4,
-                    }}
-                  >
-                    <MdCheckCircle color="#407879" size={27} />
-                    <text style={{ fontWeight: 600 }}>Ending Date:</text>
-                    <text style={{ fontWeight: 600, color: "#407879" }}>
-                      {strategyBackTest.ending_price_date}
-                    </text>
-                  </Box>
-                </Box>
-                <Box
-                  sx={{
-                    display: "flex",
-                    flexDirection: "row",
-                    gap: 3,
-                    justifyContent: "space-between",
-                  }}
-                >
-                  <Box
-                    sx={{
-                      display: "flex",
-                      flexDirection: "column",
-                      marginTop: 4,
-                    }}
-                  >
-                    <MdCheckCircle color="#407879" size={27} />
-                    <text style={{ fontWeight: 600 }}>Country:</text>
-                    <text style={{ fontWeight: 600, color: "#407879" }}>
-                      {strategyBackTest.country}
-                    </text>
-                  </Box>
-                  <Box
-                    sx={{
-                      display: "flex",
-                      flexDirection: "column",
-                      marginTop: 4,
-                    }}
-                  >
-                    <MdCheckCircle color="#407879" size={27} />
-                    <text style={{ fontWeight: 600 }}>Duration:</text>
-                    <text style={{ fontWeight: 600, color: "#407879" }}>
-                    {strategyBackTest.duration}
-                    </text>
-                  </Box>
-                </Box>
-                <Box
-                  sx={{
-                    display: "flex",
-                    flexDirection: "row",
-                    gap: 3,
-                    justifyContent: "space-between",
-                  }}
-                >
-                  <Box
+                <Box style={{ display: "flex", flexDirection: "row" }}>
+                  <Box sx={{ flex: 1 }}>
+                    <Box
+                      sx={{
+                        display: "flex",
+                        flexDirection: "column",
+                        marginTop: 4,
+                      }}
+                    >
+                      <MdCheckCircle color="#407879" size={27} />
+                      <text style={{ fontWeight: 600 }}>Industrie:</text>
+                      <text style={{ fontWeight: 600, color: "#407879" }}>
+                        {strategyBackTest.industry}
+                      </text>
+                    </Box>
+                    <Box
+                      sx={{
+                        display: "flex",
+                        flexDirection: "column",
+                        marginTop: 4,
+                      }}
+                    >
+                      <MdCheckCircle color="#407879" size={27} />
+                      <text style={{ fontWeight: 600 }}>Initial Price:</text>
+                      <text style={{ fontWeight: 600, color: "#407879" }}>
+                        $ {strategyBackTest.starting_price}
+                      </text>
+                    </Box>
+                    <Box
+                      sx={{
+                        display: "flex",
+                        flexDirection: "column",
+                        marginTop: 4,
+                      }}
+                    >
+                      <MdCheckCircle color="#407879" size={27} />
+                      <text style={{ fontWeight: 600 }}>Initial Date:</text>
+                      <text style={{ fontWeight: 600, color: "#407879" }}>
+                        {strategyBackTest.starting_price_date}
+                      </text>
+                    </Box>
+                    <Box
+                      sx={{
+                        display: "flex",
+                        flexDirection: "column",
+                        marginTop: 4,
+                      }}
+                    >
+                      <MdCheckCircle color="#407879" size={27} />
+                      <text style={{ fontWeight: 600 }}>Country:</text>
+                      <text style={{ fontWeight: 600, color: "#407879" }}>
+                        {strategyBackTest.country}
+                      </text>
+                    </Box>
+                    <Box
                     sx={{
                       display: "flex",
                       flexDirection: "column",
@@ -345,6 +252,61 @@ const BackTest = ({ companySymbol, companyLogo }) => {
                     <text style={{ fontWeight: 600, color: "#407879" }}>
                       {strategyBackTest.total_shares}
                     </text>
+                  </Box>
+                  </Box>
+                  <Box sx={{ flex: 1}}>
+                    <Box
+                      sx={{
+                        display: "flex",
+                        flexDirection: "column",
+                        marginTop: 4,
+                      }}
+                    >
+                      <MdCheckCircle color="#407879" size={27} />
+                      <text style={{ fontWeight: 600 }}>Sector:</text>
+                      <text style={{ fontWeight: 600, color: "#407879" }}>
+                        {strategyBackTest.sector}
+                      </text>
+                    </Box>
+                    <Box
+                      sx={{
+                        display: "flex",
+                        flexDirection: "column",
+                        marginTop: 4,
+                      }}
+                    >
+                      <MdCheckCircle color="#407879" size={27} />
+                      <text style={{ fontWeight: 600 }}>Ending Price:</text>
+                      <text style={{ fontWeight: 600, color: "#407879" }}>
+                        $ {strategyBackTest.ending_price}
+                      </text>
+                    </Box>
+                    <Box
+                      sx={{
+                        display: "flex",
+                        flexDirection: "column",
+                        marginTop: 4,
+                      }}
+                    >
+                      <MdCheckCircle color="#407879" size={27} />
+                      <text style={{ fontWeight: 600 }}>Ending Date:</text>
+                      <text style={{ fontWeight: 600, color: "#407879" }}>
+                        {strategyBackTest.ending_price_date}
+                      </text>
+                    </Box>
+                    <Box
+                      sx={{
+                        display: "flex",
+                        flexDirection: "column",
+                        marginTop: 4,
+                      }}
+                    >
+                      <MdCheckCircle color="#407879" size={27} />
+                      <text style={{ fontWeight: 600 }}>Duration:</text>
+                      <text style={{ fontWeight: 600, color: "#407879" }}>
+                        {strategyBackTest.duration}
+                      </text>
+                    </Box>
                   </Box>
                 </Box>
               </Box>

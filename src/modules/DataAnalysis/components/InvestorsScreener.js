@@ -332,7 +332,10 @@ const InvestorsScreener = () => {
               </Tabs>
             </Box>
             <CustomTabPanel value={valueCompanyDetails} index={0}>
-              <CompanyFinancials companyName={selectedCompany.company_name} />
+              <CompanyFinancials
+                companyName={selectedCompany.company_name}
+                companyImage={selectedCompany.image}
+              />
             </CustomTabPanel>
             <CustomTabPanel value={valueCompanyDetails} index={1}>
               <CompanyReturnTab
@@ -341,9 +344,12 @@ const InvestorsScreener = () => {
                 companyImage={selectedCompany.image}
               />
             </CustomTabPanel>
-            <CustomTabPanel value={valueCompanyDetails} index={2}  >
-              <div style={{backgroundColor: '#DEDEDE', height: '200vh'}} >
-              <BackTest companySymbol={selectedCompany.symbol} companyLogo={selectedCompany.image} />
+            <CustomTabPanel value={valueCompanyDetails} index={2}>
+              <div style={{ backgroundColor: "#DEDEDE", height: "150vh" }}>
+                <BackTest
+                  companySymbol={selectedCompany.symbol}
+                  companyLogo={selectedCompany.image}
+                />
               </div>
             </CustomTabPanel>
           </Box>

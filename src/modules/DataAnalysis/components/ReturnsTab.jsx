@@ -50,7 +50,7 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   },
 }));
 
-const headCategories = ["Avg", "Best", "Worst", "Negative Periods"];
+const headCategories = ["Avg", "Best", "Worst", "Negative Periods", 'Duration'];
 const ReturnsTab = () => {
   const strategyNames = [
     "Buffett: Hangstrom",
@@ -161,7 +161,7 @@ const ReturnsTab = () => {
                 fontWeight: "bold",
               }}
             >
-              Annual Returns (10 years)
+              Annual Returns ({years.length} years)
             </text>
           </Box>
 
@@ -212,7 +212,7 @@ const ReturnsTab = () => {
                     fontFamily: "Montserrat",
                   }}
                 >
-                  Annual Prices (USD)
+                  Annual Returns (%)
                 </TableCell>
               </TableRow>
             </TableHead>
@@ -410,6 +410,16 @@ const ReturnsTab = () => {
                     }}
                   >
                     {data.negative_annual_returns}
+                  </StyledTableCell>
+                  <StyledTableCell
+                    sx={{
+                      color:
+                        parseFloat(data.duration) >= 0
+                          ? "green"
+                          : "red",
+                    }}
+                  >
+                    {data.duration}
                   </StyledTableCell>
                 </StyledTableRow>
               ))}

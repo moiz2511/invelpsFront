@@ -37,7 +37,7 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   },
 }));
 
-const CompanyFinancials = ({ companyName }) => {
+const CompanyFinancials = ({ companyName, companyImage }) => {
   const authCtx = useContext(AuthContext);
   const [authToken, setAuthToken] = useState(null);
   const [exchangeName, setExchangeName] = useState(null);
@@ -138,6 +138,8 @@ const CompanyFinancials = ({ companyName }) => {
   useEffect(() => {
     const fetchFinancials = async () => {
       try {
+        setTableData([])
+        setTableHeaders([])
         const body = {
           company: companyName,
           display: "Value",
@@ -180,7 +182,8 @@ const CompanyFinancials = ({ companyName }) => {
   }, [authToken, exchangeName, selectedTab]);
   return (
     <div>
-      <div style={{ padding: 20 }}>
+      <div style={{ padding: 20, alignItems: 'center' }}>
+        <img src={companyImage} height={40} width={40} />
         <text
           style={{ fontFamily: "Montserrat", fontWeight: 500, fontSize: 20 }}
         >
@@ -198,7 +201,7 @@ const CompanyFinancials = ({ companyName }) => {
         <Tabs
           value={selectedTab}
           onChange={handleTabChange}
-          style={{ marginBottom: 10 }}
+          style={{ marginBottom: 10}}
         >
           <Tab value="Income" label="Income Statement" />
           <Tab value="BalanceSheet" label="Balance Sheet Statement" />

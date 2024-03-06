@@ -193,7 +193,7 @@ const BackTestTab = () => {
                     fontFamily: "Montserrat",
                   }}
                 >
-                  Annual Price ($)
+                  Annual Prices (USD)
                 </TableCell>
               </TableRow>
             </TableHead>

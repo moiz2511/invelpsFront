@@ -50,32 +50,38 @@ const headCells = {
       isDropDown: false,
     },
     {
+      id: "investStyle",
+      label: "Investing Style",
+      isValueLink: false,
+      isDropDown: false,
+    },
+    {
       id: "totalreturn",
-      label: "Total Return %",
+      label: "Total Return (%)",
       isValueLink: false,
       isDropDown: false,
     },
     {
       id: "annualizedReturn",
-      label: "Annualized return",
+      label: "Annualized Return (%)",
       isValueLink: false,
       isDropDown: false,
     },
     {
       id: "rollingReturn",
-      label: "Rolling Return",
+      label: "Rolling Return (%)",
       isValueLink: false,
       isDropDown: false,
     },
     {
       id: "standardDeviation",
-      label: "Standard Deviation",
+      label: "Standard Deviation (%)",
       isValueLink: false,
       isDropDown: false,
     },
     {
       id: "maxDrawdown",
-      label: "Max Drawdown %",
+      label: "Max Drawdown (%)",
       isValueLink: false,
       isDropDown: false,
     },
@@ -406,7 +412,7 @@ const OverviewTab = ({ setSelectedCompany, setCompanyDetails }) => {
       {showVisualData ? (
         <Box ml={2} mb={4}>
           <Typography color={"rgba(0, 0, 0, 0.6)"}>
-            Financial goals / {selectedStrategy.name}
+            Strategies Overview / {selectedStrategy.name}
           </Typography>
         </Box>
       ) : (
@@ -794,6 +800,9 @@ const OverviewTab = ({ setSelectedCompany, setCompanyDetails }) => {
                           >
                             {data.investors}
                           </StyledTableCell>
+                          <StyledTableCell>
+                            {data.investing_style}
+                          </StyledTableCell>
                           <StyledTableCell
                             sx={{
                               color: data.total_return >= 0 ? "green" : "red",
@@ -849,7 +858,7 @@ const OverviewTab = ({ setSelectedCompany, setCompanyDetails }) => {
                             }}
                           >
                             {" "}
-                            {data.sortino_ratio}{" "}
+                            {data.sortino_ratio ? data.sortino_ratio : '-'}{" "}
                           </StyledTableCell>
                           <StyledTableCell> {data.duration} </StyledTableCell>
                         </StyledTableRow>
