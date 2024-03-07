@@ -8,11 +8,17 @@ import {
   TableHead,
   TableRow,
   TableBody,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  Typography,
+  Button,
 } from "@mui/material";
 
 import AuthContext from "../../Core/store/auth-context";
 import { styled } from "@mui/material/styles";
-
+import PageInfoBreadCrumbs from "../../Core/components/Layout/PageInfoBreadCrumbs";
 import LineRaceChart from "./LineRaceChart";
 import NegativeBarChart from "./NegativeBarChart";
 
@@ -21,6 +27,7 @@ import ColorConstants from "../../Core/constants/ColorConstants.json";
 
 import { IoArrowDown } from "react-icons/io5";
 import { IoArrowUpOutline } from "react-icons/io5";
+import PieChart from "./PieChart";
 
 const headYears = [
   2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023,
@@ -50,8 +57,20 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   },
 }));
 
-const headCategories = ["Avg", "Best", "Worst", "Negative Periods", 'Duration'];
+const headCategories = ["Avg", "Best", "Worst", "Negative Periods", "Duration"];
+
+const sortingFields = [
+  { key: "none", label: "None" },
+  { key: "name", label: "Strategy" },
+  { key: "rolling_return", label: "Average Returns" },
+  { key: "best_return", label: "Best Returns" },
+  { key: "worst_return", label: "Worst Returns" },
+  { key: "negative_annual_returns", label: "Negative Returns" },
+];
+
 const ReturnsTab = () => {
+  let pageLoc = window.location.pathname;
+
   const strategyNames = [
     "Buffett: Hangstrom",
     "Philip Fisher Screen",
@@ -63,6 +82,16 @@ const ReturnsTab = () => {
   const [strategyData, setStrategyData] = useState([]);
   const [years, setYears] = useState([]);
   const [bestWorstData, setBestWorstData] = useState([]);
+  const [selectedStrategy, setSelectedStrategy] = useState(null);
+  const [showVisualData, setShowVisualData] = useState(false);
+
+  const [bestWorstDataCopy, setBestWorstDataCopy] = useState([]);
+  const [selectedSort, setSelectedSort] = useState(0);
+  const [selectedField, setSelectedField] = useState(sortingFields[0].key);
+
+  const [perExchangeKPI, setPerExhangeKPI] = useState([]);
+  const [perSectorKPI, setPerSectorKPI] = useState([]);
+  const [perMarketKPI, setPerMarketKPI] = useState([]);
 
   useEffect(() => {
     const CheckUserSession = () => {
@@ -119,6 +148,7 @@ const ReturnsTab = () => {
         if (response.status === 200) {
           console.log("Data:", data);
           setBestWorstData(data.data);
+          setBestWorstDataCopy(data.data);
         } else {
           console.log("Unexpected status code:", response.status);
         }
@@ -149,284 +179,525 @@ const ReturnsTab = () => {
 
   console.log(strategyData);
 
+  const fetchGraphData = async () => {
+    try {
+      const body = {
+        strategy_name: selectedStrategy,
+      };
+      const response = await fetch(
+        `
+            https://api.invelps.com/api/strategies/getStrategyGraphData`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+          },
+          body: JSON.stringify(body),
+        }
+      );
+
+      const data = await response.json();
+
+      if (response.status === 200) {
+        console.log(data);
+        setPerExhangeKPI(data.data.companies_per_exchanges_KPI);
+        setPerSectorKPI(data.data.companies_per_sector_KPI);
+        setPerMarketKPI(data.data.companies_per_market_cap_KPI);
+      } else {
+        console.log("Unexpected status code:", response.status);
+      }
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
+  useEffect(() => {
+    fetchGraphData();
+  }, [selectedStrategy]);
+
+  const handleDataVisualization = (strategy) => {
+    setShowVisualData(!showVisualData);
+    setSelectedStrategy(strategy);
+  };
+
+  const handleSortChange = (e) => {
+    setSelectedSort(e.target.value);
+  };
+
+  const handleSortingFieldChange = (e) => {
+    setSelectedField(e.target.value);
+  };
+
+  const sorting = (data) => {
+    console.log(selectedSort);
+    switch (selectedSort) {
+      case 0:
+        return bestWorstDataCopy;
+      case 1:
+        return data.slice().sort((a, b) => {
+          const valueA = a[selectedField];
+          const valueB = b[selectedField];
+          console.log(valueA, valueB);
+
+          const alphabetRegex = /[a-zA-Z]/;
+          if (alphabetRegex.test(valueA.toString())) {
+            return valueA
+              .toString()
+              .localeCompare(valueB.toString(), undefined, { numeric: true });
+          } else {
+            return parseFloat(valueA) - parseFloat(valueB);
+          }
+        });
+      case 2:
+        return data.slice().sort((a, b) => {
+          const valueA = a[selectedField];
+          const valueB = b[selectedField];
+
+          const alphabetRegex = /[a-zA-Z]/;
+          if (alphabetRegex.test(valueA.toString())) {
+            return valueB
+              .toString()
+              .localeCompare(valueA.toString(), undefined, { numeric: true });
+          } else {
+            return parseFloat(valueB) - parseFloat(valueA);
+          }
+        });
+      default:
+        return data;
+    }
+  };
+
+  useEffect(() => {
+    const sorted = sorting(bestWorstDataCopy);
+    setBestWorstDataCopy(sorted);
+  }, [selectedSort, selectedField]);
+
   return (
     <>
-      <Card sx={{ m: 1, position: "relative", fontFamily: "Montserrat" }}>
-        <Box p={3}>
-          <Box spacing={1} sx={{ mt: 0.5 }}>
-            <text
-              style={{
-                padding: "5px",
-                fontSize: "27px",
-                fontWeight: "bold",
-              }}
-            >
-              Annual Returns ({years.length} years)
-            </text>
-          </Box>
-
-          <Box
+      {showVisualData ? (
+        <Box ml={2} mb={4}>
+          <Typography color={"rgba(0, 0, 0, 0.6)"}>
+            Strategies Overview / {selectedStrategy.name}
+          </Typography>
+        </Box>
+      ) : (
+        <PageInfoBreadCrumbs data={pageLoc} />
+      )}
+      {showVisualData ? (
+        <>
+          <Button
+            onClick={() => setShowVisualData(!showVisualData)}
             sx={{
-              display: "flex",
-              flexDirection: "row",
-              gap: 3,
-              marginTop: 6,
+              alignSelf: "flex-start",
+              backgroundColor: "#407879",
+              color: "rgb(204, 191, 144)",
+              ml: 3,
             }}
           >
-            <LineRaceChart
-              chartId={"LR-chart-1"}
-              chartData={strategyData}
-              years={years}
-            />
-          </Box>
-        </Box>
-
-        <TableContainer>
-          <Table
-            sx={{ minWidth: "100%", maxWidth: "100%", mt: 1 }}
-            size="medium"
+            Go Back
+          </Button>
+          <Card
+            sx={{
+              margin: 1,
+              display: "flex",
+              flexDirection: "column",
+              padding: 2,
+            }}
           >
-            <TableHead>
-              <TableRow>
-                <TableCell
-                  padding="normal"
-                  colSpan={1}
+            <text style={{ fontSize: 25, fontWeight: "bold" }}>
+              {" "}
+              {selectedStrategy.name}{" "}
+            </text>
+            <Card
+              sx={{
+                margin: 2,
+                display: "flex",
+                flexDirection: "column",
+                gap: 5,
+                padding: 3,
+              }}
+            >
+              <text style={{ fontSize: 20, fontWeight: "bold" }}>
+                Companies Passing Criteria Statistics
+              </text>
+              <Box sx={{ display: "flex", justifyContent: "space-around" }}>
+                <Card
                   sx={{
-                    backgroundColor: "#272727",
-                    color: "white",
-                    fontSize: 18,
-                    fontFamily: "Montserrat",
+                    padding: 4,
+                    gap: 5,
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: 4,
                   }}
                 >
-                  Strategy Models
-                </TableCell>
-
-                <TableCell
-                  padding="normal"
-                  colSpan={12}
-                  align="center"
+                  <text> Companies Per Exchanges (%) </text>
+                  <PieChart
+                    graphData={perExchangeKPI}
+                    nameData={(item) => item.exchange}
+                  />
+                </Card>
+                <Card
                   sx={{
-                    backgroundColor: "#427878",
-                    color: "white",
-                    fontSize: 18,
-                    fontFamily: "Montserrat",
+                    padding: 4,
+                    gap: 5,
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: 4,
                   }}
                 >
-                  Annual Returns (%)
-                </TableCell>
-              </TableRow>
-            </TableHead>
+                  <text> Companies Per Sector (%) </text>
+                  <PieChart
+                    graphData={perSectorKPI}
+                    nameData={(item) => item.sector}
+                  />
+                </Card>
+                <Card
+                  sx={{
+                    padding: 4,
+                    gap: 5,
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: 4,
+                  }}
+                >
+                  <text> Companies Per Market Cap (%) </text>
+                  <PieChart
+                    graphData={perMarketKPI}
+                    nameData={(item) => item.market_cap_class}
+                  />
+                </Card>
+              </Box>
+            </Card>
+          </Card>
+        </>
+      ) : (
+        <>
+          <Card sx={{ m: 1, position: "relative", fontFamily: "Montserrat" }}>
+            <Box p={3}>
+              <Box spacing={1} sx={{ mt: 0.5 }}>
+                <text
+                  style={{
+                    padding: "5px",
+                    fontSize: "27px",
+                    fontWeight: "bold",
+                  }}
+                >
+                  Annual Returns ({years.length} years)
+                </text>
+              </Box>
 
-            <TableHead>
-              <TableRow
+              <Box
                 sx={{
-                  backgroundColor: "#e7ecef",
-                  color: "#272727",
-                  fontSize: 14,
+                  display: "flex",
+                  flexDirection: "row",
+                  gap: 3,
+                  marginTop: 6,
                 }}
               >
-                <TableCell sx={{ fontFamily: "Montserrat" }}>
-                  Strategy
-                </TableCell>
-                <TableCell sx={{ fontFamily: "Montserrat" }}>Trends</TableCell>
-                {years.map((year, index) => (
-                  <TableCell
-                    key={index}
-                    padding="normal"
-                    sx={{ fontFamily: "Montserrat", color: "#427878" }}
-                  >
-                    {year}
-                  </TableCell>
-                ))}
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {strategyData.map((strategy, index) => (
-                <StyledTableRow hover key={index} sx={{ ml: 3 }}>
-                  <StyledTableCell
-                    sx={{
-                      cursor: "pointer",
-                      ":hover": {
-                        textDecoration: "underline",
-                        color: "blue",
-                      },
-                    }}
-                  >
-                    {strategy.strategy_name_here}
-                  </StyledTableCell>
-                  <StyledTableCell>
-                    {(strategy[years[years.length - 1]]?.anual_return -
-                      strategy[years[1]]?.anual_return) /
-                      (years[years.length - 1] - years[1]) >=
-                    0
-                      ? <IoArrowUpOutline color="green" size={18} />
-                      : <IoArrowDown color="red" size={18} />}
-                  </StyledTableCell>
+                <LineRaceChart
+                  chartId={"LR-chart-1"}
+                  chartData={strategyData}
+                  years={years}
+                />
+              </Box>
+            </Box>
 
-                  {years.map((year, index) => (
-                    <StyledTableCell
-                      key={index}
+            <TableContainer>
+              <Table
+                sx={{ minWidth: "100%", maxWidth: "100%", mt: 1 }}
+                size="medium"
+              >
+                <TableHead>
+                  <TableRow>
+                    <TableCell
+                      padding="normal"
+                      colSpan={1}
                       sx={{
-                        color:
-                          parseFloat(strategy[year].anual_return) >= 0
-                            ? "green"
-                            : "red",
+                        backgroundColor: "#272727",
+                        color: "white",
+                        fontSize: 18,
+                        fontFamily: "Montserrat",
                       }}
                     >
-                      {strategy[year].anual_return
-                        ? strategy[year].anual_return
-                        : "-"}
-                    </StyledTableCell>
+                      Strategy Models
+                    </TableCell>
+
+                    <TableCell
+                      padding="normal"
+                      colSpan={12}
+                      align="center"
+                      sx={{
+                        backgroundColor: "#427878",
+                        color: "white",
+                        fontSize: 18,
+                        fontFamily: "Montserrat",
+                      }}
+                    >
+                      Annual Returns (%)
+                    </TableCell>
+                  </TableRow>
+                </TableHead>
+
+                <TableHead>
+                  <TableRow
+                    sx={{
+                      backgroundColor: "#e7ecef",
+                      color: "#272727",
+                      fontSize: 14,
+                    }}
+                  >
+                    <TableCell sx={{ fontFamily: "Montserrat" }}>
+                      Strategy
+                    </TableCell>
+                    <TableCell sx={{ fontFamily: "Montserrat" }}>
+                      Trends
+                    </TableCell>
+                    {years.map((year, index) => (
+                      <TableCell
+                        key={index}
+                        padding="normal"
+                        sx={{ fontFamily: "Montserrat", color: "#427878" }}
+                      >
+                        {year}
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {strategyData.map((strategy, index) => (
+                    <StyledTableRow hover key={index} sx={{ ml: 3 }}>
+                      <StyledTableCell
+                        onClick={() =>
+                          handleDataVisualization(strategy.strategy_name_here)
+                        }
+                        sx={{
+                          cursor: "pointer",
+                          ":hover": {
+                            textDecoration: "underline",
+                            color: "blue",
+                          },
+                        }}
+                      >
+                        {strategy.strategy_name_here}
+                      </StyledTableCell>
+                      <StyledTableCell>
+                        {(strategy[years[years.length - 1]]?.anual_return -
+                          strategy[years[1]]?.anual_return) /
+                          (years[years.length - 1] - years[1]) >=
+                        0 ? (
+                          <IoArrowUpOutline color="green" size={18} />
+                        ) : (
+                          <IoArrowDown color="red" size={18} />
+                        )}
+                      </StyledTableCell>
+
+                      {years.map((year, index) => (
+                        <StyledTableCell
+                          key={index}
+                          sx={{
+                            color:
+                              parseFloat(strategy[year].anual_return) >= 0
+                                ? "green"
+                                : "red",
+                          }}
+                        >
+                          {strategy[year].anual_return
+                            ? strategy[year].anual_return
+                            : "-"}
+                        </StyledTableCell>
+                      ))}
+                    </StyledTableRow>
                   ))}
-                </StyledTableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
-      </Card>
-      <Card sx={{ m: 1, position: "relative" }}>
-        <Box p={3}>
-          <Box spacing={1} sx={{ mt: 0.5 }}>
-            <text
-              style={{
-                padding: "5px",
-                fontSize: "27px",
-                fontWeight: "bold",
-                fontFamily: "Montserrat",
-              }}
-            >
-              Rolling Return
-            </text>
-          </Box>
-
-          <Box
-            sx={{
-              display: "flex",
-              flexDirection: "row",
-              gap: 3,
-              marginTop: 6,
-            }}
-          >
-            <NegativeBarChart
-              chartId={"Neg-chart-1"}
-              chartData={bestWorstData}
-            />
-          </Box>
-        </Box>
-
-        <TableContainer>
-          <Table
-            sx={{ minWidth: "100%", maxWidth: "100%", mt: 1 }}
-            size="medium"
-          >
-            <TableHead>
-              <TableRow>
-                <TableCell
-                  padding="normal"
-                  colSpan={1}
-                  sx={{
-                    backgroundColor: "#272727",
-                    color: "white",
-                    fontSize: 18,
+                </TableBody>
+              </Table>
+            </TableContainer>
+          </Card>
+          <Card sx={{ m: 1, position: "relative" }}>
+            <Box p={3}>
+              <Box spacing={1} sx={{ mt: 0.5 }}>
+                <text
+                  style={{
+                    padding: "5px",
+                    fontSize: "27px",
+                    fontWeight: "bold",
+                    fontFamily: "Montserrat",
                   }}
                 >
-                  Strategy Models
-                </TableCell>
-                <TableCell
-                  padding="normal"
-                  colSpan={12}
-                  align="center"
-                  sx={{
-                    backgroundColor: "#427878",
-                    color: "white",
-                    fontSize: 18,
-                  }}
-                >
-                  Rolling Returns (%)
-                </TableCell>
-              </TableRow>
-            </TableHead>
+                  Rolling Return
+                </text>
+              </Box>
 
-            <TableHead>
-              <TableRow
+              <Box
                 sx={{
-                  backgroundColor: "#e7ecef",
-                  color: "#272727",
-                  fontSize: 14,
+                  display: "flex",
+                  flexDirection: "row",
+                  gap: 3,
+                  marginTop: 6,
                 }}
               >
-                <TableCell>Strategy</TableCell>
-                {headCategories.map((category, index) => (
-                  <TableCell key={index} padding="normal">
-                    {category}
-                  </TableCell>
-                ))}
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {bestWorstData.map((data, index) => (
-                <StyledTableRow hover key={index} sx={{ ml: 3 }}>
-                  <StyledTableCell
+                <NegativeBarChart
+                  chartId={"Neg-chart-1"}
+                  chartData={bestWorstData}
+                />
+              </Box>
+            </Box>
+
+            <Box
+              display="flex"
+              justifyContent="flex-end"
+              alignItems="center"
+              padding={4}
+              gap={2}
+            >
+              <FormControl>
+                <InputLabel id="sort-by-select-label">Sort by</InputLabel>
+                <Select
+                  labelId="sort-by-select-label"
+                  id="sort-by-select"
+                  value={selectedSort}
+                  label="Sort by"
+                  onChange={handleSortChange}
+                >
+                  <MenuItem value={0}>None</MenuItem>
+                  <MenuItem value={1}>Ascending</MenuItem>
+                  <MenuItem value={2}>Descending</MenuItem>
+                </Select>
+              </FormControl>
+              <FormControl>
+                <InputLabel id="to-sort-select-label">To sort</InputLabel>
+                <Select
+                  labelId="to-sort-select-label"
+                  id="to-sort-select"
+                  value={selectedField}
+                  label="To sort"
+                  onChange={handleSortingFieldChange}
+                >
+                  {sortingFields.map((field) => (
+                    <MenuItem key={field.key} value={field.key}>
+                      {field.label}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Box>
+
+            <TableContainer>
+              <Table
+                sx={{ minWidth: "100%", maxWidth: "100%", mt: 1 }}
+                size="medium"
+              >
+                <TableHead>
+                  <TableRow>
+                    <TableCell
+                      padding="normal"
+                      colSpan={1}
+                      sx={{
+                        backgroundColor: "#272727",
+                        color: "white",
+                        fontSize: 18,
+                      }}
+                    >
+                      Strategy Models
+                    </TableCell>
+                    <TableCell
+                      padding="normal"
+                      colSpan={12}
+                      align="center"
+                      sx={{
+                        backgroundColor: "#427878",
+                        color: "white",
+                        fontSize: 18,
+                      }}
+                    >
+                      Rolling Returns (%)
+                    </TableCell>
+                  </TableRow>
+                </TableHead>
+
+                <TableHead>
+                  <TableRow
                     sx={{
-                      cursor: "pointer",
-                      ":hover": {
-                        textDecoration: "underline",
-                        color: "blue",
-                      },
+                      backgroundColor: "#e7ecef",
+                      color: "#272727",
+                      fontSize: 14,
                     }}
                   >
-                    {data.name}
-                  </StyledTableCell>
-                  <StyledTableCell
-                    sx={{
-                      color:
-                        parseFloat(data.rolling_return) >= 0 ? "green" : "red",
-                    }}
-                  >
-                    {data.rolling_return}
-                  </StyledTableCell>
-                  <StyledTableCell
-                    sx={{
-                      color:
-                        parseFloat(data.best_return) >= 0 ? "green" : "red",
-                    }}
-                  >
-                    {data.best_return}
-                  </StyledTableCell>
-                  <StyledTableCell
-                    sx={{
-                      color:
-                        parseFloat(data.worst_return) >= 0 ? "green" : "red",
-                    }}
-                  >
-                    {data.worst_return}
-                  </StyledTableCell>
-                  <StyledTableCell
-                    sx={{
-                      color:
-                        parseFloat(data.negative_annual_returns) >= 0
-                          ? "green"
-                          : "red",
-                    }}
-                  >
-                    {data.negative_annual_returns}
-                  </StyledTableCell>
-                  <StyledTableCell
-                    sx={{
-                      color:
-                        parseFloat(data.duration) >= 0
-                          ? "green"
-                          : "red",
-                    }}
-                  >
-                    {data.duration}
-                  </StyledTableCell>
-                </StyledTableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
-      </Card>
+                    <TableCell>Strategy</TableCell>
+                    {headCategories.map((category, index) => (
+                      <TableCell key={index} padding="normal">
+                        {category}
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {bestWorstDataCopy.map((data, index) => (
+                    <StyledTableRow hover key={index} sx={{ ml: 3 }}>
+                      <StyledTableCell
+                        onClick={() => handleDataVisualization(data.name)}
+                        sx={{
+                          cursor: "pointer",
+                          ":hover": {
+                            textDecoration: "underline",
+                            color: "blue",
+                          },
+                        }}
+                      >
+                        {data.name}
+                      </StyledTableCell>
+                      <StyledTableCell
+                        sx={{
+                          color:
+                            parseFloat(data.rolling_return) >= 0
+                              ? "green"
+                              : "red",
+                        }}
+                      >
+                        {data.rolling_return}
+                      </StyledTableCell>
+                      <StyledTableCell
+                        sx={{
+                          color:
+                            parseFloat(data.best_return) >= 0 ? "green" : "red",
+                        }}
+                      >
+                        {data.best_return}
+                      </StyledTableCell>
+                      <StyledTableCell
+                        sx={{
+                          color:
+                            parseFloat(data.worst_return) >= 0
+                              ? "green"
+                              : "red",
+                        }}
+                      >
+                        {data.worst_return}
+                      </StyledTableCell>
+                      <StyledTableCell
+                        sx={{
+                          color:
+                            parseFloat(data.negative_annual_returns) >= 0
+                              ? "green"
+                              : "red",
+                        }}
+                      >
+                        {data.negative_annual_returns}
+                      </StyledTableCell>
+                      <StyledTableCell
+                        sx={{
+                          color:
+                            parseFloat(data.duration) >= 0 ? "green" : "red",
+                        }}
+                      >
+                        {data.duration}
+                      </StyledTableCell>
+                    </StyledTableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          </Card>{" "}
+        </>
+      )}
       {/* <Card sx={{ m: 1, position: "relative" }}>
         <Box>
           <Box

@@ -8,6 +8,8 @@ import {
   TableHead,
   TableRow,
   TableBody,
+  Typography,
+  Button,
 } from "@mui/material";
 
 import AuthContext from "../../Core/store/auth-context";
@@ -18,6 +20,8 @@ import NegativeBarChart from "./NegativeBarChart";
 
 import TableCell, { tableCellClasses } from "@mui/material/TableCell";
 import ColorConstants from "../../Core/constants/ColorConstants.json";
+import PageInfoBreadCrumbs from "../../Core/components/Layout/PageInfoBreadCrumbs";
+import PieChart from "./PieChart";
 
 const headYears = [
   2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023,
@@ -49,6 +53,8 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 
 const headCategories = ["Avg", "Best", "Worst", "Negative Periods"];
 const BackTestTab = () => {
+  let pageLoc = window.location.pathname;
+
   const strategyNames = [
     "Buffett: Hangstrom",
     "Philip Fisher Screen",
@@ -59,7 +65,12 @@ const BackTestTab = () => {
   const [authToken, setAuthToken] = useState(null);
   const [strategyData, setStrategyData] = useState([]);
   const [years, setYears] = useState([]);
-  const [bestWorstData, setBestWorstData] = useState([]); 
+  const [bestWorstData, setBestWorstData] = useState([]);
+  const [selectedStrategy, setSelectedStrategy] = useState(null);
+  const [showVisualData, setShowVisualData] = useState(false);
+  const [perExchangeKPI, setPerExhangeKPI] = useState([]);
+  const [perSectorKPI, setPerSectorKPI] = useState([]);
+  const [perMarketKPI, setPerMarketKPI] = useState([]);
 
   useEffect(() => {
     const CheckUserSession = () => {
@@ -107,13 +118,55 @@ const BackTestTab = () => {
     if (strategyData && strategyData.length > 0) {
       const firstStrategy = strategyData[0];
       const strategyKeys = Object.keys(firstStrategy);
-      const filteredYears = strategyKeys.filter((key) => key !== "strategy_name_here");
+      const filteredYears = strategyKeys.filter(
+        (key) => key !== "strategy_name_here"
+      );
       setYears(filteredYears);
     }
   }, [strategyData]);
 
   console.log(years);
   console.log(bestWorstData);
+
+  const fetchGraphData = async () => {
+    try {
+      const body = {
+        strategy_name: selectedStrategy,
+      };
+      const response = await fetch(
+        `
+            https://api.invelps.com/api/strategies/getStrategyGraphData`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+          },
+          body: JSON.stringify(body),
+        }
+      );
+
+      const data = await response.json();
+
+      if (response.status === 200) {
+        console.log(data);
+        setPerExhangeKPI(data.data.companies_per_exchanges_KPI);
+        setPerSectorKPI(data.data.companies_per_sector_KPI);
+        setPerMarketKPI(data.data.companies_per_market_cap_KPI);
+      } else {
+        console.log("Unexpected status code:", response.status);
+      }
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
+  useEffect(() => {
+    fetchGraphData();
+  }, [selectedStrategy]);
+
+  const handleDataVisualization = (strategy) => {
+    setShowVisualData(!showVisualData);
+    setSelectedStrategy(strategy);
+  };
 
   const generateRandomInvestmentData = () => {
     const data = [];
@@ -137,122 +190,229 @@ const BackTestTab = () => {
 
   return (
     <>
-      <Card sx={{ m: 1, position: "relative", fontFamily: "Montserrat" }}>
-        <Box p={3}>
-          <Box spacing={1} sx={{ mt: 0.5 }}>
-            <text
-              style={{
-                padding: "5px",
-                fontSize: "27px",
-                fontWeight: "bold",
-              }}
-            >
-              Annual Returns (10 years)
-            </text>
-          </Box>
-
-          <Box
+      {showVisualData ? (
+        <Box ml={2} mb={4}>
+          <Typography color={"rgba(0, 0, 0, 0.6)"}>
+            Strategies Overview / {selectedStrategy.name}
+          </Typography>
+        </Box>
+      ) : (
+        <PageInfoBreadCrumbs data={pageLoc} />
+      )}
+      {showVisualData ? (
+        <>
+          <Button
+            onClick={() => setShowVisualData(!showVisualData)}
             sx={{
-              display: "flex",
-              flexDirection: "row",
-              gap: 3,
-              marginTop: 6,
+              alignSelf: "flex-start",
+              backgroundColor: "#407879",
+              color: "rgb(204, 191, 144)",
+              ml: 3,
             }}
           >
-            <LineRaceChart chartId={"LR-chart-1"} chartData={strategyData} years={years} />
-          </Box>
-        </Box>
-
-        <TableContainer>
-          <Table
-            sx={{ minWidth: "100%", maxWidth: "100%", mt: 1 }}
-            size="medium"
+            Go Back
+          </Button>
+          <Card
+            sx={{
+              margin: 1,
+              display: "flex",
+              flexDirection: "column",
+              padding: 2,
+            }}
           >
-            <TableHead>
-              <TableRow>
-                <TableCell
-                  padding="normal"
-                  colSpan={1}
+            <text style={{ fontSize: 25, fontWeight: "bold" }}>
+              {" "}
+              {selectedStrategy.name}{" "}
+            </text>
+            <Card
+              sx={{
+                margin: 2,
+                display: "flex",
+                flexDirection: "column",
+                gap: 5,
+                padding: 3,
+              }}
+            >
+              <text style={{ fontSize: 20, fontWeight: "bold" }}>
+                Companies Passing Criteria Statistics
+              </text>
+              <Box sx={{ display: "flex", justifyContent: "space-around" }}>
+                <Card
                   sx={{
-                    backgroundColor: "#272727",
-                    color: "white",
-                    fontSize: 18,
-                    fontFamily: "Montserrat",
+                    padding: 4,
+                    gap: 5,
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: 4,
                   }}
                 >
-                  Strategy Models
-                </TableCell>
-                <TableCell
-                  padding="normal"
-                  colSpan={12}
-                  align="center"
+                  <text> Companies Per Exchanges (%) </text>
+                  <PieChart
+                    graphData={perExchangeKPI}
+                    nameData={(item) => item.exchange}
+                  />
+                </Card>
+                <Card
                   sx={{
-                    backgroundColor: "#427878",
-                    color: "white",
-                    fontSize: 18,
-                    fontFamily: "Montserrat",
+                    padding: 4,
+                    gap: 5,
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: 4,
                   }}
                 >
-                  Annual Prices (USD)
-                </TableCell>
-              </TableRow>
-            </TableHead>
-
-            <TableHead>
-              <TableRow
-                sx={{
-                  backgroundColor: "#e7ecef",
-                  color: "#272727",
-                  fontSize: 14,
+                  <text> Companies Per Sector (%) </text>
+                  <PieChart
+                    graphData={perSectorKPI}
+                    nameData={(item) => item.sector}
+                  />
+                </Card>
+                <Card
+                  sx={{
+                    padding: 4,
+                    gap: 5,
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: 4,
+                  }}
+                >
+                  <text> Companies Per Market Cap (%) </text>
+                  <PieChart
+                    graphData={perMarketKPI}
+                    nameData={(item) => item.market_cap_class}
+                  />
+                </Card>
+              </Box>
+            </Card>
+          </Card>
+        </>
+      ) : (
+        <Card sx={{ m: 1, position: "relative", fontFamily: "Montserrat" }}>
+          <Box p={3}>
+            <Box spacing={1} sx={{ mt: 0.5 }}>
+              <text
+                style={{
+                  padding: "5px",
+                  fontSize: "27px",
+                  fontWeight: "bold",
                 }}
               >
-                <TableCell sx={{ fontFamily: "Montserrat" }}>
-                  Strategy
-                </TableCell>
-                {years.map((year, index) => (
+                Annual Returns (10 years)
+              </text>
+            </Box>
+
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "row",
+                gap: 3,
+                marginTop: 6,
+              }}
+            >
+              <LineRaceChart
+                chartId={"LR-chart-1"}
+                chartData={strategyData}
+                years={years}
+              />
+            </Box>
+          </Box>
+
+          <TableContainer>
+            <Table
+              sx={{ minWidth: "100%", maxWidth: "100%", mt: 1 }}
+              size="medium"
+            >
+              <TableHead>
+                <TableRow>
                   <TableCell
-                    key={index}
                     padding="normal"
-                    sx={{ fontFamily: "Montserrat", color: "#427878" }}
-                  >
-                    {year}
-                  </TableCell>
-                ))}
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {strategyData.map((strategy, index) => (
-                <StyledTableRow hover key={index} sx={{ ml: 3 }}>
-                  <StyledTableCell
+                    colSpan={1}
                     sx={{
-                      cursor: "pointer",
-                      ":hover": {
-                        textDecoration: "underline",
-                        color: "blue",
-                      },
+                      backgroundColor: "#272727",
+                      color: "white",
+                      fontSize: 18,
+                      fontFamily: "Montserrat",
                     }}
                   >
-                    {strategy.strategy_name_here}
-                  </StyledTableCell>
+                    Strategy Models
+                  </TableCell>
+                  <TableCell
+                    padding="normal"
+                    colSpan={12}
+                    align="center"
+                    sx={{
+                      backgroundColor: "#427878",
+                      color: "white",
+                      fontSize: 18,
+                      fontFamily: "Montserrat",
+                    }}
+                  >
+                    Annual Prices (USD)
+                  </TableCell>
+                </TableRow>
+              </TableHead>
+
+              <TableHead>
+                <TableRow
+                  sx={{
+                    backgroundColor: "#e7ecef",
+                    color: "#272727",
+                    fontSize: 14,
+                  }}
+                >
+                  <TableCell sx={{ fontFamily: "Montserrat" }}>
+                    Strategy
+                  </TableCell>
                   {years.map((year, index) => (
-                    <StyledTableCell
+                    <TableCell
                       key={index}
+                      padding="normal"
+                      sx={{ fontFamily: "Montserrat", color: "#427878" }}
+                    >
+                      {year}
+                    </TableCell>
+                  ))}
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {strategyData.map((strategy, index) => (
+                  <StyledTableRow hover key={index} sx={{ ml: 3 }}>
+                    <StyledTableCell
+                      onClick={() => {
+                        handleDataVisualization(strategy.strategy_name_here);
+                      }}
                       sx={{
-                        color:
-                          parseFloat(strategy[year].anual_return) >= 0
-                            ? "green"
-                            : "red",
+                        cursor: "pointer",
+                        ":hover": {
+                          textDecoration: "underline",
+                          color: "blue",
+                        },
                       }}
                     >
-                      {strategy[year].anual_return ? strategy[year].anual_return : 'N/A'}
+                      {strategy.strategy_name_here}
                     </StyledTableCell>
-                  ))}
-                </StyledTableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
-      </Card>
+                    {years.map((year, index) => (
+                      <StyledTableCell
+                        key={index}
+                        sx={{
+                          color:
+                            parseFloat(strategy[year].anual_return) >= 0
+                              ? "green"
+                              : "red",
+                        }}
+                      >
+                        {strategy[year].anual_return
+                          ? strategy[year].anual_return
+                          : "N/A"}
+                      </StyledTableCell>
+                    ))}
+                  </StyledTableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </Card>
+      )}
     </>
   );
 };

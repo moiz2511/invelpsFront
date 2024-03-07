@@ -2,7 +2,6 @@ import React, { useEffect, useState, useContext } from "react";
 
 import {
   TextField,
-  MenuItem,
   Grid,
   Card,
   Box,
@@ -13,6 +12,7 @@ import {
   FormControl,
   InputLabel,
   Select,
+  MenuItem,
   Button,
   IconButton,
   Typography,
@@ -205,6 +205,20 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   },
 }));
 
+const sortingFields = [
+  { key: "none", label: "None" },
+  { key: "name", label: "Strategy Name" },
+  { key: "investors", label: "Investors" },
+  { key: "total_return", label: "Total Return" },
+  { key: "annualized_return", label: "Annualized Return" },
+  { key: "rolling_return", label: "Rolling Return" },
+  { key: "stdev_return", label: "Standard Deviation of Return" },
+  { key: "max_drawdown", label: "Max Drawdown" },
+  { key: "sharpe_ratio", label: "Sharpe Ratio" },
+  { key: "sortino_ratio", label: "Sortino Ratio" },
+  { key: "duration", label: "Duration" },
+];
+
 const OverviewTab = ({ setSelectedCompany, setCompanyDetails }) => {
   let pageLoc = window.location.pathname;
 
@@ -229,6 +243,10 @@ const OverviewTab = ({ setSelectedCompany, setCompanyDetails }) => {
   const [selectedInvestor, setSelectedInvestor] = useState(null);
   const [showInvestor, setShowInvestor] = useState(false);
 
+  const [strategiesCopy, setStrategiesCopy] = useState([]);
+  const [selectedSort, setSelectedSort] = useState(0);
+  const [selectedField, setSelectedField] = useState(sortingFields[0].key);
+
   const rowsPerPageOptions = [3, 5, 10];
 
   const handlePrevPage = () => {
@@ -251,13 +269,13 @@ const OverviewTab = ({ setSelectedCompany, setCompanyDetails }) => {
 
   console.log(rowsPerPage);
 
-  const handleSearchChange = (event) => {
+  const handleSearchValueChange = (event) => {
     setSearchValue(event.target.value);
   };
 
-  const filteredStrategies = allStrategies?.filter((strategy) =>
-    strategy.name.toLowerCase().includes(searchValue.toLowerCase())
-  );
+  // const filteredStrategies = allStrategies?.filter((strategy) =>
+  //   strategy.name.toLowerCase().includes(searchValue.toLowerCase())
+  // );
 
   const handleDropdown1Change = (event) => {
     setDropdown1Value(event.target.value);
@@ -313,6 +331,7 @@ const OverviewTab = ({ setSelectedCompany, setCompanyDetails }) => {
         if (response.status === 200) {
           console.log("Data:", data.strategies);
           setAllStrategies(data.strategies);
+          setStrategiesCopy(data.strategies);
         } else {
           console.log("Unexpected status code:", response.status);
         }
@@ -399,6 +418,79 @@ const OverviewTab = ({ setSelectedCompany, setCompanyDetails }) => {
   console.log(perExchangeKPI);
   console.log(totalPages);
   console.log(passingCriteria);
+
+  const handleSortChange = (e) => {
+    setSelectedSort(e.target.value);
+  };
+
+  const handleSortingFieldChange = (e) => {
+    setSelectedField(e.target.value);
+  };
+
+  const sorting = (data) => {
+    console.log(selectedSort);
+    switch (selectedSort) {
+      case 0:
+        return allStrategies;
+      case 1:
+        return data.slice().sort((a, b) => {
+          const valueA = a[selectedField];
+          const valueB = b[selectedField];
+          console.log(valueA, valueB);
+
+          const alphabetRegex = /[a-zA-Z]/;
+          if (alphabetRegex.test(valueA.toString())) {
+            return valueA
+              .toString()
+              .localeCompare(valueB.toString(), undefined, { numeric: true });
+          } else {
+            return parseFloat(valueA) - parseFloat(valueB);
+          }
+        });
+      case 2:
+        return data.slice().sort((a, b) => {
+          const valueA = a[selectedField];
+          const valueB = b[selectedField];
+
+          const alphabetRegex = /[a-zA-Z]/;
+
+          if (alphabetRegex.test(valueA.toString())) {
+            return valueB
+              .toString()
+              .localeCompare(valueA.toString(), undefined, { numeric: true });
+          } else {
+            return parseFloat(valueB) - parseFloat(valueA);
+          }
+        });
+      default:
+        return data;
+    }
+  };
+
+  useEffect(() => {
+    handleSearchChange();
+  }, [searchValue]);
+
+  useEffect(() => {
+    const sorted = sorting(strategiesCopy);
+    setStrategiesCopy(sorted);
+  }, [selectedSort, selectedField]);
+
+  const handleSearchChange = () => {
+    // const searchTerm = event.target.value;
+    // setSearchTerm(searchTerm);
+
+    // If search term is empty, set filtered products to original array
+    if (!searchValue.trim()) {
+      setStrategiesCopy(allStrategies);
+    } else {
+      // Filter products based on the search term
+      const filtered = strategiesCopy.filter((user) =>
+        user.name.toLowerCase().includes(searchValue.toLowerCase())
+      );
+      setStrategiesCopy(filtered);
+    }
+  };
 
   return (
     <Grid
@@ -746,12 +838,42 @@ const OverviewTab = ({ setSelectedCompany, setCompanyDetails }) => {
                     Overview{" "}
                   </text>
                 </Box>
-                <Box spacing={1} sx={{ mt: 0.5 }}>
+                <Box display="flex" gap={2} sx={{ mt: 0.5 }}>
+                  <FormControl>
+                    <InputLabel id="sort-by-select-label">Sort by</InputLabel>
+                    <Select
+                      labelId="sort-by-select-label"
+                      id="sort-by-select"
+                      value={selectedSort}
+                      label="Sort by"
+                      onChange={handleSortChange}
+                    >
+                      <MenuItem value={0}>None</MenuItem>
+                      <MenuItem value={1}>Ascending</MenuItem>
+                      <MenuItem value={2}>Descending</MenuItem>
+                    </Select>
+                  </FormControl>
+                  <FormControl>
+                    <InputLabel id="to-sort-select-label">To sort</InputLabel>
+                    <Select
+                      labelId="to-sort-select-label"
+                      id="to-sort-select"
+                      value={selectedField}
+                      label="To sort"
+                      onChange={handleSortingFieldChange}
+                    >
+                      {sortingFields.map((field) => (
+                        <MenuItem key={field.key} value={field.key}>
+                          {field.label}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
                   <TextField
                     sx={{ borderRadius: 10 }}
                     placeholder="Search"
                     value={searchValue}
-                    onChange={handleSearchChange}
+                    onChange={handleSearchValueChange}
                   />
                 </Box>
               </Box>
@@ -770,7 +892,7 @@ const OverviewTab = ({ setSelectedCompany, setCompanyDetails }) => {
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    {filteredStrategies.map((data, index) => {
+                    {strategiesCopy.map((data, index) => {
                       return (
                         <StyledTableRow hover key={index} sx={{ ml: 3 }}>
                           <StyledTableCell
@@ -858,7 +980,7 @@ const OverviewTab = ({ setSelectedCompany, setCompanyDetails }) => {
                             }}
                           >
                             {" "}
-                            {data.sortino_ratio ? data.sortino_ratio : '-'}{" "}
+                            {data.sortino_ratio ? data.sortino_ratio : "-"}{" "}
                           </StyledTableCell>
                           <StyledTableCell> {data.duration} </StyledTableCell>
                         </StyledTableRow>

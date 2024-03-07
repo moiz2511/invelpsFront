@@ -14,6 +14,7 @@ import { styled } from "@mui/material/styles";
 import TableCell, { tableCellClasses } from "@mui/material/TableCell";
 import Constants from "../../../Constants.json";
 import { MdOutlineCompassCalibration } from "react-icons/md";
+import { IoArrowDown, IoArrowUp } from "react-icons/io5";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -47,7 +48,7 @@ const CompanyFinancials = ({ companyName, companyImage }) => {
   const [stockPrice, setStockPrice] = useState(null);
   const [tableData, setTableData] = useState([]);
   const [selectedTab, setSelectedTab] = useState("Income");
-  const [divider, setDivider] = useState(1)
+  const [divider, setDivider] = useState(1);
 
   console.log(companyName);
 
@@ -138,8 +139,8 @@ const CompanyFinancials = ({ companyName, companyImage }) => {
   useEffect(() => {
     const fetchFinancials = async () => {
       try {
-        setTableData([])
-        setTableHeaders([])
+        setTableData([]);
+        setTableHeaders([]);
         const body = {
           company: companyName,
           display: "Value",
@@ -180,16 +181,47 @@ const CompanyFinancials = ({ companyName, companyImage }) => {
       fetchFinancials();
     }
   }, [authToken, exchangeName, selectedTab]);
+
+  const claculateTrend = (data) => {
+    //console.log(data);
+    let lastYear = tableHeaders[tableHeaders.length - 1];
+    let secondLastYear = tableHeaders[tableHeaders.length - 2];
+    //console.log(lastYear, secondLastYear);
+    let lastYearValue = parseInt(data[lastYear].split(",").join(""));
+    let secondLastYearValue = parseInt(
+      data[secondLastYear].split(",").join("")
+    );
+    //console.log(lastYearValue, secondLastYearValue);
+    let stockPrice = lastYearValue - secondLastYearValue;
+    //console.log(stockPrice);
+
+    if (stockPrice > 0) {
+      return <IoArrowUp color="green" size={18} />;
+    } else if (stockPrice < 0) {
+      return <IoArrowDown color="red" size={18} />;
+    } else if (stockPrice === 0) {
+      return "-";
+    }
+  };
   return (
     <div>
-      <div style={{ padding: 20, alignItems: 'center' }}>
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          paddingInline: 20,
+          paddingBlock: 10,
+          gap: 10,
+        }}
+      >
         <img src={companyImage} height={40} width={40} />
-        <text
-          style={{ fontFamily: "Montserrat", fontWeight: 500, fontSize: 20 }}
-        >
+        <h1 style={{ fontFamily: "Montserrat", fontWeight: 700, fontSize: 28 }}>
           {" "}
-          {companyName} ({companySymbol}) {currency} {stockPrice}
-        </text>
+          {companyName} ({companySymbol}){" "}
+          <span style={{ color: "gray" }}>
+            {currency} {stockPrice}
+          </span>
+        </h1>
       </div>
       <div
         style={{
@@ -201,15 +233,17 @@ const CompanyFinancials = ({ companyName, companyImage }) => {
         <Tabs
           value={selectedTab}
           onChange={handleTabChange}
-          style={{ marginBottom: 10}}
+          style={{ marginBottom: 10 }}
         >
           <Tab value="Income" label="Income Statement" />
           <Tab value="BalanceSheet" label="Balance Sheet Statement" />
           <Tab value="CashFlows" label="Cash Flow Statement" />
         </Tabs>
-        <div style={{ gap: 5}}  >
-        <Button variant="contained" style={{marginRight: 10}} >Annual</Button>
-        <Button variant="contained">Quarterly</Button>
+        <div style={{ gap: 5 }}>
+          <Button variant="contained" style={{ marginRight: 10 }}>
+            Annual
+          </Button>
+          <Button variant="contained">Quarterly</Button>
         </div>
       </div>
 
@@ -219,6 +253,9 @@ const CompanyFinancials = ({ companyName, companyImage }) => {
             <StyledTableRow>
               <StyledTableCell style={{ fontFamily: "Montserrat" }}>
                 Metrics ({currency})
+              </StyledTableCell>
+              <StyledTableCell style={{ fontFamily: "Montserrat" }}>
+                Trends
               </StyledTableCell>
               {tableHeaders.map((header, index) => (
                 <StyledTableCell
@@ -235,6 +272,9 @@ const CompanyFinancials = ({ companyName, companyImage }) => {
               <StyledTableRow key={rowIndex}>
                 <StyledTableCell style={{ fontFamily: "Montserrat" }}>
                   {rowData.metric}
+                </StyledTableCell>
+                <StyledTableCell style={{ fontFamily: "Montserrat" }}>
+                  {claculateTrend(rowData)}
                 </StyledTableCell>
                 {tableHeaders.map((header, index) => (
                   <StyledTableCell
