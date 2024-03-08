@@ -25,7 +25,7 @@ import NegativeBarChart from "./NegativeBarChart";
 import TableCell, { tableCellClasses } from "@mui/material/TableCell";
 import ColorConstants from "../../Core/constants/ColorConstants.json";
 
-import { IoArrowDown } from "react-icons/io5";
+import { IoArrowDown, IoArrowUp } from "react-icons/io5";
 import { IoArrowUpOutline } from "react-icons/io5";
 import PieChart from "./PieChart";
 
@@ -57,7 +57,20 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   },
 }));
 
-const headCategories = ["Avg", "Best", "Worst", "Negative Periods", "Duration"];
+const headCategories1 = [
+  "Avg",
+  "Best",
+  "Worst",
+  "Negative Periods",
+  "Duration",
+];
+const headCategories = [
+  { title: "Avg", key: "rolling_return" },
+  { title: "Best", key: "best_return" },
+  { title: "Worst", key: "worst_return" },
+  { title: "Negative Periods", key: "negative_annual_returns" },
+  { title: "Duration", key: "duration" },
+];
 
 const sortingFields = [
   { key: "none", label: "None" },
@@ -87,7 +100,7 @@ const ReturnsTab = () => {
 
   const [bestWorstDataCopy, setBestWorstDataCopy] = useState([]);
   const [selectedSort, setSelectedSort] = useState(0);
-  const [selectedField, setSelectedField] = useState(sortingFields[0].key);
+  const [selectedField, setSelectedField] = useState();
 
   const [perExchangeKPI, setPerExhangeKPI] = useState([]);
   const [perSectorKPI, setPerSectorKPI] = useState([]);
@@ -211,7 +224,14 @@ const ReturnsTab = () => {
     }
   };
   useEffect(() => {
-    fetchGraphData();
+    let isMounted = true;
+    if (isMounted) {
+      fetchGraphData();
+    }
+    return () => {
+      isMounted = false;
+    };
+    // fetchGraphData();
   }, [selectedStrategy]);
 
   const handleDataVisualization = (strategy) => {
@@ -223,52 +243,57 @@ const ReturnsTab = () => {
     setSelectedSort(e.target.value);
   };
 
-  const handleSortingFieldChange = (e) => {
-    setSelectedField(e.target.value);
+  const handleSortingFieldChange = (field) => {
+    setSelectedField(field);
   };
 
   const sorting = (data) => {
+    console.log(data);
     console.log(selectedSort);
-    switch (selectedSort) {
-      case 0:
-        return bestWorstDataCopy;
-      case 1:
-        return data.slice().sort((a, b) => {
-          const valueA = a[selectedField];
-          const valueB = b[selectedField];
-          console.log(valueA, valueB);
+    if (data) {
+      switch (selectedSort) {
+        case 0:
+          return bestWorstDataCopy;
+        case 1:
+          return data.slice().sort((a, b) => {
+            const valueA = a[selectedField];
+            const valueB = b[selectedField];
+            console.log(valueA, valueB);
 
-          const alphabetRegex = /[a-zA-Z]/;
-          if (alphabetRegex.test(valueA.toString())) {
-            return valueA
-              .toString()
-              .localeCompare(valueB.toString(), undefined, { numeric: true });
-          } else {
-            return parseFloat(valueA) - parseFloat(valueB);
-          }
-        });
-      case 2:
-        return data.slice().sort((a, b) => {
-          const valueA = a[selectedField];
-          const valueB = b[selectedField];
+            const alphabetRegex = /[a-zA-Z]/;
+            if (alphabetRegex.test(valueA.toString())) {
+              return valueA.localeCompare(valueB, undefined, { numeric: true });
+            } else {
+              return parseFloat(valueA) - parseFloat(valueB);
+            }
+          });
+        case 2:
+          return data.slice().sort((a, b) => {
+            const valueA = a[selectedField];
+            const valueB = b[selectedField];
 
-          const alphabetRegex = /[a-zA-Z]/;
-          if (alphabetRegex.test(valueA.toString())) {
-            return valueB
-              .toString()
-              .localeCompare(valueA.toString(), undefined, { numeric: true });
-          } else {
-            return parseFloat(valueB) - parseFloat(valueA);
-          }
-        });
-      default:
-        return data;
+            const alphabetRegex = /[a-zA-Z]/;
+            if (alphabetRegex.test(valueA.toString())) {
+              return valueB.localeCompare(valueA, undefined, { numeric: true });
+            } else {
+              return parseFloat(valueB) - parseFloat(valueA);
+            }
+          });
+        default:
+          return data;
+      }
     }
   };
 
   useEffect(() => {
-    const sorted = sorting(bestWorstDataCopy);
-    setBestWorstDataCopy(sorted);
+    let isMounted = true;
+    if (selectedSort !== 0 && isMounted) {
+      const sorted = sorting(bestWorstDataCopy);
+      setBestWorstDataCopy(sorted);
+    }
+    return () => {
+      isMounted = false;
+    };
   }, [selectedSort, selectedField]);
 
   return (
@@ -282,19 +307,19 @@ const ReturnsTab = () => {
       ) : (
         <PageInfoBreadCrumbs data={pageLoc} />
       )}
+      <Button
+        onClick={() => setShowVisualData(!showVisualData)}
+        sx={{
+          alignSelf: "flex-start",
+          backgroundColor: "#407879",
+          color: "rgb(204, 191, 144)",
+          ml: 3,
+        }}
+      >
+        Go Back
+      </Button>
       {showVisualData ? (
         <>
-          <Button
-            onClick={() => setShowVisualData(!showVisualData)}
-            sx={{
-              alignSelf: "flex-start",
-              backgroundColor: "#407879",
-              color: "rgb(204, 191, 144)",
-              ml: 3,
-            }}
-          >
-            Go Back
-          </Button>
           <Card
             sx={{
               margin: 1,
@@ -541,45 +566,6 @@ const ReturnsTab = () => {
               </Box>
             </Box>
 
-            <Box
-              display="flex"
-              justifyContent="flex-end"
-              alignItems="center"
-              padding={4}
-              gap={2}
-            >
-              <FormControl>
-                <InputLabel id="sort-by-select-label">Sort by</InputLabel>
-                <Select
-                  labelId="sort-by-select-label"
-                  id="sort-by-select"
-                  value={selectedSort}
-                  label="Sort by"
-                  onChange={handleSortChange}
-                >
-                  <MenuItem value={0}>None</MenuItem>
-                  <MenuItem value={1}>Ascending</MenuItem>
-                  <MenuItem value={2}>Descending</MenuItem>
-                </Select>
-              </FormControl>
-              <FormControl>
-                <InputLabel id="to-sort-select-label">To sort</InputLabel>
-                <Select
-                  labelId="to-sort-select-label"
-                  id="to-sort-select"
-                  value={selectedField}
-                  label="To sort"
-                  onChange={handleSortingFieldChange}
-                >
-                  {sortingFields.map((field) => (
-                    <MenuItem key={field.key} value={field.key}>
-                      {field.label}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-            </Box>
-
             <TableContainer>
               <Table
                 sx={{ minWidth: "100%", maxWidth: "100%", mt: 1 }}
@@ -621,10 +607,103 @@ const ReturnsTab = () => {
                       fontSize: 14,
                     }}
                   >
-                    <TableCell>Strategy</TableCell>
+                    <TableCell>
+                      <Box
+                        sx={{ display: "flex", alignItems: "center", gap: 2 }}
+                      >
+                        <span>Strategy</span>
+                        {selectedSort === 1 ? (
+                          <button
+                            onClick={() => {
+                              handleSortingFieldChange("name");
+                              setSelectedSort(2);
+                            }}
+                            style={{
+                              color: "white",
+                              background: "rgba(0, 0, 0, 0.3)",
+                              border: "none",
+                              borderRadius: "9999px",
+                              width: "24px",
+                              height: "24px",
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                            }}
+                          >
+                            <IoArrowDown />
+                          </button>
+                        ) : (
+                          <button
+                            style={{
+                              color: "white",
+                              background: "rgba(0, 0, 0, 0.3)",
+                              border: "none",
+                              borderRadius: "9999px",
+                              width: "24px",
+                              height: "24px",
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                            }}
+                            onClick={() => {
+                              handleSortingFieldChange("name");
+                              setSelectedSort(1);
+                            }}
+                          >
+                            <IoArrowUp />
+                          </button>
+                        )}
+                      </Box>
+                    </TableCell>
                     {headCategories.map((category, index) => (
                       <TableCell key={index} padding="normal">
-                        {category}
+                        <Box
+                          sx={{ display: "flex", alignItems: "center", gap: 2 }}
+                        >
+                          <span>{category.title}</span>
+                          {category.key.trim() !== "" &&
+                            (selectedSort === 1 ? (
+                              <button
+                                onClick={() => {
+                                  handleSortingFieldChange(category.key);
+                                  setSelectedSort(2);
+                                }}
+                                style={{
+                                  color: "white",
+                                  background: "rgba(0, 0, 0, 0.3)",
+                                  border: "none",
+                                  borderRadius: "9999px",
+                                  width: "24px",
+                                  height: "24px",
+                                  display: "flex",
+                                  alignItems: "center",
+                                  justifyContent: "center",
+                                }}
+                              >
+                                <IoArrowDown />
+                              </button>
+                            ) : (
+                              <button
+                                style={{
+                                  color: "white",
+                                  background: "rgba(0, 0, 0, 0.3)",
+                                  border: "none",
+                                  borderRadius: "9999px",
+                                  width: "24px",
+                                  height: "24px",
+                                  display: "flex",
+                                  alignItems: "center",
+                                  justifyContent: "center",
+                                }}
+                                onClick={() => {
+                                  handleSortingFieldChange(category.key);
+                                  setSelectedSort(1);
+                                }}
+                              >
+                                <IoArrowUp />
+                              </button>
+                            ))}
+                        </Box>
                       </TableCell>
                     ))}
                   </TableRow>

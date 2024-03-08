@@ -32,74 +32,87 @@ import AuthContext from "../../Core/store/auth-context";
 import VerticalBarChart from "./VerticalBarChart";
 import Fade from "@mui/material/Fade";
 import InvestorModal from "./InvestorModal";
+import { CgSpinner } from "react-icons/cg";
 
 import { styled } from "@mui/material/styles";
+import { IoArrowDown, IoArrowUp } from "react-icons/io5";
 
 const headCells = {
   data: [
     {
       id: "strategy",
       label: "Strategy",
+      key: "name",
       isValueLink: false,
       isDropDown: false,
     },
     {
       id: "investor",
       label: "Investors",
+      key: "investors",
       isValueLink: false,
       isDropDown: false,
     },
     {
       id: "investStyle",
       label: "Investing Style",
+      key: "",
       isValueLink: false,
       isDropDown: false,
     },
     {
       id: "totalreturn",
       label: "Total Return (%)",
+      key: "total_return",
       isValueLink: false,
       isDropDown: false,
     },
     {
       id: "annualizedReturn",
       label: "Annualized Return (%)",
+      key: "annualized_return",
       isValueLink: false,
       isDropDown: false,
     },
     {
       id: "rollingReturn",
       label: "Rolling Return (%)",
+      key: "rolling_return",
       isValueLink: false,
       isDropDown: false,
     },
     {
       id: "standardDeviation",
       label: "Standard Deviation (%)",
+      key: "stdev_excess_return",
       isValueLink: false,
       isDropDown: false,
     },
     {
       id: "maxDrawdown",
       label: "Max Drawdown (%)",
+      key: "max_drawdown",
       isValueLink: false,
       isDropDown: false,
     },
     {
       id: "sharpeRatio",
       label: "Sharpe Ratio",
+      key: "sharpe_ratio",
       isValueLink: false,
       isDropDown: false,
     },
     {
       id: "sortinoRatio",
       label: "Sortino Ratio",
+      key: "sortino_ratio",
       isValueLink: false,
       isDropDown: false,
     },
     {
       id: "duration",
       label: "Duration",
+      key: "duration",
       isValueLink: false,
       isDropDown: false,
     },
@@ -108,73 +121,86 @@ const headCells = {
 
 const passingHeadCells = {
   data: [
-    {
-      label: "Strategy Name",
-      isValueLink: false,
-      isDropDown: false,
-    },
+    // {
+    //   label: "Strategy Name",
+    //   isValueLink: false,
+    //   isDropDown: false,
+    // },
     {
       label: "Company Name",
+      key: "company_name",
       isValueLink: false,
       isDropDown: false,
     },
     {
       label: "Logo",
+      key: "",
       isValueLink: false,
       isDropDown: false,
     },
     {
       label: "Ticker",
+      key: "symbol",
       isValueLink: false,
       isDropDown: false,
     },
     {
       label: "Exchange",
+      key: "exchange",
       isValueLink: false,
       isDropDown: false,
     },
     {
       label: "Sector",
+      key: "sector",
       isValueLink: false,
       isDropDown: false,
     },
     {
       label: "Industry",
+      key: "industry",
       isValueLink: false,
       isDropDown: false,
     },
     {
       label: "Total Return (%)",
+      key: "total_return",
       isValueLink: false,
       isDropDown: false,
     },
     {
       label: "Annualized Return (%)",
+      key: "annualized_return",
       isValueLink: false,
       isDropDown: false,
     },
     {
       label: "Rolling Return (%)",
+      key: "rolling_return",
       isValueLink: false,
       isDropDown: false,
     },
     {
       label: "Standard Deviation (%)",
+      key: "stdev_return",
       isValueLink: false,
       isDropDown: false,
     },
     {
       label: "Max Drawdown (%)",
+      key: "max_drawdown",
       isValueLink: false,
       isDropDown: false,
     },
     {
       label: "Sharpe Ratio",
+      key: "sharpe_ratio",
       isValueLink: false,
       isDropDown: false,
     },
     {
       label: "Sortino Ratio",
+      key: "sortino_ratio",
       isValueLink: false,
       isDropDown: false,
     },
@@ -246,6 +272,8 @@ const OverviewTab = ({ setSelectedCompany, setCompanyDetails }) => {
   const [strategiesCopy, setStrategiesCopy] = useState([]);
   const [selectedSort, setSelectedSort] = useState(0);
   const [selectedField, setSelectedField] = useState(sortingFields[0].key);
+
+  const [graphTableDataCopy, setGraphTableDataCopy] = useState([]);
 
   const rowsPerPageOptions = [3, 5, 10];
 
@@ -330,6 +358,7 @@ const OverviewTab = ({ setSelectedCompany, setCompanyDetails }) => {
 
         if (response.status === 200) {
           console.log("Data:", data.strategies);
+
           setAllStrategies(data.strategies);
           setStrategiesCopy(data.strategies);
         } else {
@@ -399,8 +428,9 @@ const OverviewTab = ({ setSelectedCompany, setCompanyDetails }) => {
         const data = await response.json();
 
         if (response.status === 200) {
-          console.log(data);
+          console.log(data.data);
           setGraphTableData(data.data);
+          setGraphTableDataCopy(data.data);
           setTotalPages(data.paginator.total_pages);
           setPassingCriteria(data.companies_passing_criteris);
         } else {
@@ -423,41 +453,35 @@ const OverviewTab = ({ setSelectedCompany, setCompanyDetails }) => {
     setSelectedSort(e.target.value);
   };
 
-  const handleSortingFieldChange = (e) => {
-    setSelectedField(e.target.value);
+  const handleSortingFieldChange = (field) => {
+    setSelectedField(field);
   };
 
   const sorting = (data) => {
-    console.log(selectedSort);
+    console.log(selectedField);
     switch (selectedSort) {
-      case 0:
-        return allStrategies;
       case 1:
         return data.slice().sort((a, b) => {
-          const valueA = a[selectedField];
-          const valueB = b[selectedField];
+          const valueA = a[selectedField] || 0;
+          const valueB = b[selectedField] || 0;
           console.log(valueA, valueB);
 
           const alphabetRegex = /[a-zA-Z]/;
-          if (alphabetRegex.test(valueA.toString())) {
-            return valueA
-              .toString()
-              .localeCompare(valueB.toString(), undefined, { numeric: true });
+          if (alphabetRegex.test(valueA)) {
+            return valueA.localeCompare(valueB, undefined, { numeric: true });
           } else {
             return parseFloat(valueA) - parseFloat(valueB);
           }
         });
       case 2:
         return data.slice().sort((a, b) => {
-          const valueA = a[selectedField];
-          const valueB = b[selectedField];
-
+          const valueA = a[selectedField] || 0;
+          const valueB = b[selectedField] || 0;
+          console.log(valueA, valueB);
           const alphabetRegex = /[a-zA-Z]/;
 
-          if (alphabetRegex.test(valueA.toString())) {
-            return valueB
-              .toString()
-              .localeCompare(valueA.toString(), undefined, { numeric: true });
+          if (alphabetRegex.test(valueA)) {
+            return valueB.localeCompare(valueA, undefined, { numeric: true });
           } else {
             return parseFloat(valueB) - parseFloat(valueA);
           }
@@ -472,8 +496,20 @@ const OverviewTab = ({ setSelectedCompany, setCompanyDetails }) => {
   }, [searchValue]);
 
   useEffect(() => {
-    const sorted = sorting(strategiesCopy);
-    setStrategiesCopy(sorted);
+    let isMounted = true;
+    if (selectedSort !== 0 && isMounted) {
+      const sorted = sorting(strategiesCopy);
+      setStrategiesCopy(sorted);
+
+      if (showVisualData) {
+        const sorted = sorting(graphTableDataCopy);
+        setGraphTableDataCopy(sorted);
+      }
+    }
+
+    return () => {
+      isMounted = false;
+    };
   }, [selectedSort, selectedField]);
 
   const handleSearchChange = () => {
@@ -492,12 +528,16 @@ const OverviewTab = ({ setSelectedCompany, setCompanyDetails }) => {
     }
   };
 
+  const handleGoBack = () => {
+    setShowVisualData(!showVisualData);
+    setSelectedCompany(null);
+    setCompanyDetails(false);
+  };
+
   return (
     <Grid
       container
       sx={{
-        display: "flex",
-        flexDirection: "column",
         fontFamily: "Montserrat",
       }}
     >
@@ -513,7 +553,7 @@ const OverviewTab = ({ setSelectedCompany, setCompanyDetails }) => {
       {showVisualData ? (
         <>
           <Button
-            onClick={() => setShowVisualData(!showVisualData)}
+            onClick={handleGoBack}
             sx={{
               alignSelf: "flex-start",
               backgroundColor: "#407879",
@@ -604,7 +644,8 @@ const OverviewTab = ({ setSelectedCompany, setCompanyDetails }) => {
             >
               <Box justifyContent={"space-between"} display={"flex"}>
                 <text style={{ fontSize: 20, fontWeight: "bold" }}>
-                  Companies Passing Criterias: : {passingCriteria}
+                  Companies Passing Criterias:{" "}
+                  <span style={{ color: "gray" }}>{passingCriteria}</span>
                 </text>
                 {/* <input
                   style={{ borderRadius: 10, padding: 12 }}
@@ -622,114 +663,175 @@ const OverviewTab = ({ setSelectedCompany, setCompanyDetails }) => {
                     <TableRow>
                       {passingHeadCells.data.map((headCell, index) => (
                         <StyledTableCell key={index} padding="normal">
-                          {headCell.label}
+                          <Box
+                            sx={{
+                              display: "flex",
+                              alignItems: "center",
+                              gap: 2,
+                            }}
+                          >
+                            <span>{headCell.label}</span>
+                            {headCell.key.trim() !== "" &&
+                              (selectedSort === 1 ? (
+                                <button
+                                  onClick={() => {
+                                    handleSortingFieldChange(headCell.key);
+                                    setSelectedSort(2);
+                                  }}
+                                  style={{
+                                    color: "white",
+                                    background: "rgba(255, 255, 255, 0.3)",
+                                    border: "none",
+                                    borderRadius: "9999px",
+                                    width: "24px",
+                                    height: "24px",
+                                    display: "flex",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                  }}
+                                >
+                                  <IoArrowDown />
+                                </button>
+                              ) : (
+                                <button
+                                  style={{
+                                    color: "white",
+                                    background: "rgba(255, 255, 255, 0.3)",
+                                    border: "none",
+                                    borderRadius: "9999px",
+                                    width: "24px",
+                                    height: "24px",
+                                    display: "flex",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                  }}
+                                  onClick={() => {
+                                    handleSortingFieldChange(headCell.key);
+                                    setSelectedSort(1);
+                                  }}
+                                >
+                                  <IoArrowUp />
+                                </button>
+                              ))}
+                          </Box>
                         </StyledTableCell>
                       ))}
                     </TableRow>
                   </TableHead>
-                  <TableBody>
-                    {graphTableData.map((data, index) => {
-                      return (
-                        <Tooltip
-                          key={index}
-                          TransitionComponent={Fade}
-                          TransitionProps={{ timeout: 600 }}
-                          title="Click to analyze the company"
-                        >
-                          <StyledTableRow
-                            hover
-                            onClick={() => {
-                              setSelectedCompany(data);
-                              setCompanyDetails(true);
-                            }}
-                            style={{ cursor: "pointer" }}
+                  {graphTableData ? (
+                    <TableBody>
+                      {graphTableDataCopy.map((data, index) => {
+                        return (
+                          <Tooltip
+                            key={index}
+                            TransitionComponent={Fade}
+                            TransitionProps={{ timeout: 600 }}
+                            title="Click to analyze the company"
                           >
-                            <StyledTableCell>
-                              {" "}
-                              {data.strategy_name}
-                            </StyledTableCell>
-                            <StyledTableCell>
-                              {data.company_name}
-                            </StyledTableCell>
-                            <StyledTableCell>
-                              <img
-                                src={data.image}
-                                style={{ height: "30px", width: "35px" }}
-                              />
-                            </StyledTableCell>
-                            <StyledTableCell> {data.symbol} </StyledTableCell>
-                            <StyledTableCell> {data.exchange} </StyledTableCell>
-                            <StyledTableCell> {data.sector} </StyledTableCell>
-                            <StyledTableCell> {data.industry} </StyledTableCell>
-                            <StyledTableCell
-                              sx={{
-                                color: data.total_return >= 0 ? "green" : "red",
+                            <StyledTableRow
+                              hover
+                              onClick={() => {
+                                setSelectedCompany(data);
+                                setCompanyDetails(true);
                               }}
+                              style={{ cursor: "pointer" }}
                             >
-                              {" "}
-                              {data.total_return}{" "}
-                            </StyledTableCell>
-                            <StyledTableCell
-                              sx={{
-                                color:
-                                  data.annualized_return >= 0 ? "green" : "red",
-                              }}
-                            >
-                              {" "}
-                              {data.annualized_return}{" "}
-                            </StyledTableCell>
-                            <StyledTableCell
-                              sx={{
-                                color:
-                                  data.rolling_return >= 0 ? "green" : "red",
-                              }}
-                            >
-                              {" "}
-                              {data.rolling_return}{" "}
-                            </StyledTableCell>
-                            <StyledTableCell
-                              sx={{
-                                color:
-                                  data.stdev_excess_return >= 0
-                                    ? "green"
-                                    : "red",
-                              }}
-                            >
-                              {" "}
-                              {data.stdev_excess_return}{" "}
-                            </StyledTableCell>
-                            <StyledTableCell
-                              sx={{
-                                color: data.max_drawdown >= 0 ? "green" : "red",
-                              }}
-                            >
-                              {" "}
-                              {data.max_drawdown}{" "}
-                            </StyledTableCell>
-                            <StyledTableCell
-                              sx={{
-                                color: data.sharpe_ratio >= 0 ? "green" : "red",
-                              }}
-                            >
-                              {" "}
-                              {data.sharpe_ratio}{" "}
-                            </StyledTableCell>
-                            <StyledTableCell
-                              sx={{
-                                color:
-                                  data.sortino_ratio >= 0 ? "green" : "red",
-                              }}
-                            >
-                              {" "}
-                              {data.sortino_ratio
-                                ? data.sortino_ratio
-                                : "N/A"}{" "}
-                            </StyledTableCell>
-                          </StyledTableRow>
-                        </Tooltip>
-                      );
-                    })}
-                  </TableBody>
+                              <StyledTableCell>
+                                {data.company_name}
+                              </StyledTableCell>
+                              <StyledTableCell>
+                                <img
+                                  src={data.image}
+                                  style={{ height: "30px", width: "35px" }}
+                                />
+                              </StyledTableCell>
+                              <StyledTableCell> {data.symbol} </StyledTableCell>
+                              <StyledTableCell>
+                                {" "}
+                                {data.exchange}{" "}
+                              </StyledTableCell>
+                              <StyledTableCell> {data.sector} </StyledTableCell>
+                              <StyledTableCell>
+                                {" "}
+                                {data.industry}{" "}
+                              </StyledTableCell>
+                              <StyledTableCell
+                                sx={{
+                                  color:
+                                    data.total_return >= 0 ? "green" : "red",
+                                }}
+                              >
+                                {" "}
+                                {data.total_return}{" "}
+                              </StyledTableCell>
+                              <StyledTableCell
+                                sx={{
+                                  color:
+                                    data.annualized_return >= 0
+                                      ? "green"
+                                      : "red",
+                                }}
+                              >
+                                {" "}
+                                {data.annualized_return}{" "}
+                              </StyledTableCell>
+                              <StyledTableCell
+                                sx={{
+                                  color:
+                                    data.rolling_return >= 0 ? "green" : "red",
+                                }}
+                              >
+                                {" "}
+                                {data.rolling_return}{" "}
+                              </StyledTableCell>
+                              <StyledTableCell
+                                sx={{
+                                  color:
+                                    data.stdev_excess_return >= 0
+                                      ? "green"
+                                      : "red",
+                                }}
+                              >
+                                {" "}
+                                {data.stdev_excess_return}{" "}
+                              </StyledTableCell>
+                              <StyledTableCell
+                                sx={{
+                                  color:
+                                    data.max_drawdown >= 0 ? "green" : "red",
+                                }}
+                              >
+                                {" "}
+                                {data.max_drawdown}{" "}
+                              </StyledTableCell>
+                              <StyledTableCell
+                                sx={{
+                                  color:
+                                    data.sharpe_ratio >= 0 ? "green" : "red",
+                                }}
+                              >
+                                {" "}
+                                {data.sharpe_ratio}{" "}
+                              </StyledTableCell>
+                              <StyledTableCell
+                                sx={{
+                                  color:
+                                    data.sortino_ratio >= 0 ? "green" : "red",
+                                }}
+                              >
+                                {" "}
+                                {data.sortino_ratio
+                                  ? data.sortino_ratio
+                                  : "N/A"}{" "}
+                              </StyledTableCell>
+                            </StyledTableRow>
+                          </Tooltip>
+                        );
+                      })}
+                    </TableBody>
+                  ) : (
+                    <CgSpinner size={24} />
+                  )}
                 </Table>
               </TableContainer>
               <Box display={"flex"} justifyContent={"flex-end"} gap={4} mt={2}>
@@ -772,7 +874,7 @@ const OverviewTab = ({ setSelectedCompany, setCompanyDetails }) => {
         </>
       ) : (
         <>
-          <Card sx={{ m: 1, position: "relative" }}>
+          <Card sx={{ width: "100vw", m: 1, position: "relative" }}>
             <Box p={3}>
               <Box spacing={1} sx={{ mt: 0.5 }}>
                 <text
@@ -817,7 +919,7 @@ const OverviewTab = ({ setSelectedCompany, setCompanyDetails }) => {
               </Box>
             </Box>
           </Card>
-          <Card sx={{ m: 1, position: "relative" }}>
+          <Card sx={{ width: "100vw", m: 1, position: "relative" }}>
             <Box>
               <Box
                 sx={{
@@ -839,7 +941,7 @@ const OverviewTab = ({ setSelectedCompany, setCompanyDetails }) => {
                   </text>
                 </Box>
                 <Box display="flex" gap={2} sx={{ mt: 0.5 }}>
-                  <FormControl>
+                  {/* <FormControl>
                     <InputLabel id="sort-by-select-label">Sort by</InputLabel>
                     <Select
                       labelId="sort-by-select-label"
@@ -868,7 +970,7 @@ const OverviewTab = ({ setSelectedCompany, setCompanyDetails }) => {
                         </MenuItem>
                       ))}
                     </Select>
-                  </FormControl>
+                  </FormControl> */}
                   <TextField
                     sx={{ borderRadius: 10 }}
                     placeholder="Search"
@@ -886,7 +988,57 @@ const OverviewTab = ({ setSelectedCompany, setCompanyDetails }) => {
                     <TableRow>
                       {headCells.data.map((headCell, index) => (
                         <StyledTableCell key={headCell.id} padding="normal">
-                          {headCell.label}
+                          <Box
+                            sx={{
+                              display: "flex",
+                              alignItems: "center",
+                              gap: 2,
+                            }}
+                          >
+                            <span>{headCell.label}</span>
+                            {headCell.key.trim() !== "" &&
+                              (selectedSort === 1 ? (
+                                <button
+                                  onClick={() => {
+                                    handleSortingFieldChange(headCell.key);
+                                    setSelectedSort(2);
+                                  }}
+                                  style={{
+                                    color: "white",
+                                    background: "rgba(255, 255, 255, 0.3)",
+                                    border: "none",
+                                    borderRadius: "9999px",
+                                    width: "24px",
+                                    height: "24px",
+                                    display: "flex",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                  }}
+                                >
+                                  <IoArrowDown />
+                                </button>
+                              ) : (
+                                <button
+                                  style={{
+                                    color: "white",
+                                    background: "rgba(255, 255, 255, 0.3)",
+                                    border: "none",
+                                    borderRadius: "9999px",
+                                    width: "24px",
+                                    height: "24px",
+                                    display: "flex",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                  }}
+                                  onClick={() => {
+                                    handleSortingFieldChange(headCell.key);
+                                    setSelectedSort(1);
+                                  }}
+                                >
+                                  <IoArrowUp />
+                                </button>
+                              ))}
+                          </Box>
                         </StyledTableCell>
                       ))}
                     </TableRow>

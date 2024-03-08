@@ -310,7 +310,10 @@ const InvestorsScreener = () => {
       {companyDetails ? (
         <Box sx={{ display: "flex", flexDirection: "column", p: 1, gap: 2 }}>
           <Button
-            onClick={() => setCompanyDetails(false)}
+            onClick={() => {
+              setCompanyDetails(false);
+              setSelectedCompany(null);
+            }}
             sx={{
               alignSelf: "flex-start",
               backgroundColor: "#407879",

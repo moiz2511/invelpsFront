@@ -9,6 +9,11 @@ import {
   Tabs,
   Tab,
   Button,
+  FormControl,
+  FormLabel,
+  RadioGroup,
+  FormControlLabel,
+  Radio,
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import TableCell, { tableCellClasses } from "@mui/material/TableCell";
@@ -49,6 +54,8 @@ const CompanyFinancials = ({ companyName, companyImage }) => {
   const [tableData, setTableData] = useState([]);
   const [selectedTab, setSelectedTab] = useState("Income");
   const [divider, setDivider] = useState(1);
+
+  const [valueScale, setValueScale] = useState("thousands");
 
   console.log(companyName);
 
@@ -203,6 +210,26 @@ const CompanyFinancials = ({ companyName, companyImage }) => {
       return "-";
     }
   };
+
+  const convertValue = (value, valueScale) => {
+    let amount = parseInt(value.split(",").join(""));
+    console.log(value);
+    switch (valueScale) {
+      case "thousands":
+        return amount / 1000;
+      case "millions":
+        return amount / 1000000;
+      case "billions":
+        return amount / 1000000000;
+      default:
+        return value;
+    }
+  };
+
+  const handleValueScaleChange = (e) => {
+    setValueScale(e.target.value);
+  };
+
   return (
     <div>
       <div
@@ -239,10 +266,37 @@ const CompanyFinancials = ({ companyName, companyImage }) => {
           <Tab value="BalanceSheet" label="Balance Sheet Statement" />
           <Tab value="CashFlows" label="Cash Flow Statement" />
         </Tabs>
-        <div style={{ gap: 5 }}>
-          <Button variant="contained" style={{ marginRight: 10 }}>
-            Annual
-          </Button>
+        <div style={{ display: "flex", alignItems: "center", gap: 2 }}>
+          <FormControl>
+            <FormLabel id="row-radio-buttons-group-label">
+              Value Scale
+            </FormLabel>
+            <RadioGroup
+              row
+              aria-labelledby="row-radio-buttons-group-label"
+              name="row-radio-buttons-group"
+              value={valueScale}
+              onChange={handleValueScaleChange}
+            >
+              <FormControlLabel
+                value="thousands"
+                control={<Radio />}
+                label="Thousands"
+              />
+              <FormControlLabel
+                value="millions"
+                control={<Radio />}
+                label="Millions"
+              />
+              <FormControlLabel
+                value="billions"
+                control={<Radio />}
+                label="Billions"
+              />
+            </RadioGroup>
+          </FormControl>
+
+          <Button variant="contained">Annual</Button>
           <Button variant="contained">Quarterly</Button>
         </div>
       </div>
@@ -281,7 +335,16 @@ const CompanyFinancials = ({ companyName, companyImage }) => {
                     key={index}
                     style={{ fontFamily: "Montserrat" }}
                   >
-                    {rowData[header]}
+                    {convertValue(rowData[header], valueScale).toFixed(
+                      valueScale !== "thousands" ? 2 : 0
+                    )}
+                    {valueScale === "thousands"
+                      ? "K"
+                      : valueScale === "millions"
+                      ? "M"
+                      : valueScale === "billions"
+                      ? "B"
+                      : ""}
                   </StyledTableCell>
                 ))}
               </StyledTableRow>

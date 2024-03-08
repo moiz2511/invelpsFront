@@ -111,12 +111,24 @@ const InvestorModal = ({ showInvestor, closeInvestorModal, investor }) => {
           overflow: "auto",
         }}
       >
-        <IoClose
-          color="black"
-          style={{ alignSelf: "flex-end", cursor: "pointer" }}
-          size={20}
+        <span
+          style={{
+            position: "absolute",
+            top: 10,
+            right: 20,
+            backgroundColor: "rgba(0,0,0,0.1)",
+            borderRadius: "50%",
+            padding: 5,
+            cursor: "pointer",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            zIndex: 1,
+          }}
           onClick={closeInvestorModal}
-        />
+        >
+          <IoClose color="black" size={20} />
+        </span>
         <Tabs
           value={selectedTab}
           onChange={handleTabChange}
