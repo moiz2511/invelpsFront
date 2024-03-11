@@ -42,6 +42,7 @@ import CompanyFinancials from "./CompanyFinancials";
 
 import CompanyReturnTab from "./CompanyReturnTab";
 import CompanyRiskTab from "./CompanyRiskTab";
+import { useSwitch } from "../../../utils/context/SwitchContext";
 
 const headCells = {
   data: [
@@ -295,24 +296,28 @@ const InvestorsScreener = () => {
   const [selectedCompany, setSelectedCompany] = useState(null);
   const [companyDetails, setCompanyDetails] = useState(false);
 
+  const { isSwitch1, setIsSwitch1, isSwitch2, setIsSwitch2 } = useSwitch();
+
   const handleChange = (event, newValue) => {
-    if (companyDetails) {
+    if (isSwitch1) {
       setValueCompanyDetails(newValue);
     } else {
       setValue(newValue);
     }
   };
 
+  console.log(isSwitch1);
   console.log(selectedCompany);
 
   return (
     <>
-      {companyDetails ? (
+      {isSwitch1 ? (
         <Box sx={{ display: "flex", flexDirection: "column", p: 1, gap: 2 }}>
           <Button
             onClick={() => {
-              setCompanyDetails(false);
-              setSelectedCompany(null);
+              setIsSwitch1(false);
+              setIsSwitch2(true);
+              // setSelectedCompany(null);
             }}
             sx={{
               alignSelf: "flex-start",
@@ -320,7 +325,7 @@ const InvestorsScreener = () => {
               color: "rgb(204, 191, 144)",
             }}
           >
-            Go Back
+            Back
           </Button>
           <Box sx={{ width: "100%" }}>
             <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
@@ -374,7 +379,7 @@ const InvestorsScreener = () => {
           <CustomTabPanel value={value} index={0}>
             <OverviewTab
               setSelectedCompany={setSelectedCompany}
-              setCompanyDetails={setCompanyDetails}
+              // setCompanyDetails={setCompanyDetails}
             />
           </CustomTabPanel>
           <CustomTabPanel value={value} index={1}>

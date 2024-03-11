@@ -1,9 +1,11 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import './index.css';
-import { StyledEngineProvider } from '@mui/material/styles';
-import App from './App';
-import { AuthContextProvider } from './modules/Core/store/auth-context';
+import React from "react";
+import ReactDOM from "react-dom";
+import "./index.css";
+import { StyledEngineProvider } from "@mui/material/styles";
+import App from "./App";
+import { AuthContextProvider } from "./modules/Core/store/auth-context";
+import { SwitchProvider } from "./utils/context/SwitchContext";
+
 // import reportWebVitals from './reportWebVitals';
 
 ReactDOM.render(
@@ -13,7 +15,9 @@ ReactDOM.render(
   // document.getElementById('root')
   <AuthContextProvider>
     <StyledEngineProvider injectFirst>
-      <App />
+      <SwitchProvider>
+        <App />
+      </SwitchProvider>
     </StyledEngineProvider>
   </AuthContextProvider>,
   document.querySelector("#root")

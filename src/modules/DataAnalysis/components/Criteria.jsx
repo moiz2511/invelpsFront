@@ -14,9 +14,10 @@ import CriteriaPie from "./CriteriaPie";
 import CriteriaBar from "./CriteriaBar";
 import AuthContext from "../../Core/store/auth-context";
 
-const Criteria = ({ investor }) => {
+const Criteria = ({ investor, investorDetails, investorTableData }) => {
   const authCtx = useContext(AuthContext);
   const [authToken, setAuthToken] = useState(null);
+  // const [investorTableData, setInvestorTableData] = useState();
 
   useEffect(() => {
     const CheckUserSession = () => {
@@ -27,40 +28,41 @@ const Criteria = ({ investor }) => {
     setAuthToken(userToken);
   }, []);
 
-  useEffect(() => {
-    const fetchInvestorDetails = async () => {
-      try {
-        const body = {
-          investor: investor,
-        };
-        const response = await fetch(
-          `https://api.invelps.com/api/strategies/getInvestorBottomTable`,
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${authToken}`,
-            },
-            body: JSON.stringify(body),
-          }
-        );
+  // useEffect(() => {
+  //   const fetchInvestorDetails = async () => {
+  //     try {
+  //       const body = {
+  //         investor: investor,
+  //       };
+  //       const response = await fetch(
+  //         `https://api.invelps.com/api/strategies/getInvestorBottomTable`,
+  //         {
+  //           method: "POST",
+  //           headers: {
+  //             "Content-Type": "application/json",
+  //             Authorization: `Bearer ${authToken}`,
+  //           },
+  //           body: JSON.stringify(body),
+  //         }
+  //       );
 
-        const data = await response.json();
+  //       const data = await response.json();
 
-        if (response.status === 200) {
-          console.log("Data:", data);
-        } else {
-          console.log("Unexpected status code:", response.status);
-        }
-      } catch (error) {
-        console.error("Error:", error);
-      }
-    };
+  //       if (response.status === 200) {
+  //         console.log("Data:", data);
+  //         setInvestorTableData(data.investor_details);
+  //       } else {
+  //         console.log("Unexpected status code:", response.status);
+  //       }
+  //     } catch (error) {
+  //       console.error("Error:", error);
+  //     }
+  //   };
 
-    if (authToken && investor) {
-      fetchInvestorDetails();
-    }
-  }, [authToken, investor]);
+  //   if (authToken && investor) {
+  //     fetchInvestorDetails();
+  //   }
+  // }, [authToken, investor]);
 
   const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
@@ -86,7 +88,21 @@ const Criteria = ({ investor }) => {
     },
   }));
 
-  const headCategories = ["Avg", "Best", "Worst", "Negative Periods"];
+  console.log(investor);
+  console.log(investorDetails);
+  console.log(investorTableData);
+
+  const headCategories = [
+    "Strategy",
+    "Investing style",
+    "Total Return",
+    "Annualized Return",
+    "Rolling Return",
+    "Standard Deviation",
+    "Max Drawdown",
+    "Sharpe Ratio",
+    "Sortino Ratio",
+  ];
   return (
     <div style={{ padding: 20, fontFamily: "Montserrat" }}>
       <div
@@ -110,16 +126,10 @@ const Criteria = ({ investor }) => {
             gap: 8,
           }}
         >
-          <text>Warren Buffet</text>
-          <text>
-            Warren Buffett, widely regarded as one of the most successful
-            investors of all time, is the chairman and CEO of Berkshire
-            Hathaway. Renowned for his value investing approach and long-term
-            perspective, Buffett's keen insights and financial acumen have made
-            him a global icon in the world of finance. His annual shareholder
-            letters and timeless investment principles continue to inspire
-            investors worldwide.
+          <text style={{ color: "black", fontWeight: 600, fontSize: 25 }}>
+            Outlook
           </text>
+          <text>{investorDetails.description}</text>
         </div>
         <div
           style={{
@@ -179,7 +189,7 @@ const Criteria = ({ investor }) => {
                 <TableRow>
                   <TableCell
                     padding="normal"
-                    colSpan={1}
+                    colSpan={2}
                     sx={{
                       backgroundColor: "#272727",
                       color: "white",
@@ -191,7 +201,7 @@ const Criteria = ({ investor }) => {
                   </TableCell>
                   <TableCell
                     padding="normal"
-                    colSpan={12}
+                    colSpan={4}
                     align="center"
                     sx={{
                       backgroundColor: "#427878",
@@ -204,7 +214,7 @@ const Criteria = ({ investor }) => {
                   </TableCell>
                   <TableCell
                     padding="normal"
-                    colSpan={12}
+                    colSpan={2}
                     align="center"
                     sx={{
                       backgroundColor: "orange",
@@ -217,7 +227,7 @@ const Criteria = ({ investor }) => {
                   </TableCell>
                   <TableCell
                     padding="normal"
-                    colSpan={12}
+                    colSpan={2}
                     align="center"
                     sx={{
                       backgroundColor: "blue",
@@ -254,66 +264,22 @@ const Criteria = ({ investor }) => {
                   ))}
                 </TableRow>
               </TableHead>
-              {/* <TableBody>
-                <StyledTableRow hover sx={{ ml: 3 }}>
-                  <StyledTableCell
-                    sx={{
-                      cursor: "pointer",
-                      ":hover": {
-                        textDecoration: "underline",
-                        color: "blue",
-                      },
-                      fontFamily: "Montserrat",
-                    }}
-                  >
-                    <img
-                      src={companyImage}
-                      style={{ height: "15px", width: "15px" }}
-                    />{" "}
-                    {rollingReturn.company_name}
-                  </StyledTableCell>
-                  <StyledTableCell
-                    sx={{
-                      color:
-                        parseFloat(rollingReturn.rolling_return) >= 0
-                          ? "green"
-                          : "red",
-                    }}
-                  >
-                    {rollingReturn.rolling_return}
-                  </StyledTableCell>
-                  <StyledTableCell
-                    sx={{
-                      color:
-                        parseFloat(rollingReturn.best_return) >= 0
-                          ? "green"
-                          : "red",
-                    }}
-                  >
-                    {rollingReturn.best_return}
-                  </StyledTableCell>
-                  <StyledTableCell
-                    sx={{
-                      color:
-                        parseFloat(rollingReturn.worst_return) >= 0
-                          ? "green"
-                          : "red",
-                    }}
-                  >
-                    {rollingReturn.worst_return}
-                  </StyledTableCell>
-                  <StyledTableCell
-                    sx={{
-                      color:
-                        parseFloat(rollingReturn.negative_returns) >= 0
-                          ? "green"
-                          : "red",
-                    }}
-                  >
-                    {rollingReturn.negative_returns}
-                  </StyledTableCell>
-                </StyledTableRow>
-              </TableBody> */}
+              <TableBody>
+                {investorTableData.map((data, index) => (
+                  <StyledTableRow key={index}>
+                    <StyledTableCell>{investor}</StyledTableCell>
+                    <StyledTableCell>{data.strategy_label}</StyledTableCell>
+                    <StyledTableCell>{data.investing_style}</StyledTableCell>
+                    <StyledTableCell>10%</StyledTableCell>
+                    <StyledTableCell>{data.annualized_return}</StyledTableCell>
+                    <StyledTableCell>{data.rolling_return}</StyledTableCell>
+                    <StyledTableCell>{data.stdev_return}</StyledTableCell>
+                    <StyledTableCell>{data.max_drawdown}</StyledTableCell>
+                    <StyledTableCell>{data.sharpe_ratio}</StyledTableCell>
+                    <StyledTableCell>{data.sortino_ratio}</StyledTableCell>
+                  </StyledTableRow>
+                ))}
+              </TableBody>
             </Table>
           </TableContainer>
         </div>
@@ -327,16 +293,10 @@ const Criteria = ({ investor }) => {
             gap: 8,
           }}
         >
-          <text>Warren Buffet</text>
-          <text>
-            Warren Buffett, widely regarded as one of the most successful
-            investors of all time, is the chairman and CEO of Berkshire
-            Hathaway. Renowned for his value investing approach and long-term
-            perspective, Buffett's keen insights and financial acumen have made
-            him a global icon in the world of finance. His annual shareholder
-            letters and timeless investment principles continue to inspire
-            investors worldwide.
+          <text style={{ color: "black", fontSize: 25, fontWeight: 600 }}>
+            Contributions & Legacy
           </text>
+          <text>{investorDetails.contributions_and_legacy}</text>
         </div>
       </div>
     </div>

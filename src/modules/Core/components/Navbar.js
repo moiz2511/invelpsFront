@@ -41,7 +41,6 @@ function Navbar() {
         <Link to="/contact" style={achorStyle}>
           <li>Contact</li>
         </Link>
-        
       </ul>
       <ul className="navbar-list navbar-list-second">
         <li>Login</li>

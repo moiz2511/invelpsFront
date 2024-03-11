@@ -36,6 +36,7 @@ import { CgSpinner } from "react-icons/cg";
 
 import { styled } from "@mui/material/styles";
 import { IoArrowDown, IoArrowUp } from "react-icons/io5";
+import { useSwitch } from "../../../utils/context/SwitchContext";
 
 const headCells = {
   data: [
@@ -245,7 +246,7 @@ const sortingFields = [
   { key: "duration", label: "Duration" },
 ];
 
-const OverviewTab = ({ setSelectedCompany, setCompanyDetails }) => {
+const OverviewTab = ({ setSelectedCompany }) => {
   let pageLoc = window.location.pathname;
 
   const [searchValue, setSearchValue] = useState("");
@@ -274,6 +275,8 @@ const OverviewTab = ({ setSelectedCompany, setCompanyDetails }) => {
   const [selectedField, setSelectedField] = useState(sortingFields[0].key);
 
   const [graphTableDataCopy, setGraphTableDataCopy] = useState([]);
+
+  const { isSwitch1, setIsSwitch1, isSwitch2, setIsSwitch2 } = useSwitch();
 
   const rowsPerPageOptions = [3, 5, 10];
 
@@ -314,7 +317,7 @@ const OverviewTab = ({ setSelectedCompany, setCompanyDetails }) => {
   };
 
   const handleDataVisualization = (strategy) => {
-    setShowVisualData(!showVisualData);
+    setIsSwitch2(true);
     setSelectedStrategy(strategy);
   };
 
@@ -373,85 +376,85 @@ const OverviewTab = ({ setSelectedCompany, setCompanyDetails }) => {
     }
   }, [authToken]);
 
+  const fetchGraphData = async () => {
+    try {
+      const body = {
+        strategy_name: selectedStrategy.name,
+      };
+      const response = await fetch(
+        `
+            https://api.invelps.com/api/strategies/getStrategyGraphData`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+          },
+          body: JSON.stringify(body),
+        }
+      );
+
+      const data = await response.json();
+
+      if (response.status === 200) {
+        console.log(data);
+        setPerExhangeKPI(data.data.companies_per_exchanges_KPI);
+        setPerSectorKPI(data.data.companies_per_sector_KPI);
+        setPerMarketKPI(data.data.companies_per_market_cap_KPI);
+      } else {
+        console.log("Unexpected status code:", response.status);
+      }
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
+  const fetchGraphTableData = async () => {
+    try {
+      const body = {
+        strategy_name: selectedStrategy.name,
+        page: currentPage,
+        data_per_page: currentRowsPerPage,
+      };
+      const response = await fetch(
+        `
+          https://api.invelps.com/api/strategies/getStrategyTableData
+          `,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+          },
+          body: JSON.stringify(body),
+        }
+      );
+
+      const data = await response.json();
+
+      if (response.status === 200) {
+        console.log(data.data);
+        setGraphTableData(data.data);
+        setGraphTableDataCopy(data.data);
+        setTotalPages(data.paginator.total_pages);
+        setPassingCriteria(data.companies_passing_criteris);
+      } else {
+        console.log("Unexpected status code:", response.status);
+      }
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
   useEffect(() => {
-    const fetchGraphData = async () => {
-      try {
-        const body = {
-          strategy_name: selectedStrategy.name,
-        };
-        const response = await fetch(
-          `
-              https://api.invelps.com/api/strategies/getStrategyGraphData`,
-          {
-            method: "POST",
-            headers: {
-              Authorization: `Bearer ${authToken}`,
-            },
-            body: JSON.stringify(body),
-          }
-        );
-
-        const data = await response.json();
-
-        if (response.status === 200) {
-          console.log(data);
-          setPerExhangeKPI(data.data.companies_per_exchanges_KPI);
-          setPerSectorKPI(data.data.companies_per_sector_KPI);
-          setPerMarketKPI(data.data.companies_per_market_cap_KPI);
-        } else {
-          console.log("Unexpected status code:", response.status);
-        }
-      } catch (error) {
-        console.error("Error:", error);
-      }
-    };
-    const fetchGraphTableData = async () => {
-      try {
-        const body = {
-          strategy_name: selectedStrategy.name,
-          page: currentPage,
-          data_per_page: currentRowsPerPage,
-        };
-        const response = await fetch(
-          `
-            https://api.invelps.com/api/strategies/getStrategyTableData
-            `,
-          {
-            method: "POST",
-            headers: {
-              Authorization: `Bearer ${authToken}`,
-            },
-            body: JSON.stringify(body),
-          }
-        );
-
-        const data = await response.json();
-
-        if (response.status === 200) {
-          console.log(data.data);
-          setGraphTableData(data.data);
-          setGraphTableDataCopy(data.data);
-          setTotalPages(data.paginator.total_pages);
-          setPassingCriteria(data.companies_passing_criteris);
-        } else {
-          console.log("Unexpected status code:", response.status);
-        }
-      } catch (error) {
-        console.error("Error:", error);
-      }
-    };
-
     fetchGraphData();
     fetchGraphTableData();
-  }, [selectedStrategy, currentPage, currentRowsPerPage]);
+  }, [selectedStrategy, currentPage, currentRowsPerPage, isSwitch1]);
 
+  console.log(isSwitch1);
   console.log(perExchangeKPI);
   console.log(totalPages);
   console.log(passingCriteria);
 
-  const handleSortChange = (e) => {
-    setSelectedSort(e.target.value);
-  };
+  // const handleSortChange = (e) => {
+  //   setSelectedSort(e.target.value);
+  // };
 
   const handleSortingFieldChange = (field) => {
     setSelectedField(field);
@@ -529,9 +532,7 @@ const OverviewTab = ({ setSelectedCompany, setCompanyDetails }) => {
   };
 
   const handleGoBack = () => {
-    setShowVisualData(!showVisualData);
-    setSelectedCompany(null);
-    setCompanyDetails(false);
+    setIsSwitch2(false);
   };
 
   return (
@@ -541,17 +542,24 @@ const OverviewTab = ({ setSelectedCompany, setCompanyDetails }) => {
         fontFamily: "Montserrat",
       }}
     >
-      {showVisualData ? (
+      {isSwitch2 ? (
         <Box ml={2} mb={4}>
           <Typography color={"rgba(0, 0, 0, 0.6)"}>
-            Strategies Overview / {selectedStrategy.name}
+            Strategies Overview / {selectedStrategy?.name}
           </Typography>
         </Box>
       ) : (
         <PageInfoBreadCrumbs data={pageLoc} />
       )}
-      {showVisualData ? (
-        <>
+      {isSwitch2 ? (
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            maxWidth: "100%",
+            overflowX: "hidden",
+          }}
+        >
           <Button
             onClick={handleGoBack}
             sx={{
@@ -561,11 +569,10 @@ const OverviewTab = ({ setSelectedCompany, setCompanyDetails }) => {
               ml: 3,
             }}
           >
-            Go Back
+            Back
           </Button>
           <Card
             sx={{
-              margin: 1,
               display: "flex",
               flexDirection: "column",
               padding: 2,
@@ -573,7 +580,7 @@ const OverviewTab = ({ setSelectedCompany, setCompanyDetails }) => {
           >
             <text style={{ fontSize: 25, fontWeight: "bold" }}>
               {" "}
-              {selectedStrategy.name}{" "}
+              {selectedStrategy?.name}{" "}
             </text>
             <Card
               sx={{
@@ -718,7 +725,7 @@ const OverviewTab = ({ setSelectedCompany, setCompanyDetails }) => {
                       ))}
                     </TableRow>
                   </TableHead>
-                  {graphTableData ? (
+                  {graphTableDataCopy ? (
                     <TableBody>
                       {graphTableDataCopy.map((data, index) => {
                         return (
@@ -732,7 +739,8 @@ const OverviewTab = ({ setSelectedCompany, setCompanyDetails }) => {
                               hover
                               onClick={() => {
                                 setSelectedCompany(data);
-                                setCompanyDetails(true);
+                                setIsSwitch1(true);
+                                setIsSwitch2(false);
                               }}
                               style={{ cursor: "pointer" }}
                             >
@@ -871,7 +879,7 @@ const OverviewTab = ({ setSelectedCompany, setCompanyDetails }) => {
               </Box>
             </Card>
           </Card>
-        </>
+        </div>
       ) : (
         <>
           <Card sx={{ width: "100vw", m: 1, position: "relative" }}>

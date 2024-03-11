@@ -143,7 +143,13 @@ const InvestorModal = ({ showInvestor, closeInvestorModal, investor }) => {
             investorTableData={investorTableData}
           />
         )}
-        {selectedTab === 1 && <Criteria investor={investor} />}
+        {selectedTab === 1 && (
+          <Criteria
+            investor={investor}
+            investorDetails={investorDetails}
+            investorTableData={investorTableData}
+          />
+        )}
       </Box>
     </Modal>
   );
