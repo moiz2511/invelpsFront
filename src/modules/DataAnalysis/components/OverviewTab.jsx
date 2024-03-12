@@ -445,7 +445,7 @@ const OverviewTab = ({ setSelectedCompany }) => {
   useEffect(() => {
     fetchGraphData();
     fetchGraphTableData();
-  }, [selectedStrategy, currentPage, currentRowsPerPage, isSwitch1]);
+  }, [selectedStrategy, currentPage, currentRowsPerPage]);
 
   console.log(isSwitch1);
   console.log(perExchangeKPI);
@@ -540,33 +540,41 @@ const OverviewTab = ({ setSelectedCompany }) => {
       container
       sx={{
         fontFamily: "Montserrat",
+        width: "100%",
       }}
     >
-      {isSwitch2 ? (
-        <Box ml={2} mb={4}>
-          <Typography color={"rgba(0, 0, 0, 0.6)"}>
-            Strategies Overview / {selectedStrategy?.name}
-          </Typography>
-        </Box>
-      ) : (
-        <PageInfoBreadCrumbs data={pageLoc} />
-      )}
-      {isSwitch2 ? (
+      <PageInfoBreadCrumbs data={pageLoc} />
+
+      {/* Strategies modal */}
+      {isSwitch2 && (
         <div
           style={{
             display: "flex",
             flexDirection: "column",
             maxWidth: "100%",
+            position: "absolute",
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+            backgroundColor: "white",
+            zIndex: 1,
             overflowX: "hidden",
           }}
         >
+          <Box ml={2} mb={4}>
+            <Typography color={"rgba(0, 0, 0, 0.6)"}>
+              Strategies Overview / {selectedStrategy?.name}
+            </Typography>
+          </Box>
           <Button
             onClick={handleGoBack}
             sx={{
               alignSelf: "flex-start",
               backgroundColor: "#407879",
               color: "rgb(204, 191, 144)",
-              ml: 3,
+              ml: 2,
+              mb: 2,
             }}
           >
             Back
@@ -575,7 +583,7 @@ const OverviewTab = ({ setSelectedCompany }) => {
             sx={{
               display: "flex",
               flexDirection: "column",
-              padding: 2,
+              padding: 1,
             }}
           >
             <text style={{ fontSize: 25, fontWeight: "bold" }}>
@@ -584,11 +592,11 @@ const OverviewTab = ({ setSelectedCompany }) => {
             </text>
             <Card
               sx={{
-                margin: 2,
+                my: 1,
                 display: "flex",
                 flexDirection: "column",
                 gap: 5,
-                padding: 3,
+                padding: 2,
               }}
             >
               <text style={{ fontSize: 20, fontWeight: "bold" }}>
@@ -880,10 +888,84 @@ const OverviewTab = ({ setSelectedCompany }) => {
             </Card>
           </Card>
         </div>
-      ) : (
-        <>
-          <Card sx={{ width: "100vw", m: 1, position: "relative" }}>
-            <Box p={3}>
+      )}
+      {/* ------------------------------------------------------ */}
+
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+          gap: 5,
+        }}
+      >
+        <Card sx={{ my: 1, position: "relative", width: "calc(100vw - 20px)" }}>
+          <Box px={2} py={1}>
+            <Box spacing={1} sx={{ mt: 0.5 }}>
+              <text
+                style={{
+                  padding: "5px",
+                  fontSize: "27px",
+                  fontWeight: "bold",
+                }}
+              >
+                Strategies Performances and Risks (10 years)
+              </text>
+            </Box>
+
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "row",
+                gap: 3,
+                marginTop: 6,
+              }}
+            >
+              {allStrategies.length > 0 ? (
+                <>
+                  <VerticalBarChart
+                    chartId={"bar-chart-1"}
+                    graphData={allStrategies}
+                  />
+
+                  <VerticalBarChart
+                    chartId={"bar-chart-2"}
+                    graphData={allStrategies}
+                  />
+
+                  <VerticalBarChart
+                    chartId={"bar-chart-3"}
+                    graphData={allStrategies}
+                  />
+                </>
+              ) : (
+                <h1>Fetching...</h1>
+              )}
+            </Box>
+          </Box>
+        </Card>
+        <Card
+          sx={{
+            display: "flex",
+            width: "calc(100vw - 20px)",
+            my: 1,
+            position: "relative",
+            overflowX: "auto",
+          }}
+        >
+          <Box
+            display={"flex"}
+            flexDirection={"column"}
+            width={"100%"}
+            bgcolor={"white"}
+          >
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "space-between",
+                padding: 3,
+              }}
+            >
               <Box spacing={1} sx={{ mt: 0.5 }}>
                 <text
                   style={{
@@ -892,64 +974,12 @@ const OverviewTab = ({ setSelectedCompany }) => {
                     fontWeight: "bold",
                   }}
                 >
-                  Strategies Performances and Risks (10 years)
+                  {" "}
+                  Overview{" "}
                 </text>
               </Box>
-
-              <Box
-                sx={{
-                  display: "flex",
-                  flexDirection: "row",
-                  gap: 3,
-                  marginTop: 6,
-                }}
-              >
-                {allStrategies.length > 0 ? (
-                  <>
-                    <VerticalBarChart
-                      chartId={"bar-chart-1"}
-                      graphData={allStrategies}
-                    />
-
-                    <VerticalBarChart
-                      chartId={"bar-chart-2"}
-                      graphData={allStrategies}
-                    />
-
-                    <VerticalBarChart
-                      chartId={"bar-chart-3"}
-                      graphData={allStrategies}
-                    />
-                  </>
-                ) : (
-                  <h1>Fetching...</h1>
-                )}
-              </Box>
-            </Box>
-          </Card>
-          <Card sx={{ width: "100vw", m: 1, position: "relative" }}>
-            <Box>
-              <Box
-                sx={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  padding: 3,
-                }}
-              >
-                <Box spacing={1} sx={{ mt: 0.5 }}>
-                  <text
-                    style={{
-                      padding: "5px",
-                      fontSize: "27px",
-                      fontWeight: "bold",
-                    }}
-                  >
-                    {" "}
-                    Overview{" "}
-                  </text>
-                </Box>
-                <Box display="flex" gap={2} sx={{ mt: 0.5 }}>
-                  {/* <FormControl>
+              <Box display="flex" gap={2} sx={{ mt: 0.5 }}>
+                {/* <FormControl>
                     <InputLabel id="sort-by-select-label">Sort by</InputLabel>
                     <Select
                       labelId="sort-by-select-label"
@@ -979,180 +1009,177 @@ const OverviewTab = ({ setSelectedCompany }) => {
                       ))}
                     </Select>
                   </FormControl> */}
-                  <TextField
-                    sx={{ borderRadius: 10 }}
-                    placeholder="Search"
-                    value={searchValue}
-                    onChange={handleSearchValueChange}
-                  />
-                </Box>
+                <TextField
+                  sx={{ borderRadius: 10 }}
+                  placeholder="Search"
+                  value={searchValue}
+                  onChange={handleSearchValueChange}
+                />
               </Box>
-              <TableContainer>
-                <Table
-                  sx={{ minWidth: "100%", maxWidth: "100%", mt: 1 }}
-                  size="medium"
-                >
-                  <TableHead>
-                    <TableRow>
-                      {headCells.data.map((headCell, index) => (
-                        <StyledTableCell key={headCell.id} padding="normal">
-                          <Box
-                            sx={{
-                              display: "flex",
-                              alignItems: "center",
-                              gap: 2,
-                            }}
-                          >
-                            <span>{headCell.label}</span>
-                            {headCell.key.trim() !== "" &&
-                              (selectedSort === 1 ? (
-                                <button
-                                  onClick={() => {
-                                    handleSortingFieldChange(headCell.key);
-                                    setSelectedSort(2);
-                                  }}
-                                  style={{
-                                    color: "white",
-                                    background: "rgba(255, 255, 255, 0.3)",
-                                    border: "none",
-                                    borderRadius: "9999px",
-                                    width: "24px",
-                                    height: "24px",
-                                    display: "flex",
-                                    alignItems: "center",
-                                    justifyContent: "center",
-                                  }}
-                                >
-                                  <IoArrowDown />
-                                </button>
-                              ) : (
-                                <button
-                                  style={{
-                                    color: "white",
-                                    background: "rgba(255, 255, 255, 0.3)",
-                                    border: "none",
-                                    borderRadius: "9999px",
-                                    width: "24px",
-                                    height: "24px",
-                                    display: "flex",
-                                    alignItems: "center",
-                                    justifyContent: "center",
-                                  }}
-                                  onClick={() => {
-                                    handleSortingFieldChange(headCell.key);
-                                    setSelectedSort(1);
-                                  }}
-                                >
-                                  <IoArrowUp />
-                                </button>
-                              ))}
-                          </Box>
-                        </StyledTableCell>
-                      ))}
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {strategiesCopy.map((data, index) => {
-                      return (
-                        <StyledTableRow hover key={index} sx={{ ml: 3 }}>
-                          <StyledTableCell
-                            onClick={() => handleDataVisualization(data)}
-                            sx={{
-                              cursor: "pointer",
-                              ":hover": {
-                                textDecoration: "underline",
-                                color: "blue",
-                              },
-                            }}
-                          >
-                            {" "}
-                            {data.name}
-                          </StyledTableCell>
-                          <StyledTableCell
-                            onClick={() =>
-                              handleInvestorVisualization(data.investors)
-                            }
-                            sx={{
-                              cursor: "pointer",
-                              ":hover": {
-                                textDecoration: "underline",
-                                color: "blue",
-                              },
-                            }}
-                          >
-                            {data.investors}
-                          </StyledTableCell>
-                          <StyledTableCell>
-                            {data.investing_style}
-                          </StyledTableCell>
-                          <StyledTableCell
-                            sx={{
-                              color: data.total_return >= 0 ? "green" : "red",
-                            }}
-                          >
-                            {" "}
-                            {data.total_return}{" "}
-                          </StyledTableCell>
-                          <StyledTableCell
-                            sx={{
-                              color:
-                                data.annualized_return >= 0 ? "green" : "red",
-                            }}
-                          >
-                            {" "}
-                            {data.annualized_return}{" "}
-                          </StyledTableCell>
-                          <StyledTableCell
-                            sx={{
-                              color: data.rolling_return >= 0 ? "green" : "red",
-                            }}
-                          >
-                            {" "}
-                            {data.rolling_return}{" "}
-                          </StyledTableCell>
-                          <StyledTableCell
-                            sx={{
-                              color: data.stdev_return >= 0 ? "green" : "red",
-                            }}
-                          >
-                            {" "}
-                            {data.stdev_return}{" "}
-                          </StyledTableCell>
-                          <StyledTableCell
-                            sx={{
-                              color: data.max_drawdown >= 0 ? "green" : "red",
-                            }}
-                          >
-                            {" "}
-                            {data.max_drawdown}{" "}
-                          </StyledTableCell>
-                          <StyledTableCell
-                            sx={{
-                              color: data.sharpe_ratio >= 0 ? "green" : "red",
-                            }}
-                          >
-                            {" "}
-                            {data.sharpe_ratio}{" "}
-                          </StyledTableCell>
-                          <StyledTableCell
-                            sx={{
-                              color: data.sortino_ratio >= 0 ? "green" : "red",
-                            }}
-                          >
-                            {" "}
-                            {data.sortino_ratio ? data.sortino_ratio : "-"}{" "}
-                          </StyledTableCell>
-                          <StyledTableCell> {data.duration} </StyledTableCell>
-                        </StyledTableRow>
-                      );
-                    })}
-                  </TableBody>
-                </Table>
-              </TableContainer>
             </Box>
-          </Card>
-        </>
-      )}
+            <TableContainer>
+              <Table sx={{ width: "100%", mt: 1 }} size="medium">
+                <TableHead>
+                  <TableRow>
+                    {headCells.data.map((headCell, index) => (
+                      <StyledTableCell key={headCell.id} padding="normal">
+                        <Box
+                          sx={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: 2,
+                          }}
+                        >
+                          <span>{headCell.label}</span>
+                          {headCell.key.trim() !== "" &&
+                            (selectedSort === 1 ? (
+                              <button
+                                onClick={() => {
+                                  handleSortingFieldChange(headCell.key);
+                                  setSelectedSort(2);
+                                }}
+                                style={{
+                                  color: "white",
+                                  background: "rgba(255, 255, 255, 0.3)",
+                                  border: "none",
+                                  borderRadius: "9999px",
+                                  width: "24px",
+                                  height: "24px",
+                                  display: "flex",
+                                  alignItems: "center",
+                                  justifyContent: "center",
+                                }}
+                              >
+                                <IoArrowDown />
+                              </button>
+                            ) : (
+                              <button
+                                style={{
+                                  color: "white",
+                                  background: "rgba(255, 255, 255, 0.3)",
+                                  border: "none",
+                                  borderRadius: "9999px",
+                                  width: "24px",
+                                  height: "24px",
+                                  display: "flex",
+                                  alignItems: "center",
+                                  justifyContent: "center",
+                                }}
+                                onClick={() => {
+                                  handleSortingFieldChange(headCell.key);
+                                  setSelectedSort(1);
+                                }}
+                              >
+                                <IoArrowUp />
+                              </button>
+                            ))}
+                        </Box>
+                      </StyledTableCell>
+                    ))}
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {strategiesCopy.map((data, index) => {
+                    return (
+                      <StyledTableRow hover key={index} sx={{ ml: 3 }}>
+                        <StyledTableCell
+                          onClick={() => handleDataVisualization(data)}
+                          sx={{
+                            cursor: "pointer",
+                            ":hover": {
+                              textDecoration: "underline",
+                              color: "blue",
+                            },
+                          }}
+                        >
+                          {" "}
+                          {data.name}
+                        </StyledTableCell>
+                        <StyledTableCell
+                          onClick={() =>
+                            handleInvestorVisualization(data.investors)
+                          }
+                          sx={{
+                            cursor: "pointer",
+                            ":hover": {
+                              textDecoration: "underline",
+                              color: "blue",
+                            },
+                          }}
+                        >
+                          {data.investors}
+                        </StyledTableCell>
+                        <StyledTableCell>
+                          {data.investing_style}
+                        </StyledTableCell>
+                        <StyledTableCell
+                          sx={{
+                            color: data.total_return >= 0 ? "green" : "red",
+                          }}
+                        >
+                          {" "}
+                          {data.total_return}{" "}
+                        </StyledTableCell>
+                        <StyledTableCell
+                          sx={{
+                            color:
+                              data.annualized_return >= 0 ? "green" : "red",
+                          }}
+                        >
+                          {" "}
+                          {data.annualized_return}{" "}
+                        </StyledTableCell>
+                        <StyledTableCell
+                          sx={{
+                            color: data.rolling_return >= 0 ? "green" : "red",
+                          }}
+                        >
+                          {" "}
+                          {data.rolling_return}{" "}
+                        </StyledTableCell>
+                        <StyledTableCell
+                          sx={{
+                            color: data.stdev_return >= 0 ? "green" : "red",
+                          }}
+                        >
+                          {" "}
+                          {data.stdev_return}{" "}
+                        </StyledTableCell>
+                        <StyledTableCell
+                          sx={{
+                            color: data.max_drawdown >= 0 ? "green" : "red",
+                          }}
+                        >
+                          {" "}
+                          {data.max_drawdown}{" "}
+                        </StyledTableCell>
+                        <StyledTableCell
+                          sx={{
+                            color: data.sharpe_ratio >= 0 ? "green" : "red",
+                          }}
+                        >
+                          {" "}
+                          {data.sharpe_ratio}{" "}
+                        </StyledTableCell>
+                        <StyledTableCell
+                          sx={{
+                            color: data.sortino_ratio >= 0 ? "green" : "red",
+                          }}
+                        >
+                          {" "}
+                          {data.sortino_ratio ? data.sortino_ratio : "-"}{" "}
+                        </StyledTableCell>
+                        <StyledTableCell> {data.duration} </StyledTableCell>
+                      </StyledTableRow>
+                    );
+                  })}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          </Box>
+        </Card>
+      </div>
+
       {showInvestor && (
         <InvestorModal
           showInvestor={showInvestor}

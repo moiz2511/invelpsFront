@@ -97,7 +97,7 @@ const BackTest = ({ companySymbol, companyLogo }) => {
 
           <Card
             sx={{
-              p: 3,
+              p: 2,
               display: "flex",
               flexDirection: "column",
               fontFamily: "Montserrat",
@@ -108,206 +108,305 @@ const BackTest = ({ companySymbol, companyLogo }) => {
           >
             <Box
               sx={{
-                p: 3,
+                p: 1,
                 display: "flex",
                 flexDirection: "row",
                 justifyContent: "space-between",
+                alignItems: "center",
               }}
             >
-              <img src={companyLogo} width={40} height={40} />
+              <img src={companyLogo} width={50} height={50} />
+              <Box
+                sx={{
+                  px: 2,
+                  display: "flex",
+                  flexDirection: "row",
+                  justifyContent: "flex-start",
+                  alignItems: "center",
+                  width: "100%",
+                }}
+              >
+                <text style={{ fontSize: "30px", fontWeight: "bold" }}>
+                  {strategyBackTest.company_name}
+                </text>
+                <Box sx={{ py: 1, px: 3 }}>
+                  <div
+                    style={{
+                      width: "auto",
+                      paddingInline: "20px",
+                      background: "linear-gradient(to left,#CC6656, #F26800)",
+                      position: "relative",
+                      transform: "skew(20deg)",
+                      textAlign: "center",
+                      lineHeight: "40px",
+                      color: "#ffffff",
+                    }}
+                  >
+                    <div
+                      style={{
+                        transform: "skew(-20deg)",
+                        fontWeight: "bold",
+                      }}
+                    >
+                      {companySymbol}
+                    </div>
+                  </div>
+                </Box>
+              </Box>
               <img
                 src={require("../../../assets/images/4Dots.png")}
                 width={70}
                 height={35}
               />
             </Box>
+
+            <Box sx={{ px: 4, pt: 2 }}>
+              <text style={{ fontWeight: 600 }}>
+                If you&apos;d invested{" "}
+                <span style={{ color: "#407879" }}>
+                  $ {strategyBackTest.investment_capital_usd}
+                </span>{" "}
+                in{" "}
+                <span style={{ color: "#CB6843" }}>
+                  {strategyBackTest.company_name} ({companySymbol})
+                </span>{" "}
+                on {strategyBackTest.starting_price_date},{" "}
+                {strategyBackTest.duration} 10 years later your investment would
+                be worth:
+              </text>
+            </Box>
             <Box
               sx={{
-                p: 3,
                 display: "flex",
                 flexDirection: "row",
-                justifyContent: "space-between",
+                px: 2,
               }}
             >
-              <text style={{ fontSize: "30px", fontWeight: "bold" }}>
-                {strategyBackTest.company_name}
-              </text>
-              <Box sx={{ p: 3 }}>
-                <div
-                  style={{
-                    width: "auto",
-                    paddingLeft: "30px",
-                    paddingRight: "30px",
-                    height: 50,
-                    background: "linear-gradient(to left,#CC6656, #F26800)",
-                    position: "relative",
-                    transform: "skew(20deg)",
-                    textAlign: "center",
-                    lineHeight: "50px",
-                    color: "#ffffff",
-                  }}
-                >
-                  <div
-                    style={{
-                      transform: "skew(-20deg)",
-                      fontWeight: "bold",
-                    }}
-                  >
-                    {companySymbol}
-                  </div>
-                </div>
-              </Box>
-            </Box>
-            <text style={{ fontWeight: 600 }}>
-              If you&apos;d invested{" "}
-              <span style={{ color: "#407879" }}>
-                $ {strategyBackTest.investment_capital_usd}
-              </span>{" "}
-              in{" "}
-              <span style={{ color: "#CB6843" }}>
-                {strategyBackTest.company_name} ({companySymbol})
-              </span>{" "}
-              on {strategyBackTest.starting_price_date},{" "}
-              {strategyBackTest.duration} 10 years later your investment would
-              be worth :
-            </text>
-            <Box sx={{ display: "flex", flexDirection: "row" }}>
               <Box sx={{ flex: 1 }}>
                 <Box
                   sx={{
                     display: "flex",
                     flexDirection: "column",
-                    marginTop: 4,
+                    marginTop: 2,
                   }}
                 >
                   <MdCheckCircle color="#407879" size={27} />
-                  <text style={{ fontWeight: 600 }}>Bourse:</text>
-                  <text style={{ fontWeight: 600, color: "#407879" }}>
-                    {strategyBackTest.exchange}
-                  </text>
+                  <span style={{ display: "flex", gap: 8 }}>
+                    <text style={{ fontWeight: 600 }}>Bourse:</text>
+                    <text style={{ fontWeight: 600, color: "#407879" }}>
+                      {strategyBackTest.exchange}
+                    </text>
+                  </span>
                 </Box>
-                <Box style={{ display: "flex", flexDirection: "row" }}>
+                <Box style={{ display: "flex", flexDirection: "row", gap: 6 }}>
                   <Box sx={{ flex: 1 }}>
                     <Box
                       sx={{
                         display: "flex",
-                        flexDirection: "column",
-                        marginTop: 4,
+                        flexDirection: "row",
+                        alignItems: "start",
+                        marginTop: 3,
+                        gap: 1,
                       }}
                     >
                       <MdCheckCircle color="#407879" size={27} />
-                      <text style={{ fontWeight: 600 }}>Industrie:</text>
-                      <text style={{ fontWeight: 600, color: "#407879" }}>
-                        {strategyBackTest.industry}
-                      </text>
+                      <span
+                        style={{
+                          display: "flex",
+                          flexDirection: "column",
+                        }}
+                      >
+                        <text style={{ fontWeight: 600 }}>Industrie:</text>
+                        <text style={{ fontWeight: 600, color: "#407879" }}>
+                          {strategyBackTest.industry}
+                        </text>
+                      </span>
                     </Box>
                     <Box
                       sx={{
                         display: "flex",
-                        flexDirection: "column",
-                        marginTop: 4,
+                        flexDirection: "row",
+                        alignItems: "start",
+                        marginTop: 3,
+                        gap: 1,
                       }}
                     >
                       <MdCheckCircle color="#407879" size={27} />
-                      <text style={{ fontWeight: 600 }}>Initial Price:</text>
-                      <text style={{ fontWeight: 600, color: "#407879" }}>
-                        $ {strategyBackTest.starting_price}
-                      </text>
+                      <span
+                        style={{
+                          display: "flex",
+                          flexDirection: "column",
+                        }}
+                      >
+                        <text style={{ fontWeight: 600 }}>Initial Price:</text>
+                        <text style={{ fontWeight: 600, color: "#407879" }}>
+                          $ {strategyBackTest.starting_price}
+                        </text>
+                      </span>
                     </Box>
                     <Box
                       sx={{
                         display: "flex",
-                        flexDirection: "column",
-                        marginTop: 4,
+                        flexDirection: "row",
+                        alignItems: "start",
+                        marginTop: 3,
+                        gap: 1,
                       }}
                     >
                       <MdCheckCircle color="#407879" size={27} />
-                      <text style={{ fontWeight: 600 }}>Initial Date:</text>
-                      <text style={{ fontWeight: 600, color: "#407879" }}>
-                        {strategyBackTest.starting_price_date}
-                      </text>
+                      <span
+                        style={{ display: "flex", flexDirection: "column" }}
+                      >
+                        <text style={{ fontWeight: 600 }}>Initial Date:</text>
+                        <text style={{ fontWeight: 600, color: "#407879" }}>
+                          {strategyBackTest.starting_price_date}
+                        </text>
+                      </span>
                     </Box>
                     <Box
                       sx={{
                         display: "flex",
-                        flexDirection: "column",
-                        marginTop: 4,
+                        flexDirection: "row",
+                        alignItems: "start",
+                        marginTop: 3,
+                        gap: 1,
                       }}
                     >
                       <MdCheckCircle color="#407879" size={27} />
-                      <text style={{ fontWeight: 600 }}>Country:</text>
-                      <text style={{ fontWeight: 600, color: "#407879" }}>
-                        {strategyBackTest.country}
-                      </text>
+                      <span
+                        style={{ display: "flex", flexDirection: "column" }}
+                      >
+                        <text style={{ fontWeight: 600 }}>Country:</text>
+                        <text style={{ fontWeight: 600, color: "#407879" }}>
+                          {strategyBackTest.country}
+                        </text>
+                      </span>
                     </Box>
                     <Box
+                      sx={{
+                        display: "flex",
+                        flexDirection: "row",
+                        alignItems: "start",
+                        marginTop: 3,
+                        gap: 1,
+                      }}
+                    >
+                      <MdCheckCircle color="#407879" size={27} />
+                      <span
+                        style={{ display: "flex", flexDirection: "column" }}
+                      >
+                        <text style={{ fontWeight: 600 }}>Total Shares:</text>
+                        <text style={{ fontWeight: 600, color: "#407879" }}>
+                          {strategyBackTest.total_shares}
+                        </text>
+                      </span>
+                    </Box>
+                  </Box>
+                  <Box sx={{ flex: 1 }}>
+                    <Box
+                      sx={{
+                        display: "flex",
+                        flexDirection: "row",
+                        alignItems: "start",
+                        marginTop: 3,
+                        gap: 1,
+                      }}
+                    >
+                      <MdCheckCircle color="#407879" size={27} />
+                      <span
+                        style={{ display: "flex", flexDirection: "column" }}
+                      >
+                        <text style={{ fontWeight: 600 }}>Sector:</text>
+                        <text style={{ fontWeight: 600, color: "#407879" }}>
+                          {strategyBackTest.sector}
+                        </text>
+                      </span>
+                    </Box>
+                    <Box
+                      sx={{
+                        display: "flex",
+                        flexDirection: "row",
+                        alignItems: "start",
+                        marginTop: 3,
+                        gap: 1,
+                      }}
+                    >
+                      <MdCheckCircle color="#407879" size={27} />
+                      <span
+                        style={{ display: "flex", flexDirection: "column" }}
+                      >
+                        <text style={{ fontWeight: 600 }}>Ending Price:</text>
+                        <text style={{ fontWeight: 600, color: "#407879" }}>
+                          $ {strategyBackTest.ending_price}
+                        </text>
+                      </span>
+                    </Box>
+                    <Box
+                      sx={{
+                        display: "flex",
+                        flexDirection: "row",
+                        alignItems: "start",
+                        marginTop: 3,
+                        gap: 1,
+                      }}
+                    >
+                      <MdCheckCircle color="#407879" size={27} />
+                      <span
+                        style={{ display: "flex", flexDirection: "column" }}
+                      >
+                        <text style={{ fontWeight: 600 }}>Ending Date:</text>
+                        <text style={{ fontWeight: 600, color: "#407879" }}>
+                          {strategyBackTest.ending_price_date}
+                        </text>
+                      </span>
+                    </Box>
+                    <Box
+                      sx={{
+                        display: "flex",
+                        flexDirection: "row",
+                        alignItems: "start",
+                        marginTop: 3,
+                        gap: 1,
+                      }}
+                    >
+                      <MdCheckCircle color="#407879" size={27} />
+                      <span
+                        style={{ display: "flex", flexDirection: "column" }}
+                      >
+                        <text style={{ fontWeight: 600 }}>Duration:</text>
+                        <text style={{ fontWeight: 600, color: "#407879" }}>
+                          {strategyBackTest.duration}
+                        </text>
+                      </span>
+                    </Box>
+                  </Box>
+                </Box>
+                <Box
+                  sx={{
+                    p: 2,
+                    my: 2,
+                    border: "1px solid #CB6843",
+                    backgroundColor: "#FAF2ED",
+                    borderRadius: "10px",
+                    fontWeight: 700,
+                    fontSize: "20px",
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: 2,
+                    // height: "130px",
+                    width: "350px",
+                  }}
+                >
+                  IS THIS A GOOD OPPORTUNITY?
+                  <Button
                     sx={{
-                      display: "flex",
-                      flexDirection: "column",
-                      marginTop: 4,
+                      background: "linear-gradient(to left,#CC6656, #F26800)",
+                      color: "white",
+                      fontFamily: "Helvetica",
                     }}
                   >
-                    <MdCheckCircle color="#407879" size={27} />
-                    <text style={{ fontWeight: 600 }}>Total Shares:</text>
-                    <text style={{ fontWeight: 600, color: "#407879" }}>
-                      {strategyBackTest.total_shares}
-                    </text>
-                  </Box>
-                  </Box>
-                  <Box sx={{ flex: 1}}>
-                    <Box
-                      sx={{
-                        display: "flex",
-                        flexDirection: "column",
-                        marginTop: 4,
-                      }}
-                    >
-                      <MdCheckCircle color="#407879" size={27} />
-                      <text style={{ fontWeight: 600 }}>Sector:</text>
-                      <text style={{ fontWeight: 600, color: "#407879" }}>
-                        {strategyBackTest.sector}
-                      </text>
-                    </Box>
-                    <Box
-                      sx={{
-                        display: "flex",
-                        flexDirection: "column",
-                        marginTop: 4,
-                      }}
-                    >
-                      <MdCheckCircle color="#407879" size={27} />
-                      <text style={{ fontWeight: 600 }}>Ending Price:</text>
-                      <text style={{ fontWeight: 600, color: "#407879" }}>
-                        $ {strategyBackTest.ending_price}
-                      </text>
-                    </Box>
-                    <Box
-                      sx={{
-                        display: "flex",
-                        flexDirection: "column",
-                        marginTop: 4,
-                      }}
-                    >
-                      <MdCheckCircle color="#407879" size={27} />
-                      <text style={{ fontWeight: 600 }}>Ending Date:</text>
-                      <text style={{ fontWeight: 600, color: "#407879" }}>
-                        {strategyBackTest.ending_price_date}
-                      </text>
-                    </Box>
-                    <Box
-                      sx={{
-                        display: "flex",
-                        flexDirection: "column",
-                        marginTop: 4,
-                      }}
-                    >
-                      <MdCheckCircle color="#407879" size={27} />
-                      <text style={{ fontWeight: 600 }}>Duration:</text>
-                      <text style={{ fontWeight: 600, color: "#407879" }}>
-                        {strategyBackTest.duration}
-                      </text>
-                    </Box>
-                  </Box>
+                    Click here to find out!
+                  </Button>
                 </Box>
               </Box>
               <Box sx={{ flex: 1 }}>
@@ -325,13 +424,12 @@ const BackTest = ({ companySymbol, companyLogo }) => {
                   <Box sx={{ p: 3, transform: "rotate(-1deg)" }}>
                     <div
                       style={{
-                        width: 200,
-                        height: 50,
+                        paddingInline: "20px",
+                        paddingBlock: "5px",
                         background: "linear-gradient(to left,#CC6656, #F26800)",
                         position: "relative",
                         transform: "skew(-10deg)",
                         textAlign: "center",
-                        lineHeight: "50px",
                         color: "#ffffff",
                       }}
                     >
@@ -339,7 +437,7 @@ const BackTest = ({ companySymbol, companyLogo }) => {
                         style={{
                           transform: "skew(10deg)",
                           fontWeight: "bold",
-                          fontSize: "25px",
+                          fontSize: "20px",
                         }}
                       >
                         $ {strategyBackTest.total_investment_value_usd}
@@ -355,16 +453,14 @@ const BackTest = ({ companySymbol, companyLogo }) => {
                     alignItems: "center",
                   }}
                 >
-                  <Box sx={{ p: 3, transform: "rotate(-1deg)" }}>
+                  <Box sx={{ py: 2, px: 3, transform: "rotate(-1deg)" }}>
                     <div
                       style={{
                         width: 400,
-                        height: 80,
                         background: "linear-gradient(to left,#CC6656, #F26800)",
                         position: "relative",
                         transform: "skew(-10deg)",
                         textAlign: "center",
-                        lineHeight: "50px",
                         color: "#ffffff",
                       }}
                     >
@@ -373,6 +469,7 @@ const BackTest = ({ companySymbol, companyLogo }) => {
                           transform: "skew(10deg)",
                           fontWeight: "bold",
                           fontSize: "22px",
+                          paddingBlock: "10px",
                         }}
                       >
                         TOTAL RETURN{" "}
@@ -382,25 +479,24 @@ const BackTest = ({ companySymbol, companyLogo }) => {
                   </Box>
                 </Box>
                 <Box>
-                  <Box sx={{ p: 3 }}>
+                  <Box sx={{ p: 1 }}>
                     <div
                       style={{
-                        width: 400,
-                        height: 80,
                         background: "linear-gradient(#CC6656, #F26800)",
                         color: "#ffffff",
-                        borderRadius: "30px",
+                        borderRadius: "20px",
                         display: "flex",
                         flexDirection: "row",
                         alignItems: "center",
-                        padding: "20px",
+                        paddingInline: "30px",
+                        paddingBlock: "12px",
                         justifyContent: "space-between",
                       }}
                     >
                       <div
                         style={{
                           fontWeight: "bold",
-                          fontSize: "23px",
+                          fontSize: "18px",
                         }}
                       >
                         ANNUALIZED
@@ -409,7 +505,7 @@ const BackTest = ({ companySymbol, companyLogo }) => {
                       <div
                         style={{
                           fontWeight: "bold",
-                          fontSize: "50px",
+                          fontSize: "42px",
                         }}
                       >
                         {strategyBackTest.investment_total_return}%
@@ -422,42 +518,6 @@ const BackTest = ({ companySymbol, companyLogo }) => {
                   montantInvesti={strategyBackTest.invested_capital}
                   gainPerteEnCapital={strategyBackTest.invested_capital}
                 />
-              </Box>
-            </Box>
-            <Box
-              sx={{
-                p: 3,
-                display: "flex",
-                flexDirection: "row",
-                justifyContent: "space-between",
-              }}
-            >
-              <Box
-                sx={{
-                  p: 3,
-                  border: "1px solid #CB6843",
-                  backgroundColor: "#FAF2ED",
-                  borderRadius: "10px",
-                  fontWeight: 600,
-                  fontSize: "22px",
-                  display: "flex",
-                  flexDirection: "column",
-                  gap: 3,
-                  height: "130px",
-                  width: "350px",
-                }}
-              >
-                IS THIS A GOOD
-                <br /> OPPORTUNITY?
-                <Button
-                  sx={{
-                    background: "linear-gradient(to left,#CC6656, #F26800)",
-                    color: "white",
-                    fontFamily: "Helvetica",
-                  }}
-                >
-                  Click here to find out!
-                </Button>
               </Box>
             </Box>
           </Card>

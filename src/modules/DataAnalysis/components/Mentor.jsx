@@ -52,6 +52,47 @@ const Mentor = ({ investorDetails, investorTableData }) => {
     "Sharpe Ratio",
     "Sortino Ratio",
   ];
+
+  function formatText(inputText) {
+    // Split text by double line breaks to get paragraphs
+    const paragraphs = inputText.split("\n");
+    console.log(paragraphs);
+
+    const cleanedArray = paragraphs
+      .map((item) => {
+        let x = item.split(/\s*[\r\n]+\s*/)[0];
+        let y = item.replace(/(\n\n|\n)+$/, "");
+
+        console.log(x);
+        return x;
+      })
+      .filter(Boolean);
+
+    console.log(cleanedArray);
+
+    // Map each paragraph to a JSX element, further processing for bullet points
+    const formattedText = paragraphs.map((paragraph, index) => {
+      if (paragraph.includes("**")) {
+        // Split paragraph by '**' to identify bullet points
+        const parts = paragraph.split("**").filter(Boolean); // Filter out empty strings
+        console.log(parts);
+
+        return (
+          <ul key={index}>
+            {parts.map((part, partIndex) => (
+              <li key={partIndex}>{part}</li>
+            ))}
+          </ul>
+        );
+      } else {
+        // Regular paragraph without bullet points
+        return <p key={index}>{paragraph}</p>;
+      }
+    });
+
+    return formattedText;
+  }
+
   return (
     <div style={{ padding: 20, fontFamily: "Montserrat" }}>
       {investorDetails && (
@@ -76,7 +117,9 @@ const Mentor = ({ investorDetails, investorTableData }) => {
               gap: 8,
             }}
           >
-            <text style={{ fontWeight: 600 }}>{investorDetails.investors}</text>
+            <text style={{ fontWeight: 600, fontSize: 22 }}>
+              {investorDetails.investors}
+            </text>
             <text>{investorDetails.description}</text>
           </div>
           <div
@@ -89,9 +132,7 @@ const Mentor = ({ investorDetails, investorTableData }) => {
               gap: 8,
             }}
           >
-            <text style={{ fontWeight: 600 }}>
-              {investorDetails.investors}: Background
-            </text>
+            <text style={{ fontWeight: 600, fontSize: 22 }}>Background</text>
             <text>{investorDetails.background}</text>
           </div>
           <div
@@ -104,10 +145,8 @@ const Mentor = ({ investorDetails, investorTableData }) => {
               gap: 8,
             }}
           >
-            <text style={{ fontWeight: 600 }}>
-              {investorDetails.investors}: Philosophy
-            </text>
-            <text>{investorDetails.philosophy}</text>
+            <text style={{ fontWeight: 600, fontSize: 22 }}>Philosophy</text>
+            <text>{formatText(investorDetails.philosophy)}</text>
           </div>
           <div
             style={{
@@ -117,7 +156,7 @@ const Mentor = ({ investorDetails, investorTableData }) => {
               flexDirection: "column",
               borderRadius: 15,
               gap: 8,
-              fontFamily: 'Montserrat',
+              fontFamily: "Montserrat",
             }}
           >
             <Autocomplete

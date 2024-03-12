@@ -310,9 +310,36 @@ const InvestorsScreener = () => {
   console.log(selectedCompany);
 
   return (
-    <>
-      {isSwitch1 ? (
-        <Box sx={{ display: "flex", flexDirection: "column", p: 1, gap: 2 }}>
+    <Grid
+      sx={{
+        // display: "flex",
+        // flexDirection: "column",
+        // justifyContent: "flex-start",
+        placeItems: "center",
+        width: "100%",
+        alignItems: "center",
+        position: "relative",
+      }}
+    >
+      {isSwitch1 && (
+        <Grid
+          sx={{
+            // display: "flex",
+            // flexDirection: "column",
+            // justifyContent: "flex-start",
+            alignItems: "start",
+            p: 1,
+            gap: 2,
+            position: "absolute",
+            top: 0,
+            left: 0,
+            right: 0,
+            width: "100%",
+            height: "100%",
+            backgroundColor: "white",
+            zIndex: 2,
+          }}
+        >
           <Button
             onClick={() => {
               setIsSwitch1(false);
@@ -361,39 +388,38 @@ const InvestorsScreener = () => {
               </div>
             </CustomTabPanel>
           </Box>
-        </Box>
-      ) : (
-        <Box sx={{ width: "100%" }}>
-          <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
-            <Tabs
-              value={value}
-              onChange={handleChange}
-              aria-label="basic tabs example"
-            >
-              <Tab label="Overview" {...a11yProps(0)} />
-              <Tab label="Returns" {...a11yProps(1)} />
-              <Tab label="Risks" {...a11yProps(2)} />
-              <Tab label="Historical Prices" {...a11yProps(3)} />
-            </Tabs>
-          </Box>
-          <CustomTabPanel value={value} index={0}>
-            <OverviewTab
-              setSelectedCompany={setSelectedCompany}
-              // setCompanyDetails={setCompanyDetails}
-            />
-          </CustomTabPanel>
-          <CustomTabPanel value={value} index={1}>
-            <ReturnsTab />
-          </CustomTabPanel>
-          <CustomTabPanel value={value} index={2}>
-            <RisksTab />
-          </CustomTabPanel>
-          <CustomTabPanel value={value} index={3}>
-            <BackTestTab />
-          </CustomTabPanel>
-        </Box>
+        </Grid>
       )}
-    </>
+      <Box sx={{ width: "100%" }}>
+        <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
+          <Tabs
+            value={value}
+            onChange={handleChange}
+            aria-label="basic tabs example"
+          >
+            <Tab label="Overview" {...a11yProps(0)} />
+            <Tab label="Returns" {...a11yProps(1)} />
+            <Tab label="Risks" {...a11yProps(2)} />
+            <Tab label="Historical Prices" {...a11yProps(3)} />
+          </Tabs>
+        </Box>
+        <CustomTabPanel value={value} index={0}>
+          <OverviewTab
+            setSelectedCompany={setSelectedCompany}
+            // setCompanyDetails={setCompanyDetails}
+          />
+        </CustomTabPanel>
+        <CustomTabPanel value={value} index={1}>
+          <ReturnsTab />
+        </CustomTabPanel>
+        <CustomTabPanel value={value} index={2}>
+          <RisksTab />
+        </CustomTabPanel>
+        <CustomTabPanel value={value} index={3}>
+          <BackTestTab />
+        </CustomTabPanel>
+      </Box>
+    </Grid>
   );
 };
 

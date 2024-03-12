@@ -307,19 +307,20 @@ const ReturnsTab = () => {
       ) : (
         <PageInfoBreadCrumbs data={pageLoc} />
       )}
-      <Button
-        onClick={() => setShowVisualData(!showVisualData)}
-        sx={{
-          alignSelf: "flex-start",
-          backgroundColor: "#407879",
-          color: "rgb(204, 191, 144)",
-          ml: 3,
-        }}
-      >
-        Go Back
-      </Button>
+
       {showVisualData ? (
         <>
+          <Button
+            onClick={() => setShowVisualData(!showVisualData)}
+            sx={{
+              alignSelf: "flex-start",
+              backgroundColor: "#407879",
+              color: "rgb(204, 191, 144)",
+              ml: 3,
+            }}
+          >
+            Go Back
+          </Button>
           <Card
             sx={{
               margin: 1,

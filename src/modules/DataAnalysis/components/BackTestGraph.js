@@ -23,8 +23,8 @@ const ReusablePieChart = ({
         bottom: 0, // Adjust bottom position
         left: 0, // Adjust left position
         textStyle: {
-          fontFamily: 'Montserrat' // Specify the desired font family
-        }
+          fontFamily: "Montserrat", // Specify the desired font family
+        },
       },
       series: [
         {
@@ -79,7 +79,7 @@ const ReusablePieChart = ({
   return (
     <div
       ref={chartRef}
-      style={{ width: "100%", height: "300px", alignSelf: "center" }}
+      style={{ width: "100%", height: "250px", alignSelf: "center" }}
     />
   );
 };
