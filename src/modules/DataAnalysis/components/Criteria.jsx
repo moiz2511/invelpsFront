@@ -126,7 +126,7 @@ const Criteria = ({ investor, investorDetails, investorTableData }) => {
             gap: 8,
           }}
         >
-          <text style={{ color: "black", fontWeight: 600, fontSize: 25 }}>
+          <text style={{ color: "black", fontWeight: 600, fontSize: 20 }}>
             Outlook
           </text>
           <text>{investorDetails.description}</text>

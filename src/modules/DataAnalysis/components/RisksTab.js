@@ -20,6 +20,7 @@ import AuthContext from "../../Core/store/auth-context";
 
 import PageInfoBreadCrumbs from "../../Core/components/Layout/PageInfoBreadCrumbs";
 import PieChart from "./PieChart";
+import { IoArrowDown, IoArrowUp } from "react-icons/io5";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -45,18 +46,29 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   },
 }));
 
+const headCategories = [
+  { key: "name", label: "Strategy" },
+  { key: "annualized_return", label: "Annualized Return %" },
+  { key: "stdev_return", label: "Standard Deviation %" },
+  { key: "duration", label: "Duration" },
+];
+
 const RisksTab = () => {
   let pageLoc = window.location.pathname;
 
   const authCtx = useContext(AuthContext);
   const [authToken, setAuthToken] = useState(null);
   const [riskReturn, setRiskReturn] = useState([]);
+  const [riskReturnCopy, setRiskReturnCopy] = useState([]);
 
   const [selectedStrategy, setSelectedStrategy] = useState(null);
   const [showVisualData, setShowVisualData] = useState(false);
   const [perExchangeKPI, setPerExhangeKPI] = useState([]);
   const [perSectorKPI, setPerSectorKPI] = useState([]);
   const [perMarketKPI, setPerMarketKPI] = useState([]);
+
+  const [selectedSort, setSelectedSort] = useState(0);
+  const [selectedField, setSelectedField] = useState(null);
 
   useEffect(() => {
     const CheckUserSession = () => {
@@ -86,6 +98,7 @@ const RisksTab = () => {
         if (response.status === 200) {
           console.log("Data:", data);
           setRiskReturn(data.data);
+          setRiskReturnCopy(data.data);
         } else {
           console.log("Unexpected status code:", response.status);
         }
@@ -99,7 +112,7 @@ const RisksTab = () => {
     }
   }, [authToken]);
 
-  console.log(riskReturn);
+  console.log(riskReturnCopy);
 
   const fetchGraphData = async () => {
     try {
@@ -140,6 +153,59 @@ const RisksTab = () => {
     setShowVisualData(!showVisualData);
     setSelectedStrategy(strategy);
   };
+
+  const handleSortingFieldChange = (field) => {
+    setSelectedField(field);
+  };
+
+  const sorting = (data) => {
+    // console.log(data);
+    // console.log(selectedSort);
+    if (data) {
+      switch (selectedSort) {
+        case 0:
+          return riskReturnCopy;
+        case 1:
+          return data.slice().sort((a, b) => {
+            const valueA = a[selectedField];
+            const valueB = b[selectedField];
+            // console.log(valueA, valueB);
+
+            const alphabetRegex = /[a-zA-Z]/;
+            if (alphabetRegex.test(valueA.toString())) {
+              return valueA.localeCompare(valueB, undefined, { numeric: true });
+            } else {
+              return parseFloat(valueA) - parseFloat(valueB);
+            }
+          });
+        case 2:
+          return data.slice().sort((a, b) => {
+            const valueA = a[selectedField];
+            const valueB = b[selectedField];
+
+            const alphabetRegex = /[a-zA-Z]/;
+            if (alphabetRegex.test(valueA.toString())) {
+              return valueB.localeCompare(valueA, undefined, { numeric: true });
+            } else {
+              return parseFloat(valueB) - parseFloat(valueA);
+            }
+          });
+        default:
+          return data;
+      }
+    }
+  };
+
+  useEffect(() => {
+    let isMounted = true;
+    if (selectedSort !== 0 && isMounted) {
+      const sorted = sorting(riskReturnCopy);
+      setRiskReturnCopy(sorted);
+    }
+    return () => {
+      isMounted = false;
+    };
+  }, [selectedSort, selectedField]);
 
   return (
     <>
@@ -267,7 +333,7 @@ const RisksTab = () => {
           </Box>
 
           <TableContainer>
-            <Box
+            {/* <Box
               sx={{
                 backgroundColor: "black",
                 padding: 3,
@@ -280,11 +346,37 @@ const RisksTab = () => {
                 {" "}
                 Strategy Models{" "}
               </text>
-            </Box>
+            </Box> */}
             <Table
               sx={{ minWidth: "100%", maxWidth: "100%", mt: 1 }}
               size="medium"
             >
+              <TableHead>
+                <TableRow>
+                  <TableCell
+                    sx={{
+                      fontFamily: "Montserrat",
+                      fontSize: 18,
+                      color: "white",
+                      bgcolor: "#272727",
+                    }}
+                  >
+                    Strategy Models
+                  </TableCell>
+                  <TableCell
+                    colSpan={3}
+                    sx={{
+                      fontFamily: "Montserrat",
+                      textAlign: "center",
+                      fontSize: 18,
+                      color: "white",
+                      bgcolor: "#407879",
+                    }}
+                  >
+                    Risk Returns
+                  </TableCell>
+                </TableRow>
+              </TableHead>
               <TableHead>
                 <TableRow
                   sx={{
@@ -296,7 +388,58 @@ const RisksTab = () => {
                   {/* <TableCell sx={{ fontFamily: "Montserrat" }}>
                   Investor
                 </TableCell> */}
-                  <TableCell sx={{ fontFamily: "Montserrat" }}>
+                  {headCategories.map((category, index) => (
+                    <TableCell key={index} sx={{ fontFamily: "Montserrat" }}>
+                      <Box
+                        sx={{ display: "flex", alignItems: "center", gap: 2 }}
+                      >
+                        <span>{category.label}</span>
+                        {category.key.trim() !== "" &&
+                          (selectedSort === 1 ? (
+                            <button
+                              onClick={() => {
+                                handleSortingFieldChange(category.key);
+                                setSelectedSort(2);
+                              }}
+                              style={{
+                                color: "white",
+                                background: "rgba(0, 0, 0, 0.3)",
+                                border: "none",
+                                borderRadius: "9999px",
+                                width: "24px",
+                                height: "24px",
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                              }}
+                            >
+                              <IoArrowDown />
+                            </button>
+                          ) : (
+                            <button
+                              style={{
+                                color: "white",
+                                background: "rgba(0, 0, 0, 0.3)",
+                                border: "none",
+                                borderRadius: "9999px",
+                                width: "24px",
+                                height: "24px",
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                              }}
+                              onClick={() => {
+                                handleSortingFieldChange(category.key);
+                                setSelectedSort(1);
+                              }}
+                            >
+                              <IoArrowUp />
+                            </button>
+                          ))}
+                      </Box>
+                    </TableCell>
+                  ))}
+                  {/* <TableCell sx={{ fontFamily: "Montserrat" }}>
                     Strategy
                   </TableCell>
                   <TableCell sx={{ fontFamily: "Montserrat" }}>
@@ -307,11 +450,11 @@ const RisksTab = () => {
                   </TableCell>
                   <TableCell sx={{ fontFamily: "Montserrat" }}>
                     Duration
-                  </TableCell>
+                  </TableCell> */}
                 </TableRow>
               </TableHead>
               <TableBody>
-                {riskReturn.map((data, index) => {
+                {riskReturnCopy.map((data, index) => {
                   return (
                     <StyledTableRow hover key={index} sx={{ ml: 3 }}>
                       <StyledTableCell

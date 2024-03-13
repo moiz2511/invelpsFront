@@ -55,38 +55,47 @@ const Mentor = ({ investorDetails, investorTableData }) => {
 
   function formatText(inputText) {
     // Split text by double line breaks to get paragraphs
-    const paragraphs = inputText.split("\n");
+    const paragraphs = inputText.split("\n\n");
     console.log(paragraphs);
 
     const cleanedArray = paragraphs
       .map((item) => {
-        let x = item.split(/\s*[\r\n]+\s*/)[0];
-        let y = item.replace(/(\n\n|\n)+$/, "");
+        // let x = item.split("\n")[0];
+        let y = item.trim().replace(/(\\n\\n|\\n)/g, "");
 
-        console.log(x);
-        return x;
+        // console.log(y);
+        return y;
       })
       .filter(Boolean);
 
     console.log(cleanedArray);
 
     // Map each paragraph to a JSX element, further processing for bullet points
-    const formattedText = paragraphs.map((paragraph, index) => {
+    const formattedText = cleanedArray.map((paragraph, index) => {
       if (paragraph.includes("**")) {
         // Split paragraph by '**' to identify bullet points
-        const parts = paragraph.split("**").filter(Boolean); // Filter out empty strings
+        const parts = paragraph.replace(/"/g, "").split("**").filter(Boolean); // Filter out empty strings
         console.log(parts);
 
         return (
           <ul key={index}>
-            {parts.map((part, partIndex) => (
-              <li key={partIndex}>{part}</li>
-            ))}
+            {parts.map((part, partIndex) =>
+              part.endsWith(":") ? (
+                <li
+                  style={{ listStyleType: "none", marginTop: 12 }}
+                  key={partIndex}
+                >
+                  <strong>{part}</strong>
+                </li>
+              ) : (
+                <li key={partIndex}>{part}</li>
+              )
+            )}
           </ul>
         );
       } else {
         // Regular paragraph without bullet points
-        return <p key={index}>{paragraph}</p>;
+        return <text key={index}>{paragraph}</text>;
       }
     });
 
@@ -117,7 +126,7 @@ const Mentor = ({ investorDetails, investorTableData }) => {
               gap: 8,
             }}
           >
-            <text style={{ fontWeight: 600, fontSize: 22 }}>
+            <text style={{ fontWeight: 600, fontSize: 20 }}>
               {investorDetails.investors}
             </text>
             <text>{investorDetails.description}</text>
@@ -132,7 +141,7 @@ const Mentor = ({ investorDetails, investorTableData }) => {
               gap: 8,
             }}
           >
-            <text style={{ fontWeight: 600, fontSize: 22 }}>Background</text>
+            <text style={{ fontWeight: 600, fontSize: 20 }}>Background</text>
             <text>{investorDetails.background}</text>
           </div>
           <div
@@ -145,7 +154,7 @@ const Mentor = ({ investorDetails, investorTableData }) => {
               gap: 8,
             }}
           >
-            <text style={{ fontWeight: 600, fontSize: 22 }}>Philosophy</text>
+            <text style={{ fontWeight: 600, fontSize: 20 }}>Philosophy</text>
             <text>{formatText(investorDetails.philosophy)}</text>
           </div>
           <div
@@ -311,8 +320,8 @@ const Mentor = ({ investorDetails, investorTableData }) => {
               gap: 8,
             }}
           >
-            <text style={{ fontWeight: 600 }}>
-              {investorDetails.investors}: Contribution and Legacy
+            <text style={{ fontWeight: 600, fontSize: 20 }}>
+              Contribution and Legacy
             </text>
             <text>{investorDetails.contributions_and_legacy}</text>
           </div>
