@@ -71,6 +71,7 @@ const BackTestTab = () => {
   const [perExchangeKPI, setPerExhangeKPI] = useState([]);
   const [perSectorKPI, setPerSectorKPI] = useState([]);
   const [perMarketKPI, setPerMarketKPI] = useState([]);
+  const [dividendTableData, setDividendTableData] = useState([]);
 
   useEffect(() => {
     const CheckUserSession = () => {
@@ -78,6 +79,7 @@ const BackTestTab = () => {
     };
 
     const userToken = CheckUserSession();
+    console.log(userToken);
     setAuthToken(userToken);
   }, []);
 
@@ -85,8 +87,7 @@ const BackTestTab = () => {
     const fetchStrategyAnnualPerformance = async () => {
       try {
         const response = await fetch(
-          `
-              https://api.invelps.com/api/strategies/getStrategiesAnnualPerformance`,
+          `https://api.invelps.com/api/strategies/getStrategiesAnnualPerformance`,
           {
             method: "POST",
             headers: {
@@ -159,11 +160,44 @@ const BackTestTab = () => {
       console.error("Error:", error);
     }
   };
+
+  const fetchDividendTableData = async () => {
+    try {
+      const body = {
+        strategy_name: selectedStrategy,
+      };
+      const response = await fetch(
+        `
+            https://api.invelps.com/api/strategies/getStrategyAnnualizedDividend`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+          },
+          body: JSON.stringify(body),
+        }
+      );
+
+      const data = await response.json();
+
+      if (response.status === 200) {
+        console.log(data);
+        setDividendTableData(data.data);
+      } else {
+        console.log("Unexpected status code:", response.status);
+      }
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
+
   useEffect(() => {
     fetchGraphData();
+    fetchDividendTableData();
   }, [selectedStrategy]);
 
   const handleDataVisualization = (strategy) => {
+    setSelectedStrategy(null);
     setShowVisualData(!showVisualData);
     setSelectedStrategy(strategy);
   };
@@ -210,7 +244,7 @@ const BackTestTab = () => {
               ml: 3,
             }}
           >
-            Go Back
+            Back
           </Button>
           <Card
             sx={{
@@ -220,9 +254,14 @@ const BackTestTab = () => {
               padding: 2,
             }}
           >
-            <text style={{ fontSize: 25, fontWeight: "bold" }}>
-              {" "}
-              {selectedStrategy.name}{" "}
+            <text
+              style={{
+                fontFamily: "Montserrat",
+                fontSize: 25,
+                fontWeight: "bold",
+              }}
+            >
+              {selectedStrategy.split("_").join(" ")}
             </text>
             <Card
               sx={{
@@ -283,6 +322,98 @@ const BackTestTab = () => {
                   />
                 </Card>
               </Box>
+            </Card>
+
+            <Card
+              sx={{
+                margin: 2,
+                display: "flex",
+                flexDirection: "column",
+                gap: 5,
+                padding: 3,
+              }}
+            >
+              <text style={{ fontSize: 20, fontWeight: "bold" }}>
+                Annual Dividend ({dividendTableData.length} years)
+              </text>
+
+              <TableContainer>
+                <Table
+                  sx={{ minWidth: "100%", maxWidth: "100%", mt: 1 }}
+                  size="medium"
+                >
+                  <TableHead>
+                    <TableRow>
+                      <TableCell
+                        padding="normal"
+                        colSpan={1}
+                        sx={{
+                          backgroundColor: "#272727",
+                          color: "white",
+                          fontSize: 18,
+                          fontFamily: "Montserrat",
+                        }}
+                      >
+                        Strategy Models
+                      </TableCell>
+                      <TableCell
+                        padding="normal"
+                        colSpan={12}
+                        align="center"
+                        sx={{
+                          backgroundColor: "#427878",
+                          color: "white",
+                          fontSize: 18,
+                          fontFamily: "Montserrat",
+                        }}
+                      >
+                        Annual Dividends (USD)
+                      </TableCell>
+                    </TableRow>
+                  </TableHead>
+
+                  <TableHead>
+                    <TableRow
+                      sx={{
+                        backgroundColor: "#e7ecef",
+                        color: "#272727",
+                        fontSize: 14,
+                      }}
+                    >
+                      <TableCell sx={{ fontFamily: "Montserrat" }}>
+                        Strategy
+                      </TableCell>
+                      {dividendTableData.map((data, index) => (
+                        <TableCell
+                          key={index}
+                          padding="normal"
+                          sx={{ fontFamily: "Montserrat", color: "#427878" }}
+                        >
+                          {data.date_Year}
+                        </TableCell>
+                      ))}
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    <StyledTableRow hover sx={{ ml: 3 }}>
+                      <StyledTableCell>{selectedStrategy}</StyledTableCell>
+                      {dividendTableData.map((data, index) => (
+                        <StyledTableCell
+                          key={index}
+                          sx={{
+                            color:
+                              parseFloat(data.Annual_Dividend) >= 0
+                                ? "green"
+                                : "red",
+                          }}
+                        >
+                          {data.Annual_Dividend || "N/A"}
+                        </StyledTableCell>
+                      ))}
+                    </StyledTableRow>
+                  </TableBody>
+                </Table>
+              </TableContainer>
             </Card>
           </Card>
         </>

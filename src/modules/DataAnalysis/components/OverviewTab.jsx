@@ -415,9 +415,7 @@ const OverviewTab = ({ setSelectedCompany }) => {
         data_per_page: currentRowsPerPage,
       };
       const response = await fetch(
-        `
-          https://api.invelps.com/api/strategies/getStrategyTableData
-          `,
+        `https://api.invelps.com/api/strategies/getStrategyTableData`,
         {
           method: "POST",
           headers: {
@@ -556,10 +554,11 @@ const OverviewTab = ({ setSelectedCompany }) => {
             top: 0,
             left: 0,
             width: "100%",
-            height: "100%",
+            height: "auto",
             backgroundColor: "white",
             zIndex: 1,
             overflowX: "hidden",
+            overflowY: "auto",
           }}
         >
           <Box ml={2} mb={4}>
@@ -595,6 +594,8 @@ const OverviewTab = ({ setSelectedCompany }) => {
                 my: 1,
                 display: "flex",
                 flexDirection: "column",
+                width: "100%",
+                height: "100%",
                 gap: 5,
                 padding: 2,
               }}
@@ -652,9 +653,11 @@ const OverviewTab = ({ setSelectedCompany }) => {
             </Card>
             <Card
               sx={{
-                margin: 2,
+                width: "100%",
+                height: "100%",
+                margin: 1,
                 gap: 5,
-                padding: 3,
+                padding: 2,
               }}
             >
               <Box justifyContent={"space-between"} display={"flex"}>
@@ -850,7 +853,13 @@ const OverviewTab = ({ setSelectedCompany }) => {
                   )}
                 </Table>
               </TableContainer>
-              <Box display={"flex"} justifyContent={"flex-end"} gap={4} mt={2}>
+              <Box
+                display={"flex"}
+                justifyContent={"flex-end"}
+                width={"100%"}
+                gap={1}
+                mt={2}
+              >
                 <Box display={"flex"} alignItems={"center"} gap={1}>
                   <label>Rows Per Page:</label>
                   <select
@@ -865,7 +874,7 @@ const OverviewTab = ({ setSelectedCompany }) => {
                   </select>
                 </Box>
 
-                <Box display={"flex"} alignItems={"center"} gap={1}>
+                <Box display={"flex"} alignItems={"center"} px={2} gap={1}>
                   <IconButton
                     onClick={handlePrevPage}
                     disabled={currentPage === 1}
@@ -896,11 +905,19 @@ const OverviewTab = ({ setSelectedCompany }) => {
           display: "flex",
           flexDirection: "column",
           justifyContent: "center",
+          alignItems: "center",
           gap: 5,
         }}
       >
-        <Card sx={{ my: 1, position: "relative", width: "calc(100vw - 20px)" }}>
-          <Box px={2} py={1}>
+        <Card
+          sx={{
+            my: 1,
+            position: "relative",
+            width: "calc(100vw - 30px)",
+            overflowX: "auto",
+          }}
+        >
+          <Box px={2} py={2} width={"100%"}>
             <Box spacing={1} sx={{ mt: 0.5 }}>
               <text
                 style={{
@@ -947,7 +964,7 @@ const OverviewTab = ({ setSelectedCompany }) => {
         <Card
           sx={{
             display: "flex",
-            width: "calc(100vw - 20px)",
+            width: "calc(100vw - 30px)",
             my: 1,
             position: "relative",
             overflowX: "auto",

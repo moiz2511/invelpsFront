@@ -138,7 +138,7 @@ const CompanyRiskTab = ({ companySymbol, companyName }) => {
               alignItems: "center",
             }}
           >
-             <CompanyScatterChart
+            <CompanyScatterChart
               chartId="companyScatterChart"
               data={riskReturn}
             />
@@ -153,8 +153,7 @@ const CompanyRiskTab = ({ companySymbol, companyName }) => {
                 }}
               >
                 <text style={{ color: "#fff", textAlign: "center" }}>
-                  {" "}
-                  Risk Adjusted Return{" "}
+                  Risk Adjusted Return
                 </text>
               </Box>
               <Table
@@ -228,8 +227,6 @@ const CompanyRiskTab = ({ companySymbol, companyName }) => {
                 </TableBody>
               </Table>
             </TableContainer>
-           
-            
           </Box>
         </Card>
       )}

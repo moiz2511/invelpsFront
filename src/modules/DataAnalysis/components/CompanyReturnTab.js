@@ -23,6 +23,7 @@ import CompanyScatterChart from "./CompanyScatterChart";
 
 import TableCell, { tableCellClasses } from "@mui/material/TableCell";
 import ColorConstants from "../../Core/constants/ColorConstants.json";
+import { grey } from "@mui/material/colors";
 
 const headYears = [
   2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023,
@@ -68,6 +69,8 @@ const CompanyReturnTab = ({ companySymbol, companyName, companyImage }) => {
   const [annualReturn, setAnnualReturn] = useState([]);
   const [rollingReturn, setRollingReturn] = useState([]);
   const [riskReturn, setRiskReturn] = useState(null);
+  const [exchangeName, setExchangeName] = useState(null);
+  const [companyProfile, setCompanyProfile] = useState(null);
 
   useEffect(() => {
     const CheckUserSession = () => {
@@ -77,6 +80,111 @@ const CompanyReturnTab = ({ companySymbol, companyName, companyImage }) => {
     const userToken = CheckUserSession();
     setAuthToken(userToken);
   }, []);
+
+  const fetchExchangeAndProfile = async () => {
+    try {
+      const body = {
+        companyName: companyName,
+      };
+      const response = await fetch(
+        `https://api.invelps.com/api/getExchangesByCompanyName`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${authToken}`,
+          },
+          body: JSON.stringify(body),
+        }
+      );
+
+      var exchange;
+      const data = await response.json();
+
+      // console.log(data);
+
+      // console.log("Data:", data);
+
+      if (data.success) {
+        exchange = data.resp_data[0].exchange;
+      }
+      console.log(exchange);
+
+      if (data.success) {
+        // setExchangeName(data.resp_data[0].exchange);
+
+        const body = {
+          company: companyName,
+          exchange: exchange,
+        };
+        const response = await fetch(
+          `https://api.invelps.com/api/companies/profile`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${authToken}`,
+            },
+            body: JSON.stringify(body),
+          }
+        );
+
+        const data = await response.json();
+
+        if (response.status === 200) {
+          // console.log("Data:", data.resp_data.profile[0]);
+
+          setCompanyProfile(data.resp_data.profile[0]);
+          setExchangeName(exchange);
+        } else {
+          console.log("Unexpected status code:", response.status);
+        }
+      } else {
+        console.log("Unexpected status code:", response.status);
+      }
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
+  useEffect(() => {
+    if (authToken && companyName) fetchExchangeAndProfile();
+  }, [authToken, companyName]);
+
+  console.log(exchangeName, companyProfile);
+
+  // useEffect(() => {
+  //   const fetchCompanyProfile = async () => {
+  //     try {
+  //       const body = {
+  //         company: companyName,
+  //         exchange: exchangeName,
+  //       };
+  //       const response = await fetch(
+  //         `https://api.invelps.com/api/companies/profile`,
+  //         {
+  //           method: "POST",
+  //           headers: {
+  //             "Content-Type": "application/json",
+  //             Authorization: `Bearer ${authToken}`,
+  //           },
+  //           body: JSON.stringify(body),
+  //         }
+  //       );
+
+  //       const data = await response.json();
+
+  //       if (response.status === 200) {
+  //         console.log("Data:", data.resp_data);
+  //         // setCompanyProfile(data);
+  //       } else {
+  //         console.log("Unexpected status code:", response.status);
+  //       }
+  //     } catch (error) {
+  //       console.error("Error:", error);
+  //     }
+  //   };
+  //   if (authToken && exchangeName) fetchCompanyProfile();
+  // }, [authToken, exchangeName]);
 
   useEffect(() => {
     const fetchStrategyAnnualPerformance = async () => {
@@ -168,22 +276,27 @@ const CompanyReturnTab = ({ companySymbol, companyName, companyImage }) => {
         <Box p={3}>
           <Box
             spacing={1}
-            sx={{ mt: 0.5, display: "flex", flexDirection: "row", gap: 10 }}
+            sx={{ mt: 0.5, display: "flex", flexDirection: "row", gap: 6 }}
           >
-            <text
-              style={{
-                padding: "5px",
-                fontSize: "27px",
-                fontWeight: "bold",
-              }}
-            >
+            <span style={{ display: "flex", alignItems: "flex-start", gap: 8 }}>
               <img
                 src={companyImage}
-                style={{ height: "25px", width: "25px" }}
-              />{" "}
-              {companyName}
-              <br />({companySymbol})
-            </text>
+                style={{ height: "40px", width: "40px" }}
+              />
+              <text
+                style={{
+                  padding: "5px",
+                  fontSize: 28,
+                  fontWeight: "bold",
+                }}
+              >
+                {" "}
+                {companyName} ({companySymbol}) <br />
+                <text style={{ color: "grey" }}>
+                  {companyProfile?.currency} {companyProfile?.price}
+                </text>
+              </text>
+            </span>
             <text
               style={{
                 padding: "5px",
@@ -230,20 +343,19 @@ const CompanyReturnTab = ({ companySymbol, companyName, companyImage }) => {
                 >
                   Company
                 </TableCell>
-                  <TableCell
+                <TableCell
                   colSpan={12}
-                    padding="normal"
-                    sx={{
-                      fontFamily: "Montserrat",
-                      color: "#fff",
-                      backgroundColor: "#427878",
-                      fontSize: 18,
-                      textAlign: "center"
-                    }}
-                  >
-                    Annual Returns %
-                  </TableCell>
-                
+                  padding="normal"
+                  sx={{
+                    fontFamily: "Montserrat",
+                    color: "#fff",
+                    backgroundColor: "#427878",
+                    fontSize: 18,
+                    textAlign: "center",
+                  }}
+                >
+                  Annual Returns %
+                </TableCell>
               </TableRow>
               <TableRow>
                 <TableCell
@@ -295,7 +407,9 @@ const CompanyReturnTab = ({ companySymbol, companyName, companyImage }) => {
                         parseFloat(ann.annual_return) >= 0 ? "green" : "red",
                     }}
                   >
-                    {ann.annual_return ? ann.annual_return.toFixed(2) : "N/A"}
+                    {ann.annual_return
+                      ? (ann.annual_return * 100).toFixed(2)
+                      : "N/A"}
                   </StyledTableCell>
                 ))}
               </StyledTableRow>
@@ -311,24 +425,29 @@ const CompanyReturnTab = ({ companySymbol, companyName, companyImage }) => {
               mt: 0.5,
               display: "flex",
               flexDirection: "row",
-              gap: 10,
+              gap: 6,
               fontFamily: "Montserrat",
             }}
           >
-            <text
-              style={{
-                padding: "5px",
-                fontSize: "27px",
-                fontWeight: "bold",
-              }}
-            >
+            <span style={{ display: "flex", alignItems: "flex-start", gap: 8 }}>
               <img
                 src={companyImage}
-                style={{ height: "25px", width: "25px" }}
-              />{" "}
-              {companyName}
-              <br />({companySymbol})
-            </text>
+                style={{ height: "40px", width: "40px" }}
+              />
+
+              <text
+                style={{
+                  padding: "5px",
+                  fontSize: 28,
+                  fontWeight: "bold",
+                }}
+              >
+                {companyName} ({companySymbol}) <br />
+                <text style={{ color: "grey" }}>
+                  {companyProfile?.currency} {companyProfile?.price}
+                </text>
+              </text>
+            </span>
             <text
               style={{
                 padding: "5px",
@@ -341,13 +460,16 @@ const CompanyReturnTab = ({ companySymbol, companyName, companyImage }) => {
             </text>
           </Box>
         </Box>
-        <Box display={'flex'} flexDirection={'row'} justifyContent={'space-between'} alignItems={'center'} > 
-
-            <CompanyNegativeBar
-              chartId={"CompNeg-chart-1"}
-              chartData={rollingReturn}
-            />
-
+        <Box
+          display={"flex"}
+          flexDirection={"row"}
+          justifyContent={"space-between"}
+          alignItems={"center"}
+        >
+          <CompanyNegativeBar
+            chartId={"CompNeg-chart-1"}
+            chartData={rollingReturn}
+          />
 
           <TableContainer>
             <Table
@@ -485,24 +607,30 @@ const CompanyReturnTab = ({ companySymbol, companyName, companyImage }) => {
                 mt: 0.5,
                 display: "flex",
                 flexDirection: "row",
-                gap: 10,
+                gap: 6,
                 fontFamily: "Montserrat",
               }}
             >
-              <text
-                style={{
-                  padding: "5px",
-                  fontSize: "27px",
-                  fontWeight: "bold",
-                }}
+              <span
+                style={{ display: "flex", alignItems: "flex-start", gap: 8 }}
               >
                 <img
                   src={companyImage}
-                  style={{ height: "25px", width: "25px" }}
-                />{" "}
-                {companyName}
-                <br />({companySymbol})
-              </text>
+                  style={{ height: "40px", width: "40px" }}
+                />
+                <text
+                  style={{
+                    padding: "5px",
+                    fontSize: 28,
+                    fontWeight: "bold",
+                  }}
+                >
+                  {companyName} ({companySymbol}) <br />
+                  <text style={{ color: "grey" }}>
+                    {companyProfile?.currency} {companyProfile?.price}
+                  </text>
+                </text>
+              </span>
               <text
                 style={{
                   padding: "5px",
@@ -539,8 +667,7 @@ const CompanyReturnTab = ({ companySymbol, companyName, companyImage }) => {
                 }}
               >
                 <text style={{ color: "#fff", textAlign: "center" }}>
-                  {" "}
-                  Risk Adjusted Return{" "}
+                  Risk Adjusted Return
                 </text>
               </Box>
               <Table
