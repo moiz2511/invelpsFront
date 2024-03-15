@@ -171,8 +171,8 @@ const BackTest = ({ companySymbol, companyLogo }) => {
                   {strategyBackTest.company_name} ({companySymbol})
                 </span>{" "}
                 on {strategyBackTest.starting_price_date},{" "}
-                {strategyBackTest.duration} 10 years later your investment would
-                be worth:
+                {strategyBackTest.duration} years later your investment would be
+                worth:
               </text>
             </Box>
             <Box

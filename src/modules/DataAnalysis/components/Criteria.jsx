@@ -18,15 +18,18 @@ const Criteria = ({ investor, investorDetails, investorTableData }) => {
   const authCtx = useContext(AuthContext);
   const [authToken, setAuthToken] = useState(null);
   // const [investorTableData, setInvestorTableData] = useState();
+  const [strategyOutlooks, setStrategyOutlooks] = useState([]);
 
-  useEffect(() => {
-    const CheckUserSession = () => {
-      return authCtx.isLoggedIn ? authCtx.token : "";
-    };
+  const CheckUserSession = () => {
+    return authCtx.isLoggedIn ? authCtx.token : "";
+  };
 
-    const userToken = CheckUserSession();
-    setAuthToken(userToken);
-  }, []);
+  const userToken = CheckUserSession();
+  // setAuthToken(userToken);
+  // useEffect(() => {
+  // }, []);
+
+  console.log(userToken);
 
   // useEffect(() => {
   //   const fetchInvestorDetails = async () => {
@@ -64,6 +67,64 @@ const Criteria = ({ investor, investorDetails, investorTableData }) => {
   //   }
   // }, [authToken, investor]);
 
+  const fetchOutlookPageData = async (strategy) => {
+    try {
+      const body = {
+        strategy_name: strategy,
+      };
+      const response = await fetch(
+        `https://api.invelps.com/api/strategies/getOutlookPageData`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${userToken}`,
+          },
+          body: JSON.stringify(body),
+        }
+      );
+
+      const data = await response.json();
+
+      if (response.status) {
+        // Return data for aggregation
+        return data;
+      } else {
+        console.log("Unexpected status code:", response.status);
+        return null;
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      return null;
+    }
+  };
+
+  console.log(strategyOutlooks);
+
+  useEffect(() => {
+    const strategies = investorTableData.map((item) => item.strategy_name);
+    console.log(strategies);
+
+    const fetchAllStrategiesData = async () => {
+      const allData = await Promise.all(
+        strategies.map((strategy) => fetchOutlookPageData(strategy))
+      );
+
+      // Flatten the array of arrays and filter out nulls if any request failed
+      const flattenedData = allData.flat().filter((item) => item !== null);
+
+      // Deduplicate the flattened data
+      const uniqueData = Array.from(
+        new Map(
+          flattenedData.map((item) => [JSON.stringify(item), item])
+        ).values()
+      );
+
+      setStrategyOutlooks(uniqueData);
+    };
+
+    fetchAllStrategiesData();
+  }, []);
+
   const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
       backgroundColor: ColorConstants.APP_TABLE_HEAD_COLOR,
@@ -93,197 +154,144 @@ const Criteria = ({ investor, investorDetails, investorTableData }) => {
   console.log(investorTableData);
 
   const headCategories = [
-    "Strategy",
-    "Investing style",
-    "Total Return",
-    "Annualized Return",
-    "Rolling Return",
-    "Standard Deviation",
-    "Max Drawdown",
-    "Sharpe Ratio",
-    "Sortino Ratio",
+    "Measure",
+    "Metric",
+    "Description",
+    "Range",
+    "Interpretation",
   ];
+
   return (
     <div style={{ padding: 20, fontFamily: "Montserrat" }}>
-      <div
-        style={{
-          border: "1px solid #aaa",
-          height: "100%",
-          padding: 20,
-          borderRadius: 15,
-          gap: 20,
-          display: "flex",
-          flexDirection: "column",
-        }}
-      >
+      {strategyOutlooks.map((outlook, index) => (
         <div
+          key={index}
           style={{
-            backgroundColor: "#F3F3F3",
-            padding: 20,
-            display: "flex",
-            flexDirection: "column",
-            borderRadius: 15,
-            gap: 8,
-          }}
-        >
-          <text style={{ color: "black", fontWeight: 600, fontSize: 20 }}>
-            Outlook
-          </text>
-          <text>{investorDetails.description}</text>
-        </div>
-        <div
-          style={{
-            backgroundColor: "transparent",
-            display: "flex",
-            flexDirection: "column",
-            borderRadius: 15,
             border: "1px solid #aaa",
-            gap: 8,
+            height: "100%",
+            padding: 20,
+            marginBottom: 10,
+            borderRadius: 15,
+            gap: 20,
+            display: "flex",
+            flexDirection: "column",
           }}
         >
-          <div style={{ borderBottom: "1px solid #aaa", padding: 30 }}>
-            <text style={{ color: "black", fontWeight: 600, fontSize: 25 }}>
-              Selection Criteria Statistics
+          <div
+            style={{
+              backgroundColor: "#F3F3F3",
+              padding: 20,
+              display: "flex",
+              flexDirection: "column",
+              borderRadius: 15,
+              gap: 8,
+            }}
+          >
+            <text style={{ color: "black", fontWeight: 600, fontSize: 20 }}>
+              Outlook
             </text>
+            <text>{outlook.strategies_per_group.outlook}</text>
+          </div>
+
+          <div
+            style={{
+              backgroundColor: "transparent",
+              display: "flex",
+              flexDirection: "column",
+              borderRadius: 15,
+              border: "1px solid #aaa",
+              gap: 8,
+            }}
+          >
+            <div style={{ borderBottom: "1px solid #aaa", padding: 30 }}>
+              <text style={{ color: "black", fontWeight: 600, fontSize: 25 }}>
+                Selection Criteria Statistics
+              </text>
+            </div>
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                gap: 5,
+                width: "100%",
+                padding: 20,
+              }}
+            >
+              <div
+                style={{
+                  padding: 10,
+                  backgroundColor: "#F5F5F5",
+                  flex: 1,
+                  borderRadius: 10,
+                }}
+              >
+                <CriteriaPie data={outlook.strategies_per_group} />
+              </div>
+              <div style={{ padding: 10, flex: 1 }}>
+                <CriteriaBar data={outlook.strategies_per_group} />
+              </div>
+            </div>
           </div>
           <div
             style={{
-              display: "flex",
-              flexDirection: "row",
-              gap: 5,
-              width: "100%",
+              backgroundColor: "#F3F3F3",
               padding: 20,
+              display: "flex",
+              flexDirection: "column",
+              borderRadius: 15,
+              gap: 8,
             }}
           >
-            <div
+            <text
               style={{
-                padding: 10,
-                backgroundColor: "#F5F5F5",
-                flex: 1,
-                borderRadius: 10,
+                color: "black",
+                fontWeight: 600,
+                fontSize: 20,
+                fontFamily: "Montserrat",
               }}
             >
-              <CriteriaPie />
-            </div>
-            <div style={{ padding: 10, flex: 1 }}>
-              <CriteriaBar />
-            </div>
-          </div>
-        </div>
-        <div
-          style={{
-            backgroundColor: "#F3F3F3",
-            padding: 20,
-            display: "flex",
-            flexDirection: "column",
-            borderRadius: 15,
-            gap: 8,
-          }}
-        >
-          <TableContainer>
-            <Table
-              sx={{ minWidth: "100%", maxWidth: "100%", mt: 1 }}
-              size="medium"
-            >
-              <TableHead>
-                <TableRow>
-                  <TableCell
-                    padding="normal"
-                    colSpan={2}
+              Selection Criterias
+            </text>
+            <TableContainer>
+              <Table
+                sx={{ minWidth: "100%", maxWidth: "100%", mt: 1 }}
+                size="medium"
+              >
+                <TableHead>
+                  <TableRow
                     sx={{
-                      backgroundColor: "#272727",
-                      color: "white",
-                      fontSize: 18,
+                      backgroundColor: "#e7ecef",
+                      color: "#272727",
+                      fontSize: 14,
                       fontFamily: "Montserrat",
                     }}
                   >
-                    Strategy Models
-                  </TableCell>
-                  <TableCell
-                    padding="normal"
-                    colSpan={4}
-                    align="center"
-                    sx={{
-                      backgroundColor: "#427878",
-                      color: "white",
-                      fontSize: 18,
-                      fontFamily: "Montserrat",
-                    }}
-                  >
-                    Return %
-                  </TableCell>
-                  <TableCell
-                    padding="normal"
-                    colSpan={2}
-                    align="center"
-                    sx={{
-                      backgroundColor: "orange",
-                      color: "white",
-                      fontSize: 18,
-                      fontFamily: "Montserrat",
-                    }}
-                  >
-                    Risk %
-                  </TableCell>
-                  <TableCell
-                    padding="normal"
-                    colSpan={2}
-                    align="center"
-                    sx={{
-                      backgroundColor: "blue",
-                      color: "white",
-                      fontSize: 18,
-                      fontFamily: "Montserrat",
-                    }}
-                  >
-                    Risk Adjusted Return %
-                  </TableCell>
-                </TableRow>
-              </TableHead>
-
-              <TableHead>
-                <TableRow
-                  sx={{
-                    backgroundColor: "#e7ecef",
-                    color: "#272727",
-                    fontSize: 14,
-                    fontFamily: "Montserrat",
-                  }}
-                >
-                  <TableCell sx={{ fontFamily: "Montserrat" }}>
-                    Investor
-                  </TableCell>
-                  {headCategories.map((category, index) => (
-                    <TableCell
-                      key={index}
-                      padding="normal"
-                      sx={{ fontFamily: "Montserrat" }}
-                    >
-                      {category}
-                    </TableCell>
+                    {headCategories.map((category, index) => (
+                      <TableCell
+                        key={index}
+                        padding="normal"
+                        sx={{ fontFamily: "Montserrat" }}
+                      >
+                        {category}
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {outlook.criterias_per_strategy_obj.map((data, index) => (
+                    <StyledTableRow key={index}>
+                      <StyledTableCell>{data.measure}</StyledTableCell>
+                      <StyledTableCell>{data.category}</StyledTableCell>
+                      <StyledTableCell>{data.metric}</StyledTableCell>
+                      <StyledTableCell>{data.range_limit}</StyledTableCell>
+                      <StyledTableCell>{data.interpretation}</StyledTableCell>
+                    </StyledTableRow>
                   ))}
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {investorTableData.map((data, index) => (
-                  <StyledTableRow key={index}>
-                    <StyledTableCell>{investor}</StyledTableCell>
-                    <StyledTableCell>{data.strategy_label}</StyledTableCell>
-                    <StyledTableCell>{data.investing_style}</StyledTableCell>
-                    <StyledTableCell>10%</StyledTableCell>
-                    <StyledTableCell>{data.annualized_return}</StyledTableCell>
-                    <StyledTableCell>{data.rolling_return}</StyledTableCell>
-                    <StyledTableCell>{data.stdev_return}</StyledTableCell>
-                    <StyledTableCell>{data.max_drawdown}</StyledTableCell>
-                    <StyledTableCell>{data.sharpe_ratio}</StyledTableCell>
-                    <StyledTableCell>{data.sortino_ratio}</StyledTableCell>
-                  </StyledTableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
-        </div>
-        <div
+                </TableBody>
+              </Table>
+            </TableContainer>
+          </div>
+          {/* <div
           style={{
             backgroundColor: "#F3F3F3",
             padding: 20,
@@ -297,8 +305,9 @@ const Criteria = ({ investor, investorDetails, investorTableData }) => {
             Contributions & Legacy
           </text>
           <text>{investorDetails.contributions_and_legacy}</text>
+        </div> */}
         </div>
-      </div>
+      ))}
     </div>
   );
 };

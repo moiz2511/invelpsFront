@@ -141,7 +141,9 @@ const Mentor = ({ investorDetails, investorTableData }) => {
               gap: 8,
             }}
           >
-            <text style={{ fontWeight: 600, fontSize: 20 }}>Background</text>
+            <text style={{ fontWeight: 600, fontSize: 20 }}>
+              {investorDetails.investors} Background
+            </text>
             <text>{investorDetails.background}</text>
           </div>
           <div
@@ -154,7 +156,9 @@ const Mentor = ({ investorDetails, investorTableData }) => {
               gap: 8,
             }}
           >
-            <text style={{ fontWeight: 600, fontSize: 20 }}>Philosophy</text>
+            <text style={{ fontWeight: 600, fontSize: 20 }}>
+              {investorDetails.investors} Philosophy
+            </text>
             <text>{formatText(investorDetails.philosophy)}</text>
           </div>
           <div
@@ -321,7 +325,7 @@ const Mentor = ({ investorDetails, investorTableData }) => {
             }}
           >
             <text style={{ fontWeight: 600, fontSize: 20 }}>
-              Contribution and Legacy
+              {investorDetails.investors} Contribution and Legacy
             </text>
             <text>{investorDetails.contributions_and_legacy}</text>
           </div>

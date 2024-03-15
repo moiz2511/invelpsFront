@@ -5,7 +5,6 @@ export const SwitchContext = createContext({});
 export const SwitchProvider = ({ children }) => {
   const [isSwitch1, setIsSwitch1] = useState(false);
   const [isSwitch2, setIsSwitch2] = useState(false);
-  const [isSwitch3, setIsSwitch3] = useState(false);
 
   return (
     <SwitchContext.Provider

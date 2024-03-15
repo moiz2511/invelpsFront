@@ -306,7 +306,13 @@ const InvestorsScreener = () => {
     }
   };
 
-  console.log(isSwitch1);
+  useEffect(() => {
+    return () => {
+      setIsSwitch1(false);
+    };
+  }, []);
+
+  // console.log(isSwitch1);
   console.log(selectedCompany);
 
   return (

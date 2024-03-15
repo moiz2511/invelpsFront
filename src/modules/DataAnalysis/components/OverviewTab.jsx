@@ -502,7 +502,7 @@ const OverviewTab = ({ setSelectedCompany }) => {
       const sorted = sorting(strategiesCopy);
       setStrategiesCopy(sorted);
 
-      if (showVisualData) {
+      if (isSwitch2) {
         const sorted = sorting(graphTableDataCopy);
         setGraphTableDataCopy(sorted);
       }
@@ -510,6 +510,7 @@ const OverviewTab = ({ setSelectedCompany }) => {
 
     return () => {
       isMounted = false;
+      setIsSwitch2(false);
     };
   }, [selectedSort, selectedField]);
 
@@ -655,9 +656,9 @@ const OverviewTab = ({ setSelectedCompany }) => {
               sx={{
                 width: "100%",
                 height: "100%",
-                margin: 1,
+                margin: 0,
                 gap: 5,
-                padding: 2,
+                padding: 1,
               }}
             >
               <Box justifyContent={"space-between"} display={"flex"}>
@@ -674,7 +675,7 @@ const OverviewTab = ({ setSelectedCompany }) => {
               </Box>
               <TableContainer>
                 <Table
-                  sx={{ minWidth: "100%", maxWidth: "100%", mt: 1 }}
+                  sx={{ width: "100%", maxWidth: "100%", mt: 1 }}
                   size="medium"
                 >
                   <TableHead>
