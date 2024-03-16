@@ -134,8 +134,8 @@ const InvestorModal = ({ showInvestor, closeInvestorModal, investor }) => {
           onChange={handleTabChange}
           aria-label="Tabs for Investor Modal"
         >
-          <Tab label="Mentor" />
-          <Tab label="Criteria" />
+          <Tab label="Investor Profile" />
+          <Tab label="Screen Criterias" />
         </Tabs>
         {selectedTab === 0 && (
           <Mentor

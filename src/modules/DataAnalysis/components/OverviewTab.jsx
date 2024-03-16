@@ -510,7 +510,7 @@ const OverviewTab = ({ setSelectedCompany }) => {
 
     return () => {
       isMounted = false;
-      setIsSwitch2(false);
+      // setIsSwitch2(false);
     };
   }, [selectedSort, selectedField]);
 
@@ -563,8 +563,8 @@ const OverviewTab = ({ setSelectedCompany }) => {
           }}
         >
           <Box ml={2} mb={4}>
-            <Typography color={"rgba(0, 0, 0, 0.6)"}>
-              Strategies Overview / {selectedStrategy?.name}
+            <Typography color={"rgba(0, 0, 0, 0.6)"} >
+              <span onClick={handleGoBack} style={{ cursor: "pointer" }} > Strategies Overview </span> / {selectedStrategy?.name}
             </Typography>
           </Box>
           <Button
@@ -915,7 +915,7 @@ const OverviewTab = ({ setSelectedCompany }) => {
             my: 1,
             position: "relative",
             width: "calc(100vw - 30px)",
-            overflowX: "auto",
+            overflowX: "hidden",
           }}
         >
           <Box px={2} py={2} width={"100%"}>
@@ -935,8 +935,8 @@ const OverviewTab = ({ setSelectedCompany }) => {
               sx={{
                 display: "flex",
                 flexDirection: "row",
-                gap: 3,
                 marginTop: 6,
+                overflowX: "hidden"
               }}
             >
               {allStrategies.length > 0 ? (

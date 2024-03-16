@@ -61,7 +61,7 @@ const ReusablePieChart = ({
             },
             {
               value: gainPerteEnCapital,
-              name: "Gain/Perte en capital",
+              name: "Gain/Loss Capital",
               itemStyle: { color: "#ACABAB" },
             },
           ],

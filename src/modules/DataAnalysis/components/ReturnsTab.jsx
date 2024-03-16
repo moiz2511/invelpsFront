@@ -397,7 +397,7 @@ const ReturnsTab = () => {
         </>
       ) : (
         <>
-          <Card sx={{ m: 1, position: "relative", fontFamily: "Montserrat" }}>
+          <Card sx={{ m: 1, position: "relative" }}>
             <Box p={3}>
               <Box spacing={1} sx={{ mt: 0.5 }}>
                 <text
@@ -492,16 +492,6 @@ const ReturnsTab = () => {
                   {strategyData.map((strategy, index) => (
                     <StyledTableRow hover key={index} sx={{ ml: 3 }}>
                       <StyledTableCell
-                        onClick={() =>
-                          handleDataVisualization(strategy.strategy_name_here)
-                        }
-                        sx={{
-                          cursor: "pointer",
-                          ":hover": {
-                            textDecoration: "underline",
-                            color: "blue",
-                          },
-                        }}
                       >
                         {strategy.strategy_name_here}
                       </StyledTableCell>
@@ -569,7 +559,7 @@ const ReturnsTab = () => {
 
             <TableContainer>
               <Table
-                sx={{ minWidth: "100%", maxWidth: "100%", mt: 1 }}
+                sx={{ minWidth: "100%", maxWidth: "100%", mt: 1, fontFamily: 'Montserrat' }}
                 size="medium"
               >
                 <TableHead>
@@ -581,6 +571,7 @@ const ReturnsTab = () => {
                         backgroundColor: "#272727",
                         color: "white",
                         fontSize: 18,
+                        fontFamily: "Montserrat"
                       }}
                     >
                       Strategy Models
@@ -593,6 +584,7 @@ const ReturnsTab = () => {
                         backgroundColor: "#427878",
                         color: "white",
                         fontSize: 18,
+                        fontFamily: "Montserrat"
                       }}
                     >
                       Rolling Returns (%)
@@ -610,7 +602,7 @@ const ReturnsTab = () => {
                   >
                     <TableCell>
                       <Box
-                        sx={{ display: "flex", alignItems: "center", gap: 2 }}
+                        sx={{ display: "flex", alignItems: "center", gap: 2,  fontFamily: "Montserrat" }}
                       >
                         <span>Strategy</span>
                         {selectedSort === 1 ? (
@@ -713,14 +705,7 @@ const ReturnsTab = () => {
                   {bestWorstDataCopy.map((data, index) => (
                     <StyledTableRow hover key={index} sx={{ ml: 3 }}>
                       <StyledTableCell
-                        onClick={() => handleDataVisualization(data.name)}
-                        sx={{
-                          cursor: "pointer",
-                          ":hover": {
-                            textDecoration: "underline",
-                            color: "blue",
-                          },
-                        }}
+                
                       >
                         {data.name}
                       </StyledTableCell>
