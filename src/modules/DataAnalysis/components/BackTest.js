@@ -473,7 +473,7 @@ const BackTest = ({ companySymbol, companyLogo }) => {
                         }}
                       >
                         TOTAL RETURN{" "}
-                        {strategyBackTest.total_investment_value_usd} %
+                        {strategyBackTest.investment_total_return} %
                       </div>
                     </div>
                   </Box>
@@ -508,7 +508,7 @@ const BackTest = ({ companySymbol, companyLogo }) => {
                           fontSize: "42px",
                         }}
                       >
-                        {strategyBackTest.investment_total_return}%
+                        {strategyBackTest.investment_annualized_return}%
                       </div>
                     </div>
                   </Box>
@@ -516,7 +516,7 @@ const BackTest = ({ companySymbol, companyLogo }) => {
                 <BackTestGraph
                   dividendTotal={strategyBackTest.dividend_income_usd}
                   montantInvesti={strategyBackTest.invested_capital}
-                  gainPerteEnCapital={strategyBackTest.invested_capital}
+                  gainPerteEnCapital={strategyBackTest.capital_gain_loss_usd}
                 />
               </Box>
             </Box>

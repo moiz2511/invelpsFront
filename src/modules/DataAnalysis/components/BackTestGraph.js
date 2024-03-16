@@ -21,7 +21,7 @@ const ReusablePieChart = ({
         show: true,
         orient: "vertical",
         bottom: 0, // Adjust bottom position
-        left: 0, // Adjust left position
+        right: 0, // Adjust left position
         textStyle: {
           fontFamily: "Montserrat", // Specify the desired font family
         },
@@ -56,7 +56,7 @@ const ReusablePieChart = ({
             },
             {
               value: montantInvesti,
-              name: "Montant Investi",
+              name: "Invested Capital",
               itemStyle: { color: "#D36748" },
             },
             {
@@ -77,10 +77,13 @@ const ReusablePieChart = ({
   }, [dividendTotal, montantInvesti, gainPerteEnCapital]);
 
   return (
-    <div
-      ref={chartRef}
-      style={{ width: "100%", height: "250px", alignSelf: "center" }}
-    />
+    <>
+      <div
+        ref={chartRef}
+        style={{ width: "100%", height: "250px", alignSelf: "center" }}
+      />
+      {/* <text>total return</text> */}
+    </>
   );
 };
 
