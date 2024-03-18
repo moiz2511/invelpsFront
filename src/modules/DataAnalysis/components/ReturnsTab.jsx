@@ -224,14 +224,9 @@ const ReturnsTab = () => {
     }
   };
   useEffect(() => {
-    let isMounted = true;
-    if (isMounted) {
+    if (selectedStrategy !== null) {
       fetchGraphData();
     }
-    return () => {
-      isMounted = false;
-    };
-    // fetchGraphData();
   }, [selectedStrategy]);
 
   const handleDataVisualization = (strategy) => {
@@ -489,40 +484,51 @@ const ReturnsTab = () => {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {strategyData.map((strategy, index) => (
-                    <StyledTableRow hover key={index} sx={{ ml: 3 }}>
-                      <StyledTableCell
-                      >
-                        {strategy.strategy_name_here}
-                      </StyledTableCell>
-                      <StyledTableCell>
-                        {(strategy[years[years.length - 1]]?.anual_return -
-                          strategy[years[1]]?.anual_return) /
-                          (years[years.length - 1] - years[1]) >=
-                        0 ? (
-                          <IoArrowUpOutline color="green" size={18} />
-                        ) : (
-                          <IoArrowDown color="red" size={18} />
-                        )}
-                      </StyledTableCell>
-
-                      {years.map((year, index) => (
+                  {strategyData !== null &&
+                    strategyData.map((strategy, index) => (
+                      <StyledTableRow hover key={index} sx={{ ml: 3 }}>
                         <StyledTableCell
-                          key={index}
+                          onClick={() =>
+                            handleDataVisualization(strategy.strategy_name_here)
+                          }
                           sx={{
-                            color:
-                              parseFloat(strategy[year].anual_return) >= 0
-                                ? "green"
-                                : "red",
+                            cursor: "pointer",
+                            ":hover": {
+                              textDecoration: "underline",
+                              color: "blue",
+                            },
                           }}
                         >
-                          {strategy[year].anual_return
-                            ? strategy[year].anual_return
-                            : "-"}
+                          {strategy?.strategy_name_here}
                         </StyledTableCell>
-                      ))}
-                    </StyledTableRow>
-                  ))}
+                        <StyledTableCell>
+                          {(strategy[years[years.length - 1]]?.anual_return -
+                            strategy[years[1]]?.anual_return) /
+                            (years[years.length - 1] - years[1]) >=
+                          0 ? (
+                            <IoArrowUpOutline color="green" size={18} />
+                          ) : (
+                            <IoArrowDown color="red" size={18} />
+                          )}
+                        </StyledTableCell>
+
+                        {years.map((year, index) => (
+                          <StyledTableCell
+                            key={index}
+                            sx={{
+                              color:
+                                parseFloat(strategy[year]?.anual_return) >= 0
+                                  ? "green"
+                                  : "red",
+                            }}
+                          >
+                            {strategy[year]?.anual_return
+                              ? strategy[year]?.anual_return
+                              : "-"}
+                          </StyledTableCell>
+                        ))}
+                      </StyledTableRow>
+                    ))}
                 </TableBody>
               </Table>
             </TableContainer>
@@ -559,7 +565,12 @@ const ReturnsTab = () => {
 
             <TableContainer>
               <Table
-                sx={{ minWidth: "100%", maxWidth: "100%", mt: 1, fontFamily: 'Montserrat' }}
+                sx={{
+                  minWidth: "100%",
+                  maxWidth: "100%",
+                  mt: 1,
+                  fontFamily: "Montserrat",
+                }}
                 size="medium"
               >
                 <TableHead>
@@ -571,7 +582,7 @@ const ReturnsTab = () => {
                         backgroundColor: "#272727",
                         color: "white",
                         fontSize: 18,
-                        fontFamily: "Montserrat"
+                        fontFamily: "Montserrat",
                       }}
                     >
                       Strategy Models
@@ -584,7 +595,7 @@ const ReturnsTab = () => {
                         backgroundColor: "#427878",
                         color: "white",
                         fontSize: 18,
-                        fontFamily: "Montserrat"
+                        fontFamily: "Montserrat",
                       }}
                     >
                       Rolling Returns (%)
@@ -602,7 +613,12 @@ const ReturnsTab = () => {
                   >
                     <TableCell>
                       <Box
-                        sx={{ display: "flex", alignItems: "center", gap: 2,  fontFamily: "Montserrat" }}
+                        sx={{
+                          display: "flex",
+                          alignItems: "center",
+                          gap: 2,
+                          fontFamily: "Montserrat",
+                        }}
                       >
                         <span>Strategy</span>
                         {selectedSort === 1 ? (
@@ -705,10 +721,18 @@ const ReturnsTab = () => {
                   {bestWorstDataCopy.map((data, index) => (
                     <StyledTableRow hover key={index} sx={{ ml: 3 }}>
                       <StyledTableCell
-                
-                      >
-                        {data.name}
-                      </StyledTableCell>
+                      onClick={() =>
+                        handleDataVisualization(data.name)
+                      }
+                      sx={{
+                        cursor: "pointer",
+                        ":hover": {
+                          textDecoration: "underline",
+                          color: "blue",
+                        },
+                      }}
+                      
+                      >{data.name}</StyledTableCell>
                       <StyledTableCell
                         sx={{
                           color:

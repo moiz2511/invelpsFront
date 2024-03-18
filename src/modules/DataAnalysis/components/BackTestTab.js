@@ -192,8 +192,10 @@ const BackTestTab = () => {
   };
 
   useEffect(() => {
-    fetchGraphData();
-    fetchDividendTableData();
+    if (selectedStrategy !== null) {
+      fetchGraphData();
+      fetchDividendTableData();
+    }
   }, [selectedStrategy]);
 
   const handleDataVisualization = (strategy) => {
@@ -510,7 +512,7 @@ const BackTestTab = () => {
                   <StyledTableRow hover key={index} sx={{ ml: 3 }}>
                     <StyledTableCell
                       onClick={() => {
-                        handleDataVisualization(strategy.strategy_name_here);
+                        handleDataVisualization(strategy?.strategy_name_here);
                       }}
                       sx={{
                         cursor: "pointer",
@@ -520,20 +522,20 @@ const BackTestTab = () => {
                         },
                       }}
                     >
-                      {strategy.strategy_name_here}
+                      {strategy?.strategy_name_here}
                     </StyledTableCell>
                     {years.map((year, index) => (
                       <StyledTableCell
                         key={index}
                         sx={{
                           color:
-                            parseFloat(strategy[year].anual_return) >= 0
+                            parseFloat(strategy[year]?.anual_return) >= 0
                               ? "green"
                               : "red",
                         }}
                       >
-                        {strategy[year].anual_return
-                          ? strategy[year].anual_return
+                        {strategy[year]?.anual_return
+                          ? strategy[year]?.anual_return
                           : "N/A"}
                       </StyledTableCell>
                     ))}

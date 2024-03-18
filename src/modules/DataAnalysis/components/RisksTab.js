@@ -146,7 +146,10 @@ const RisksTab = () => {
     }
   };
   useEffect(() => {
-    fetchGraphData();
+    if(selectedStrategy !== null){
+      fetchGraphData();
+    }
+
   }, [selectedStrategy]);
 
   const handleDataVisualization = (strategy) => {
