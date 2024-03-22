@@ -196,6 +196,8 @@ const BackTestTab = () => {
   const [selectedSort, setSelectedSort] = useState(0);
   const [currentRowsPerPage, setCurrentRowsPerPage] = useState(3);
   const [currentPage, setCurrentPage] = useState(1);
+  const [selectedCompany, setSelectedCompany] = useState(null);
+  const [selectedField, setSelectedField] = useState(null);
 
   const rowsPerPageOptions = [3, 5, 10];
 
@@ -373,6 +375,10 @@ const BackTestTab = () => {
     setSelectedStrategy(null);
     setShowVisualData(!showVisualData);
     setSelectedStrategy(strategy);
+  };
+
+  const handleSortingFieldChange = (field) => {
+    setSelectedField(field);
   };
 
   const generateRandomInvestmentData = () => {
@@ -795,8 +801,6 @@ const BackTestTab = () => {
                               hover
                               onClick={() => {
                                 setSelectedCompany(data);
-                                setIsSwitch1(true);
-                                setIsSwitch2(false);
                               }}
                               style={{ cursor: "pointer" }}
                             >
@@ -953,7 +957,7 @@ const BackTestTab = () => {
                   fontWeight: "bold",
                 }}
               >
-                Annual Returns (10 years)
+                Annual Returns ({years.length} years)
               </text>
             </Box>
 
