@@ -529,13 +529,13 @@ const BackTestTab = () => {
                         key={index}
                         sx={{
                           color:
-                            parseFloat(strategy[year]?.anual_return) >= 0
+                            parseFloat(strategy[year]?.anualPrice) >= 0
                               ? "green"
                               : "red",
                         }}
                       >
-                        {strategy[year]?.anual_return
-                          ? strategy[year]?.anual_return
+                        {strategy[year]?.anualPrice
+                          ? strategy[year]?.anualPrice
                           : "N/A"}
                       </StyledTableCell>
                     ))}
