@@ -43,12 +43,12 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   },
 }));
 
-const CompanyFinancials = ({ companyName, companyImage }) => {
+const CompanyFinancials = ({ companyName, companyImage, companySymbol }) => {
   const authCtx = useContext(AuthContext);
   const [authToken, setAuthToken] = useState(null);
   const [exchangeName, setExchangeName] = useState(null);
   const [tableHeaders, setTableHeaders] = useState([]);
-  const [companySymbol, setCompanySymbol] = useState(null);
+  // const [companySymbol, setCompanySymbol] = useState(null);
   const [currency, setCurrency] = useState(null);
   const [stockPrice, setStockPrice] = useState(null);
   const [tableData, setTableData] = useState([]);
@@ -130,7 +130,7 @@ const CompanyFinancials = ({ companyName, companyImage }) => {
 
         if (response.status === 200) {
           console.log("Data:", data);
-          setCompanySymbol(data.resp_data.profile[0].symbol);
+          // setCompanySymbol(data.resp_data.profile[0].symbol);
           setCurrency(data.resp_data.profile[0].currency);
           setStockPrice(data.resp_data.profile[0].price);
         } else {
