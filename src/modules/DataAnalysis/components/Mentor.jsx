@@ -289,7 +289,10 @@ const Mentor = ({ investorDetails, investorTableData }) => {
                         <StyledTableCell>
                           {investor.investing_style}
                         </StyledTableCell>
-                        <StyledTableCell>10%</StyledTableCell>
+                        <StyledTableCell>
+                          {(investor.annualized_return / 100).toFixed(2) + "%"}
+                        </StyledTableCell>
+                        {/* <StyledTableCell>10%</StyledTableCell> */}
                         <StyledTableCell>
                           {investor.annualized_return}
                         </StyledTableCell>
