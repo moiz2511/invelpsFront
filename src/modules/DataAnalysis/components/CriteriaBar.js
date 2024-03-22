@@ -5,16 +5,18 @@ const CriteriaBar = ({ data }) => {
   const chartRef = useRef(null);
 
   const keys = [
-    "performance",
-    "risk",
-    "value",
     "profitability",
     "liquidity",
     "solvency",
     "efficiency",
     "return_field",
+    // "performance",
+    // "risk",
+    // "value",
     "valuation",
   ];
+
+  console.log(data);
 
   const chartData = keys.map((key) => data[key] || "N/A");
 

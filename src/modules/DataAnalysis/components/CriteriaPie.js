@@ -10,12 +10,12 @@ const ReusablePieChart = ({ data }) => {
     "performance",
     "risk",
     "value",
-    "profitability",
-    "liquidity",
-    "solvency",
-    "efficiency",
-    "return_field",
-    "valuation",
+    // "profitability",
+    // "liquidity",
+    // "solvency",
+    // "efficiency",
+    // "return_field",
+    // "valuation",
   ];
 
   const chartData = keys.map((key) => ({
