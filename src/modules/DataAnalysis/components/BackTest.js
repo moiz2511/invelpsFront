@@ -22,10 +22,12 @@ import BackTestGraph from "./BackTestGraph";
 import AuthContext from "../../Core/store/auth-context";
 import BannerImage from "../../../assets/images/Banner.png";
 
-const BackTest = ({ companySymbol, companyLogo }) => {
+const BackTest = ({ companySymbol, companyLogo, strategyLabel }) => {
   const authCtx = useContext(AuthContext);
   const [authToken, setAuthToken] = useState(null);
   const [strategyBackTest, setStrategyBackTest] = useState(null);
+
+  console.log(strategyLabel);
 
   useEffect(() => {
     const CheckUserSession = () => {
@@ -41,6 +43,7 @@ const BackTest = ({ companySymbol, companyLogo }) => {
       try {
         const body = {
           symbol: companySymbol,
+          strategy: strategyLabel,
         };
         const response = await fetch(
           `https://api.invelps.com/api/strategies/getBackTestDataAgainstCompany`,
@@ -472,8 +475,8 @@ const BackTest = ({ companySymbol, companyLogo }) => {
                           paddingBlock: "10px",
                         }}
                       >
-                        TOTAL RETURN{" "}
-                        {strategyBackTest.investment_total_return} %
+                        TOTAL RETURN {strategyBackTest.investment_total_return}{" "}
+                        %
                       </div>
                     </div>
                   </Box>

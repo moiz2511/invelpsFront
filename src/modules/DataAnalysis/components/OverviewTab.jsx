@@ -563,8 +563,12 @@ const OverviewTab = ({ setSelectedCompany }) => {
           }}
         >
           <Box ml={2} mb={4}>
-            <Typography color={"rgba(0, 0, 0, 0.6)"} >
-              <span onClick={handleGoBack} style={{ cursor: "pointer" }} > Strategies Overview </span> / {selectedStrategy?.name}
+            <Typography color={"rgba(0, 0, 0, 0.6)"}>
+              <span onClick={handleGoBack} style={{ cursor: "pointer" }}>
+                {" "}
+                Strategies Overview{" "}
+              </span>{" "}
+              / {selectedStrategy?.name}
             </Typography>
           </Box>
           <Button
@@ -750,9 +754,11 @@ const OverviewTab = ({ setSelectedCompany }) => {
                             <StyledTableRow
                               hover
                               onClick={() => {
+                                console.log(isSwitch1);
                                 setSelectedCompany(data);
                                 setIsSwitch1(true);
                                 setIsSwitch2(false);
+                                setShowVisualData(!showVisualData);
                               }}
                               style={{ cursor: "pointer" }}
                             >
@@ -936,7 +942,7 @@ const OverviewTab = ({ setSelectedCompany }) => {
                 display: "flex",
                 flexDirection: "row",
                 marginTop: 6,
-                overflowX: "hidden"
+                overflowX: "hidden",
               }}
             >
               {allStrategies.length > 0 ? (

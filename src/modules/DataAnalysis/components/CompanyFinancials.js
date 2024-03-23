@@ -54,6 +54,7 @@ const CompanyFinancials = ({ companyName, companyImage, companySymbol }) => {
   const [tableData, setTableData] = useState([]);
   const [selectedTab, setSelectedTab] = useState("Income");
   const [divider, setDivider] = useState(1);
+  const [dateValues, setDateValues] = useState([]);
 
   const [valueScale, setValueScale] = useState("thousands");
 
@@ -157,9 +158,11 @@ const CompanyFinancials = ({ companyName, companyImage, companySymbol }) => {
           quarter: [],
           table: selectedTab,
           to_year: "2023",
+          symbol: companySymbol,
         };
         const response = await fetch(
-          `https://api.invelps.com/api/dataAnalysis/financials`,
+          `https://api.invelps.com/api/strategies/financials/getIncomeStatement`,
+          // `https://api.invelps.com/api/dataAnalysis/financials`,
           {
             method: "POST",
             headers: {
@@ -169,13 +172,51 @@ const CompanyFinancials = ({ companyName, companyImage, companySymbol }) => {
             body: JSON.stringify(body),
           }
         );
+        const response1 = await fetch(
+          `https://api.invelps.com/api/dataAnalysis/financials`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${authToken}`,
+            },
+            body: JSON.stringify({
+              company: companyName,
+              display: "Value",
+              exchange: exchangeName,
+              from_year: "2013",
+              period: "Annual",
+              quarter: [],
+              table: selectedTab,
+              to_year: "2023",
+            }),
+          }
+        );
+
+        const data1 = await response1.json();
+        console.log(data1);
 
         const data = await response.json();
 
+        console.log(data.data.metrics[0].ten_year_data[0].date.substring(0, 4));
+
         if (response.status === 200) {
-          console.log("Data:", data);
-          setTableHeaders(data.date_range);
-          setTableData(data.return_list);
+          console.log("Data:", data.data.metrics);
+          let dates = [];
+          for (var i = 0; i < data.data.metrics[0].ten_year_data.length; i++) {
+            dates.push(
+              data.data.metrics[0].ten_year_data[i].date.substring(0, 4)
+            );
+          }
+          console.log(dates);
+
+          setDateValues(dates);
+
+          setTableHeaders(dates);
+          setTableData(data.data.metrics);
+
+          // setTableHeaders(data.date_range);
+          // setTableData(data.return_list);
         } else {
           console.log("Unexpected status code:", response.status);
         }
@@ -211,20 +252,20 @@ const CompanyFinancials = ({ companyName, companyImage, companySymbol }) => {
     }
   };
 
-  const convertValue = (value, valueScale) => {
-    let amount = parseInt(value.split(",").join(""));
-    console.log(value);
-    switch (valueScale) {
-      case "thousands":
-        return amount / 1000;
-      case "millions":
-        return amount / 1000000;
-      case "billions":
-        return amount / 1000000000;
-      default:
-        return value;
-    }
-  };
+  // const convertValue = (value, valueScale) => {
+  //   let amount = parseInt(value.split(",").join(""));
+  //   console.log(value);
+  //   switch (valueScale) {
+  //     case "thousands":
+  //       return amount / 1000;
+  //     case "millions":
+  //       return amount / 1000000;
+  //     case "billions":
+  //       return amount / 1000000000;
+  //     default:
+  //       return value;
+  //   }
+  // };
 
   const handleValueScaleChange = (e) => {
     setValueScale(e.target.value);
@@ -324,27 +365,32 @@ const CompanyFinancials = ({ companyName, companyImage, companySymbol }) => {
           <TableBody>
             {tableData.map((rowData, rowIndex) => (
               <StyledTableRow key={rowIndex}>
-                <StyledTableCell style={{ fontFamily: "Montserrat" }}>
+                {/* <StyledTableCell style={{ fontFamily: "Montserrat" }}>
                   {rowData.metric}
-                </StyledTableCell>
+                </StyledTableCell> */}
                 <StyledTableCell style={{ fontFamily: "Montserrat" }}>
-                  {claculateTrend(rowData)}
+                  {rowData.label}
                 </StyledTableCell>
-                {tableHeaders.map((header, index) => (
+                {/* <StyledTableCell style={{ fontFamily: "Montserrat" }}>
+                  {claculateTrend(rowData)}
+                </StyledTableCell> */}
+                {dateValues.map((header, index) => (
                   <StyledTableCell
                     key={index}
                     style={{ fontFamily: "Montserrat" }}
                   >
-                    {convertValue(rowData[header], valueScale).toFixed(
-                      valueScale !== "thousands" ? 2 : 0
-                    )}
+                    {rowData.ten_year_data[index].value}
+                    {/* {convertValue(
+                      rowData.ten_year_data[header],
+                      valueScale
+                    ).toFixed(valueScale !== "thousands" ? 2 : 0)}
                     {valueScale === "thousands"
                       ? "K"
                       : valueScale === "millions"
                       ? "M"
                       : valueScale === "billions"
                       ? "B"
-                      : ""}
+                      : ""} */}
                   </StyledTableCell>
                 ))}
               </StyledTableRow>

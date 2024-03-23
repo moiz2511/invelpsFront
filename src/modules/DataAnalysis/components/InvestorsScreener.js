@@ -389,6 +389,7 @@ const InvestorsScreener = () => {
             <CustomTabPanel value={valueCompanyDetails} index={2}>
               <div style={{ backgroundColor: "#DEDEDE", height: "150vh" }}>
                 <BackTest
+                  strategyLabel={selectedCompany.strategy_name}
                   companySymbol={selectedCompany.symbol}
                   companyLogo={selectedCompany.image}
                 />
@@ -417,7 +418,7 @@ const InvestorsScreener = () => {
           />
         </CustomTabPanel>
         <CustomTabPanel value={value} index={1}>
-          <ReturnsTab />
+          <ReturnsTab setSelectedCompany={setSelectedCompany} />
         </CustomTabPanel>
         <CustomTabPanel value={value} index={2}>
           <RisksTab />
