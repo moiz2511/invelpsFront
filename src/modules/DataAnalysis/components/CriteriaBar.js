@@ -18,7 +18,7 @@ const CriteriaBar = ({ data }) => {
 
   console.log(data);
 
-  const chartData = keys.map((key) => data[key] || "N/A");
+  const chartData = keys.map((key) => data[key] || "-");
 
   console.log(chartData);
 

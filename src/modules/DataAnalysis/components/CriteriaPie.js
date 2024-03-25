@@ -20,7 +20,7 @@ const ReusablePieChart = ({ data }) => {
 
   const chartData = keys.map((key) => ({
     name: key,
-    value: data[key] || "N/A", // Replace null with 'N/A' or any default value you prefer
+    value: data[key] || "-", // Replace null with '-' or any default value you prefer
   }));
 
   console.log(chartData);

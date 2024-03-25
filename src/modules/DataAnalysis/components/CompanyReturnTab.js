@@ -24,6 +24,7 @@ import CompanyScatterChart from "./CompanyScatterChart";
 import TableCell, { tableCellClasses } from "@mui/material/TableCell";
 import ColorConstants from "../../Core/constants/ColorConstants.json";
 import { grey } from "@mui/material/colors";
+import { IoArrowDown, IoArrowUp } from "react-icons/io5";
 
 const headYears = [
   2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023,
@@ -270,6 +271,20 @@ const CompanyReturnTab = ({ companySymbol, companyName, companyImage }) => {
   console.log(annualReturn);
   console.log(rollingReturn);
 
+  const calculateTrends = (data) => {
+    console.log(data);
+    let lastYearValue = parseInt(data[data.length - 1]?.annual_return);
+    let secondLastYearValue = parseInt(data[data.length - 2]?.annual_return);
+    let dividendDiff = lastYearValue - secondLastYearValue;
+    if (dividendDiff > 0) {
+      return <IoArrowUp color="green" size={18} />;
+    } else if (dividendDiff < 0) {
+      return <IoArrowDown color="red" size={18} />;
+    } else if (dividendDiff === 0) {
+      return "-";
+    }
+  };
+
   return (
     <>
       <Card sx={{ m: 1, position: "relative", fontFamily: "Montserrat" }}>
@@ -304,7 +319,7 @@ const CompanyReturnTab = ({ companySymbol, companyName, companyImage }) => {
                 fontWeight: "bold",
               }}
             >
-              Annual Returns
+              Annual Returns ({years?.length} years)
             </text>
           </Box>
 
@@ -370,6 +385,18 @@ const CompanyReturnTab = ({ companySymbol, companyName, companyImage }) => {
                 >
                   Company
                 </TableCell>
+                <TableCell
+                  padding="normal"
+                  colSpan={1}
+                  sx={{
+                    backgroundColor: "#e7ecef",
+                    color: "#427878",
+                    fontSize: 14,
+                    fontFamily: "Montserrat",
+                  }}
+                >
+                  Trends
+                </TableCell>
                 {annualReturn.map((ann, index) => (
                   <TableCell
                     key={index}
@@ -399,6 +426,13 @@ const CompanyReturnTab = ({ companySymbol, companyName, companyImage }) => {
                   />{" "}
                   {annualReturn[0]?.symbol}
                 </StyledTableCell>
+                <StyledTableCell
+                  sx={{
+                    color: "green",
+                  }}
+                >
+                  {calculateTrends(annualReturn)}
+                </StyledTableCell>
                 {annualReturn.map((ann, index) => (
                   <StyledTableCell
                     key={index}
@@ -409,7 +443,7 @@ const CompanyReturnTab = ({ companySymbol, companyName, companyImage }) => {
                   >
                     {ann.annual_return
                       ? (ann.annual_return * 100).toFixed(2)
-                      : "N/A"}
+                      : "-"}
                   </StyledTableCell>
                 ))}
               </StyledTableRow>

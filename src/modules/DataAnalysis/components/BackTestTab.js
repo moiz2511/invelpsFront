@@ -21,6 +21,7 @@ import TableCell, { tableCellClasses } from "@mui/material/TableCell";
 import ColorConstants from "../../Core/constants/ColorConstants.json";
 import PageInfoBreadCrumbs from "../../Core/components/Layout/PageInfoBreadCrumbs";
 import PieChart from "./PieChart";
+import { IoArrowDown, IoArrowUp } from "react-icons/io5";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -218,6 +219,29 @@ const BackTestTab = () => {
   console.log(investmentData);
   console.log(strategyData);
 
+  const claculateTrend = (data, type) => {
+    let lastYear = years[years.length - 1];
+    let secondLastYear = years[years.length - 2];
+    let lastYearValue = parseInt(
+      type === "price"
+        ? data[lastYear]?.anualPrice
+        : data[lastYear]?.annual_dividend
+    );
+    let secondLastYearValue = parseInt(
+      type === "price"
+        ? data[secondLastYear]?.anualPrice
+        : data[secondLastYear]?.annual_dividend
+    );
+    let dividendDiff = lastYearValue - secondLastYearValue;
+    if (dividendDiff > 0) {
+      return <IoArrowUp color="green" size={18} />;
+    } else if (dividendDiff < 0) {
+      return <IoArrowDown color="red" size={18} />;
+    } else if (dividendDiff === 0) {
+      return "-";
+    }
+  };
+
   return (
     <>
       {showVisualData ? (
@@ -403,7 +427,7 @@ const BackTestTab = () => {
                                 : "red",
                           }}
                         >
-                          {data.Annual_Dividend || "N/A"}
+                          {data.Annual_Dividend || "-"}
                         </StyledTableCell>
                       ))}
                     </StyledTableRow>
@@ -424,7 +448,7 @@ const BackTestTab = () => {
                   fontWeight: "bold",
                 }}
               >
-                Annual Returns ({years.length} years)
+                Annual Prices ({years.length} years)
               </text>
             </Box>
 
@@ -440,6 +464,37 @@ const BackTestTab = () => {
                 chartId={"LR-chart-1"}
                 chartData={strategyData}
                 years={years}
+                type="price"
+              />
+            </Box>
+          </Box>
+
+          <Box p={3}>
+            <Box spacing={1} sx={{ mt: 0.5 }}>
+              <text
+                style={{
+                  padding: "5px",
+                  fontSize: "27px",
+                  fontWeight: "bold",
+                }}
+              >
+                Annual Devidend ({years.length} years)
+              </text>
+            </Box>
+
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "row",
+                gap: 3,
+                marginTop: 6,
+              }}
+            >
+              <LineRaceChart
+                chartId={"LR-chart-2"}
+                chartData={strategyData}
+                years={years}
+                type="dividend"
               />
             </Box>
           </Box>
@@ -461,11 +516,11 @@ const BackTestTab = () => {
                       fontFamily: "Montserrat",
                     }}
                   >
-                    Strategy Models
+                    Strategy Models ({years?.length} years)
                   </TableCell>
                   <TableCell
                     padding="normal"
-                    colSpan={12}
+                    colSpan={8}
                     align="center"
                     sx={{
                       backgroundColor: "#427878",
@@ -475,6 +530,19 @@ const BackTestTab = () => {
                     }}
                   >
                     Annual Prices (USD)
+                  </TableCell>
+                  <TableCell
+                    padding="normal"
+                    colSpan={8}
+                    align="center"
+                    sx={{
+                      backgroundColor: "#42787890",
+                      color: "white",
+                      fontSize: 18,
+                      fontFamily: "Montserrat",
+                    }}
+                  >
+                    Annual Dividend
                   </TableCell>
                 </TableRow>
               </TableHead>
@@ -489,6 +557,27 @@ const BackTestTab = () => {
                 >
                   <TableCell sx={{ fontFamily: "Montserrat" }}>
                     Strategy
+                  </TableCell>
+                  <TableCell
+                    padding="normal"
+                    sx={{ fontFamily: "Montserrat", color: "#427878" }}
+                  >
+                    Trends
+                  </TableCell>
+                  {years.map((year, index) => (
+                    <TableCell
+                      key={index}
+                      padding="normal"
+                      sx={{ fontFamily: "Montserrat", color: "#427878" }}
+                    >
+                      {year}
+                    </TableCell>
+                  ))}
+                  <TableCell
+                    padding="normal"
+                    sx={{ fontFamily: "Montserrat", color: "#427878" }}
+                  >
+                    Trends
                   </TableCell>
                   {years.map((year, index) => (
                     <TableCell
@@ -518,6 +607,13 @@ const BackTestTab = () => {
                     >
                       {strategy?.strategy_name_here}
                     </StyledTableCell>
+                    <StyledTableCell
+                      sx={{
+                        color: "green",
+                      }}
+                    >
+                      {claculateTrend(strategy, "price")}
+                    </StyledTableCell>
                     {years.map((year, index) => (
                       <StyledTableCell
                         key={index}
@@ -530,7 +626,29 @@ const BackTestTab = () => {
                       >
                         {strategy[year]?.anualPrice
                           ? strategy[year]?.anualPrice
-                          : "N/A"}
+                          : "-"}
+                      </StyledTableCell>
+                    ))}
+                    <StyledTableCell
+                      sx={{
+                        color: "green",
+                      }}
+                    >
+                      {claculateTrend(strategy, "dividend")}
+                    </StyledTableCell>
+                    {years.map((year, index) => (
+                      <StyledTableCell
+                        key={index}
+                        sx={{
+                          color:
+                            parseFloat(strategy[year]?.annual_dividend) >= 0
+                              ? "green"
+                              : "red",
+                        }}
+                      >
+                        {strategy[year]?.annual_dividend
+                          ? strategy[year]?.annual_dividend
+                          : "-"}
                       </StyledTableCell>
                     ))}
                   </StyledTableRow>

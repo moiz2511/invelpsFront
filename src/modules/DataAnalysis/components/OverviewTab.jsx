@@ -110,13 +110,13 @@ const headCells = {
       isValueLink: false,
       isDropDown: false,
     },
-    {
-      id: "duration",
-      label: "Duration",
-      key: "duration",
-      isValueLink: false,
-      isDropDown: false,
-    },
+    // {
+    //   id: "duration",
+    //   label: "Duration",
+    //   key: "duration",
+    //   isValueLink: false,
+    //   isDropDown: false,
+    // },
   ],
 };
 
@@ -848,7 +848,7 @@ const OverviewTab = ({ setSelectedCompany }) => {
                                 {" "}
                                 {data.sortino_ratio
                                   ? data.sortino_ratio
-                                  : "N/A"}{" "}
+                                  : "-"}{" "}
                               </StyledTableCell>
                             </StyledTableRow>
                           </Tooltip>
@@ -933,7 +933,8 @@ const OverviewTab = ({ setSelectedCompany }) => {
                   fontWeight: "bold",
                 }}
               >
-                Strategies Performances and Risks (10 years)
+                Strategies Performances and Risks ({strategiesCopy[0]?.duration}{" "}
+                years)
               </text>
             </Box>
 
@@ -999,7 +1000,7 @@ const OverviewTab = ({ setSelectedCompany }) => {
                   }}
                 >
                   {" "}
-                  Overview{" "}
+                  Overview ({strategiesCopy[0]?.duration} years)
                 </text>
               </Box>
               <Box display="flex" gap={2} sx={{ mt: 0.5 }}>
@@ -1193,7 +1194,7 @@ const OverviewTab = ({ setSelectedCompany }) => {
                           {" "}
                           {data.sortino_ratio ? data.sortino_ratio : "-"}{" "}
                         </StyledTableCell>
-                        <StyledTableCell> {data.duration} </StyledTableCell>
+                        {/* <StyledTableCell> {data.duration} </StyledTableCell> */}
                       </StyledTableRow>
                     );
                   })}
