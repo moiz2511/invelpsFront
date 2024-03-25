@@ -164,7 +164,7 @@ const headCategories = [
   { title: "Best", key: "best_return" },
   { title: "Worst", key: "worst_return" },
   { title: "Negative Periods", key: "negative_annual_returns" },
-  { title: "Duration", key: "duration" },
+  // { title: "Duration", key: "duration" },
 ];
 
 const sortingFields = [
@@ -1383,7 +1383,7 @@ const ReturnsTab = ({ setSelectedCompany }) => {
                               {" "}
                               {data.sortino_ratio
                                 ? data.sortino_ratio
-                                : "N/A"}{" "}
+                                : "-"}{" "}
                             </StyledTableCell>
                           </StyledTableRow>
                         </Tooltip>
@@ -1451,7 +1451,7 @@ const ReturnsTab = ({ setSelectedCompany }) => {
                   fontWeight: "bold",
                 }}
               >
-                Annual Returns ({years.length} years)
+                Annual Returns ({bestWorstDataCopy[0]?.duration} years)
               </text>
             </Box>
 
@@ -1467,10 +1467,10 @@ const ReturnsTab = ({ setSelectedCompany }) => {
                 chartId={"LR-chart-1"}
                 chartData={strategyData}
                 years={years}
+                type="returns"
               />
             </Box>
           </Box>
-
           <TableContainer>
             <Table
               sx={{ minWidth: "100%", maxWidth: "100%", mt: 1 }}
@@ -1634,7 +1634,7 @@ const ReturnsTab = ({ setSelectedCompany }) => {
                       fontFamily: "Montserrat",
                     }}
                   >
-                    Strategy Models
+                    Strategy Models ({bestWorstDataCopy[0]?.duration} years)
                   </TableCell>
                   <TableCell
                     padding="normal"
@@ -1817,13 +1817,13 @@ const ReturnsTab = ({ setSelectedCompany }) => {
                     >
                       {data.negative_annual_returns}
                     </StyledTableCell>
-                    <StyledTableCell
+                    {/* <StyledTableCell
                       sx={{
                         color: parseFloat(data.duration) >= 0 ? "green" : "red",
                       }}
                     >
                       {data.duration}
-                    </StyledTableCell>
+                    </StyledTableCell> */}
                   </StyledTableRow>
                 ))}
               </TableBody>
