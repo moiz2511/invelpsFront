@@ -50,7 +50,7 @@ const headCategories = [
   { key: "name", label: "Strategy" },
   { key: "annualized_return", label: "Annualized Return %" },
   { key: "stdev_return", label: "Standard Deviation %" },
-  { key: "duration", label: "Duration" },
+  // { key: "duration", label: "Duration" },
 ];
 
 const RisksTab = () => {
@@ -146,10 +146,9 @@ const RisksTab = () => {
     }
   };
   useEffect(() => {
-    if(selectedStrategy !== null){
+    if (selectedStrategy !== null) {
       fetchGraphData();
     }
-
   }, [selectedStrategy]);
 
   const handleDataVisualization = (strategy) => {
@@ -319,7 +318,7 @@ const RisksTab = () => {
                   fontWeight: "bold",
                 }}
               >
-                Risk Adjusted Return ({riskReturn[0]?.duration} years)
+                Risk Adjusted Return ({riskReturnCopy[0]?.duration} years)
               </text>
             </Box>
 
@@ -364,7 +363,7 @@ const RisksTab = () => {
                       bgcolor: "#272727",
                     }}
                   >
-                    Strategy Models
+                    Strategy Models ({riskReturnCopy[0]?.duration} years)
                   </TableCell>
                   <TableCell
                     colSpan={3}
@@ -489,14 +488,14 @@ const RisksTab = () => {
                         {" "}
                         {data.stdev_return}{" "}
                       </StyledTableCell>
-                      <StyledTableCell
+                      {/* <StyledTableCell
                         sx={{
                           color: data.duration > 0 ? "green" : "red",
                         }}
                       >
                         {" "}
                         {data.duration}{" "}
-                      </StyledTableCell>
+                      </StyledTableCell> */}
                     </StyledTableRow>
                   );
                 })}
