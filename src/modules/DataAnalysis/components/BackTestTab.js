@@ -10,6 +10,7 @@ import {
   TableBody,
   Typography,
   Button,
+  Switch,
 } from "@mui/material";
 
 import AuthContext from "../../Core/store/auth-context";
@@ -67,6 +68,16 @@ const BackTestTab = () => {
   const [perSectorKPI, setPerSectorKPI] = useState([]);
   const [perMarketKPI, setPerMarketKPI] = useState([]);
   const [dividendTableData, setDividendTableData] = useState([]);
+  const [annualPriceSwitch, setAnnualPriceSwitch] = useState(true);
+  const [annualDevidendSwitch, setAnnualDevidendSwitch] = useState(true);
+
+  const handlePriceSwitch = () => {
+    setAnnualPriceSwitch(!annualPriceSwitch);
+  };
+
+  const handleDevidendSwitch = () => {
+    setAnnualDevidendSwitch(!annualDevidendSwitch);
+  };
 
   useEffect(() => {
     const CheckUserSession = () => {
@@ -448,10 +459,29 @@ const BackTestTab = () => {
                   fontWeight: "bold",
                 }}
               >
-                Annual Prices ({years.length} years)
+                Annual Prices (
+                {strategyData &&
+                  strategyData[0] &&
+                  strategyData[0][2017]?.duration}{" "}
+                years)
               </text>
             </Box>
-
+            <div
+              style={{
+                width: "100%",
+              }}
+            >
+              <label htmlFor="annualPriceSwitch" style={{ marginLeft: 10 }}>
+                Line Chart
+              </label>
+              <Switch
+                id="annualPriceSwitch"
+                checked={annualPriceSwitch}
+                onChange={handlePriceSwitch}
+                inputProps={{ "aria-label": "controlled" }}
+              />
+              <label htmlFor="annualPriceSwitch"> Bar Chart</label>
+            </div>
             <Box
               sx={{
                 display: "flex",
@@ -465,6 +495,7 @@ const BackTestTab = () => {
                 chartData={strategyData}
                 years={years}
                 type="price"
+                chartSwitch={annualPriceSwitch}
               />
             </Box>
           </Box>
@@ -478,10 +509,30 @@ const BackTestTab = () => {
                   fontWeight: "bold",
                 }}
               >
-                Annual Devidend ({years.length} years)
+                Annual Devidend (
+                {strategyData &&
+                  strategyData[0] &&
+                  strategyData[0][2017]?.duration}{" "}
+                years)
               </text>
             </Box>
-
+            <div
+              style={{
+                width: "100%",
+              }}
+            >
+              <label htmlFor="annualDevidendSwitch" style={{ marginLeft: 10 }}>
+                {" "}
+                Line Chart
+              </label>
+              <Switch
+                id="annualDevidendSwitch"
+                checked={annualDevidendSwitch}
+                onChange={handleDevidendSwitch}
+                inputProps={{ "aria-label": "controlled" }}
+              />
+              <label htmlFor="annualDevidendSwitch"> Bar Chart</label>
+            </div>
             <Box
               sx={{
                 display: "flex",
@@ -495,11 +546,16 @@ const BackTestTab = () => {
                 chartData={strategyData}
                 years={years}
                 type="dividend"
+                chartSwitch={annualDevidendSwitch}
               />
             </Box>
           </Box>
 
-          <TableContainer>
+          <TableContainer
+            style={{
+              marginBottom: "50px",
+            }}
+          >
             <Table
               sx={{ minWidth: "100%", maxWidth: "100%", mt: 1 }}
               size="medium"
@@ -516,7 +572,11 @@ const BackTestTab = () => {
                       fontFamily: "Montserrat",
                     }}
                   >
-                    Strategy Models ({years?.length} years)
+                    Strategy Models (
+                    {strategyData &&
+                      strategyData[0] &&
+                      strategyData[0][2017]?.duration}{" "}
+                    years)
                   </TableCell>
                   <TableCell
                     padding="normal"
@@ -530,19 +590,6 @@ const BackTestTab = () => {
                     }}
                   >
                     Annual Prices (USD)
-                  </TableCell>
-                  <TableCell
-                    padding="normal"
-                    colSpan={8}
-                    align="center"
-                    sx={{
-                      backgroundColor: "#42787890",
-                      color: "white",
-                      fontSize: 18,
-                      fontFamily: "Montserrat",
-                    }}
-                  >
-                    Annual Dividend
                   </TableCell>
                 </TableRow>
               </TableHead>
@@ -558,21 +605,6 @@ const BackTestTab = () => {
                   <TableCell sx={{ fontFamily: "Montserrat" }}>
                     Strategy
                   </TableCell>
-                  <TableCell
-                    padding="normal"
-                    sx={{ fontFamily: "Montserrat", color: "#427878" }}
-                  >
-                    Trends
-                  </TableCell>
-                  {years.map((year, index) => (
-                    <TableCell
-                      key={index}
-                      padding="normal"
-                      sx={{ fontFamily: "Montserrat", color: "#427878" }}
-                    >
-                      {year}
-                    </TableCell>
-                  ))}
                   <TableCell
                     padding="normal"
                     sx={{ fontFamily: "Montserrat", color: "#427878" }}
@@ -629,6 +661,98 @@ const BackTestTab = () => {
                           : "-"}
                       </StyledTableCell>
                     ))}
+                  </StyledTableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+
+          <TableContainer>
+            <Table
+              sx={{ minWidth: "100%", maxWidth: "100%", mt: 1 }}
+              size="medium"
+            >
+              <TableHead>
+                <TableRow>
+                  <TableCell
+                    padding="normal"
+                    colSpan={1}
+                    sx={{
+                      backgroundColor: "#272727",
+                      color: "white",
+                      fontSize: 18,
+                      fontFamily: "Montserrat",
+                    }}
+                  >
+                    Strategy Models (
+                    {strategyData &&
+                      strategyData[0] &&
+                      strategyData[0][2017]?.duration}{" "}
+                    years)
+                  </TableCell>
+                  <TableCell
+                    padding="normal"
+                    colSpan={8}
+                    align="center"
+                    sx={{
+                      backgroundColor: "#42787890",
+                      color: "white",
+                      fontSize: 18,
+                      fontFamily: "Montserrat",
+                    }}
+                  >
+                    Annual Dividend
+                  </TableCell>
+                </TableRow>
+              </TableHead>
+
+              <TableHead>
+                <TableRow
+                  sx={{
+                    backgroundColor: "#e7ecef",
+                    color: "#272727",
+                    fontSize: 14,
+                  }}
+                >
+                  <TableCell sx={{ fontFamily: "Montserrat" }}>
+                    Strategy
+                  </TableCell>
+
+                  <TableCell
+                    padding="normal"
+                    sx={{ fontFamily: "Montserrat", color: "#427878" }}
+                  >
+                    Trends
+                  </TableCell>
+                  {years.map((year, index) => (
+                    <TableCell
+                      key={index}
+                      padding="normal"
+                      sx={{ fontFamily: "Montserrat", color: "#427878" }}
+                    >
+                      {year}
+                    </TableCell>
+                  ))}
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {strategyData.map((strategy, index) => (
+                  <StyledTableRow hover key={index} sx={{ ml: 3 }}>
+                    <StyledTableCell
+                      onClick={() => {
+                        handleDataVisualization(strategy?.strategy_name_here);
+                      }}
+                      sx={{
+                        cursor: "pointer",
+                        ":hover": {
+                          textDecoration: "underline",
+                          color: "blue",
+                        },
+                      }}
+                    >
+                      {strategy?.strategy_name_here}
+                    </StyledTableCell>
+
                     <StyledTableCell
                       sx={{
                         color: "green",

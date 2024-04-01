@@ -4,7 +4,7 @@ import { Button, Box } from "@mui/material";
 import { FaCheck } from "react-icons/fa";
 import { FaXmark } from "react-icons/fa6";
 
-const LineRaceChart = ({ chartId, chartData, years, type }) => {
+const LineRaceChart = ({ chartId, chartData, years, type, chartSwitch }) => {
   const [log, setLog] = useState(true);
 
   useEffect(() => {
@@ -74,7 +74,7 @@ const LineRaceChart = ({ chartId, chartData, years, type }) => {
         });
 
         seriesList.push({
-          type: "line",
+          type: chartSwitch ? "bar" : "line",
           datasetId: datasetId,
           showSymbol: false,
           name: strategyName,
@@ -131,7 +131,7 @@ const LineRaceChart = ({ chartId, chartData, years, type }) => {
     };
 
     run();
-  }, [chartData, chartId, years, log]);
+  }, [chartData, chartId, years, log, chartSwitch]);
 
   const loggedData = () => {
     setLog(!log);
