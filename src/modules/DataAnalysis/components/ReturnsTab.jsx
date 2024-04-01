@@ -17,6 +17,7 @@ import {
   IconButton,
   Tooltip,
   Fade,
+  Switch,
 } from "@mui/material";
 
 import AuthContext from "../../Core/store/auth-context";
@@ -207,6 +208,11 @@ const ReturnsTab = ({ setSelectedCompany }) => {
   const [graphTableDataCopy, setGraphTableDataCopy] = useState([]);
   const [totalPages, setTotalPages] = useState(null);
   const [strategiesCopy, setStrategiesCopy] = useState([]);
+  const [chartSwitch, setChartSwitch] = useState(true);
+
+  const handleChartSwitchChange = () => {
+    setChartSwitch(!chartSwitch);
+  };
 
   const { isSwitch1, setIsSwitch1, isSwitch2, setIsSwitch2 } = useSwitch();
 
@@ -1454,7 +1460,23 @@ const ReturnsTab = ({ setSelectedCompany }) => {
                 Annual Returns ({bestWorstDataCopy[0]?.duration} years)
               </text>
             </Box>
-
+            <div
+              style={{
+                width: "100%",
+              }}
+            >
+              <label htmlFor="annualDevidendSwitch" style={{ marginLeft: 10 }}>
+                {" "}
+                Line Chart
+              </label>
+              <Switch
+                id="annualDevidendSwitch"
+                checked={chartSwitch}
+                onChange={handleChartSwitchChange}
+                inputProps={{ "aria-label": "controlled" }}
+              />
+              <label htmlFor="annualDevidendSwitch"> Bar Chart</label>
+            </div>
             <Box
               sx={{
                 display: "flex",
@@ -1468,6 +1490,7 @@ const ReturnsTab = ({ setSelectedCompany }) => {
                 chartData={strategyData}
                 years={years}
                 type="returns"
+                chartSwitch={chartSwitch}
               />
             </Box>
           </Box>
