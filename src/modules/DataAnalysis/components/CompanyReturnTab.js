@@ -209,7 +209,7 @@ const CompanyReturnTab = ({ companySymbol, companyName, companyImage }) => {
 
         if (response.status === 200) {
           console.log("Data:", data);
-          setAnnualReturn(data.data.annualRtn);
+          setAnnualReturn(data.data.annualRtn.reverse());
           setRollingReturn(data.data.rollingRtn);
         } else {
           console.log("Unexpected status code:", response.status);
