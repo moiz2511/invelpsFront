@@ -53,7 +53,7 @@ const CompanyFinancials = ({ companyName, companyImage }) => {
   const [stockPrice, setStockPrice] = useState(null);
   const [tableData, setTableData] = useState([]);
   const [selectedTab, setSelectedTab] = useState("Income");
-  const [financialPeriod, setFinancialPeriod] = useState('Annual')
+  const [financialPeriod, setFinancialPeriod] = useState("Annual");
   const [divider, setDivider] = useState(1);
 
   const [valueScale, setValueScale] = useState("thousands");
@@ -154,7 +154,7 @@ const CompanyFinancials = ({ companyName, companyImage }) => {
           display: "Value",
           exchange: exchangeName,
           from_year: "2013",
-          period: 'Annual',
+          period: "Annual",
           quarter: [],
           table: selectedTab,
           to_year: "2023",
@@ -195,9 +195,9 @@ const CompanyFinancials = ({ companyName, companyImage }) => {
     let lastYear = tableHeaders[tableHeaders.length - 1];
     let secondLastYear = tableHeaders[tableHeaders.length - 2];
     //console.log(lastYear, secondLastYear);
-    let lastYearValue = parseInt(data[lastYear].split(",").join(""));
+    let lastYearValue = parseInt(data[lastYear]?.split(",").join(""));
     let secondLastYearValue = parseInt(
-      data[secondLastYear].split(",").join("")
+      data[secondLastYear]?.split(",").join("")
     );
     //console.log(lastYearValue, secondLastYearValue);
     let stockPrice = lastYearValue - secondLastYearValue;
@@ -213,18 +213,23 @@ const CompanyFinancials = ({ companyName, companyImage }) => {
   };
 
   const convertValue = (value, valueScale) => {
-    let amount = parseInt(value.split(",").join(""));
-    console.log(value);
-    switch (valueScale) {
-      case "thousands":
-        return amount / 1000;
-      case "millions":
-        return amount / 1000000;
-      case "billions":
-        return amount / 1000000000;
-      default:
-        return value;
+    let amount = parseInt(value?.split(",").join(""));
+    let returnValue = amount;
+    if (amount) {
+      switch (valueScale) {
+        case "thousands":
+          returnValue = amount / 1000;
+        case "millions":
+          returnValue = amount / 1000000;
+        case "billions":
+          returnValue = amount / 1000000000;
+        default:
+          returnValue = value;
+      }
+      console.log(typeof returnValue);
+      return parseInt(returnValue)?.toFixed(valueScale !== "thousands" ? 2 : 0);
     }
+    return 0;
   };
 
   const handleValueScaleChange = (e) => {
@@ -297,8 +302,18 @@ const CompanyFinancials = ({ companyName, companyImage }) => {
             </RadioGroup>
           </FormControl>
 
-          <Button variant="contained" onClick={() => setFinancialPeriod("Annual")}  >Annual</Button>
-          <Button variant="contained" onClick={() => setFinancialPeriod("Quarter")} >Quarterly</Button>
+          <Button
+            variant="contained"
+            onClick={() => setFinancialPeriod("Annual")}
+          >
+            Annual
+          </Button>
+          <Button
+            variant="contained"
+            onClick={() => setFinancialPeriod("Quarter")}
+          >
+            Quarterly
+          </Button>
         </div>
       </div>
 
@@ -336,9 +351,7 @@ const CompanyFinancials = ({ companyName, companyImage }) => {
                     key={index}
                     style={{ fontFamily: "Montserrat" }}
                   >
-                    {convertValue(rowData[header], valueScale).toFixed(
-                      valueScale !== "thousands" ? 2 : 0
-                    )}
+                    {convertValue(rowData[header], valueScale)}
                     {valueScale === "thousands"
                       ? "K"
                       : valueScale === "millions"
