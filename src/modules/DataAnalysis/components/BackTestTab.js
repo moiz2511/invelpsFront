@@ -462,7 +462,7 @@ const BackTestTab = () => {
                 Annual Prices (
                 {strategyData &&
                   strategyData[0] &&
-                  strategyData[0][2017]?.duration}{" "}
+                  strategyData[0][Object.keys(strategyData[0])[0]]?.duration}{" "}
                 years)
               </text>
             </Box>
@@ -509,10 +509,10 @@ const BackTestTab = () => {
                   fontWeight: "bold",
                 }}
               >
-                Annual Devidend (
+                Annual Dividend (
                 {strategyData &&
                   strategyData[0] &&
-                  strategyData[0][2017]?.duration}{" "}
+                  strategyData[0][Object.keys(strategyData[0])[0]]?.duration}{" "}
                 years)
               </text>
             </Box>

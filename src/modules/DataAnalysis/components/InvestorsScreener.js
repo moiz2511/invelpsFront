@@ -377,6 +377,8 @@ const InvestorsScreener = () => {
                 companyName={selectedCompany.company_name}
                 companySymbol={selectedCompany.symbol}
                 companyImage={selectedCompany.image}
+                exchangeName={selectedCompany.exchange}
+                strategyName={selectedCompany.strategy_name}
               />
             </CustomTabPanel>
             <CustomTabPanel value={valueCompanyDetails} index={1}>

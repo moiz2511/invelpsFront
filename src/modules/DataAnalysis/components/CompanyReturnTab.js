@@ -8,6 +8,7 @@ import {
   TableHead,
   TableRow,
   TableBody,
+  Switch,
 } from "@mui/material";
 
 // getAnnualAndRollingRtrnsForCompany
@@ -20,6 +21,7 @@ import NegativeBarChart from "./NegativeBarChart";
 import CompanyLineRace from "./CompanyLineRace";
 import CompanyNegativeBar from "./CompanyNegativeBar";
 import CompanyScatterChart from "./CompanyScatterChart";
+import CompanyLineBar from "./LineBarChart";
 
 import TableCell, { tableCellClasses } from "@mui/material/TableCell";
 import ColorConstants from "../../Core/constants/ColorConstants.json";
@@ -72,6 +74,11 @@ const CompanyReturnTab = ({ companySymbol, companyName, companyImage }) => {
   const [riskReturn, setRiskReturn] = useState(null);
   const [exchangeName, setExchangeName] = useState(null);
   const [companyProfile, setCompanyProfile] = useState(null);
+  const [chartSwitch, setChartSwitch] = useState(true);
+
+  const handleChartSwitch = () => {
+    setChartSwitch(!chartSwitch);
+  };
 
   useEffect(() => {
     const CheckUserSession = () => {
@@ -322,21 +329,49 @@ const CompanyReturnTab = ({ companySymbol, companyName, companyImage }) => {
               Annual Returns ({years?.length} years)
             </text>
           </Box>
-
-          <Box
-            sx={{
-              width: "100%",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            <CompanyLineRace
-              chartId={"CLR-chart-1"}
-              chartData={annualReturn}
-              years={years}
-            />
-          </Box>
+          {annualReturn.length > 0 && (
+            <Box
+              sx={{
+                width: "100%",
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <div
+                style={{
+                  width: "100%",
+                }}
+              >
+                <label htmlFor="annualPriceSwitch" style={{ marginLeft: 10 }}>
+                  Line Chart
+                </label>
+                <Switch
+                  id="annualPriceSwitch"
+                  checked={chartSwitch}
+                  onChange={handleChartSwitch}
+                  inputProps={{ "aria-label": "controlled" }}
+                />
+                <label htmlFor="annualPriceSwitch"> Bar Chart</label>
+              </div>
+              {
+                !chartSwitch ? (
+                  <CompanyLineRace
+                chartId={"CLR-chart-1"}
+                chartData={annualReturn}
+                years={years}
+              />
+                ) : (
+                  <CompanyLineBar
+                chartId={"CBR-chart-1"}
+                chartData={annualReturn}
+                years={years}
+              />
+                )
+              }
+            </Box>
+          )}
         </Box>
 
         <TableContainer>
@@ -619,12 +654,12 @@ const CompanyReturnTab = ({ companySymbol, companyName, companyImage }) => {
                   <StyledTableCell
                     sx={{
                       color:
-                        parseFloat(rollingReturn.negative_returns) >= 0
+                        parseFloat(rollingReturn.duration) >= 0
                           ? "green"
                           : "red",
                     }}
                   >
-                    {rollingReturn.negative_returns}
+                    {rollingReturn.duration}
                   </StyledTableCell>
                 </StyledTableRow>
               </TableBody>

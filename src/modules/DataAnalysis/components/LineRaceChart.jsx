@@ -103,9 +103,6 @@ const LineRaceChart = ({ chartId, chartData, years, type, chartSwitch }) => {
               : `Year: ${data.Year}<br />
                     Dividend: ${data.Divdend}<br />
                     Name: ${data.Name}`;
-            // return `Year: ${data.Year}<br />
-            //         Return: ${data.Return}<br />
-            //         Name: ${data.Name}`; // Displaying Name at the end
           },
         },
         xAxis: {
