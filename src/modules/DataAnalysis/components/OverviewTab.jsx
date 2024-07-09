@@ -33,10 +33,12 @@ import VerticalBarChart from "./VerticalBarChart";
 import Fade from "@mui/material/Fade";
 import InvestorModal from "./InvestorModal";
 import { CgSpinner } from "react-icons/cg";
-
+import DonutPieChart from "./charts/DonoutChart";
 import { styled } from "@mui/material/styles";
 import { IoArrowDown, IoArrowUp } from "react-icons/io5";
 import { useSwitch } from "../../../utils/context/SwitchContext";
+import HorizontalBarChart from "./charts/HorizontalBar";
+import GeoChartComponent from "./charts/GeoCharts";
 
 const headCells = {
   data: [
@@ -400,6 +402,7 @@ const OverviewTab = ({ setSelectedCompany }) => {
         setPerExhangeKPI(data.data.companies_per_exchanges_KPI);
         setPerSectorKPI(data.data.companies_per_sector_KPI);
         setPerMarketKPI(data.data.companies_per_market_cap_KPI);
+         console.log("Exchange KPI",data.data.companies_per_exchanges_KPI);
       } else {
         console.log("Unexpected status code:", response.status);
       }
@@ -534,6 +537,40 @@ const OverviewTab = ({ setSelectedCompany }) => {
     setIsSwitch2(false);
   };
 
+  const getGeoLocation = (exchange) => {
+    const mapping = {
+        "National Stock Exchange Of India": "India",
+        "Taipei Exchange": "Taiwan",
+        "NASDAQ Global Market": "USA",
+        "Athens Stock Exchange": "Greece",
+        "Six Swiss Exchange": "Switzerland",
+        "Hong Kong Exchange": "Hong Kong",
+        "London Stock Exchange": "United Kingdom",
+        "Frankfurt Stock Exchange": "Germany",
+        "Johannesburg Stock Exchange": "South Africa",
+        "New York Stock Exchange": "USA",
+        "NASDAQ Capital Market": "USA",
+        "Shenzhen Stock Exchange": "China",
+        "Korea Exchange": "South Korea",
+        "Shanghai Stock Exchange": "China",
+        "Nyse Euronext - Euronext Brussels": "Belgium",
+        "Euronext Paris": "France",
+        "Australian Securities Exchange": "Australia",
+        "Tokyo Stock Exchange": "Japan",
+        "Bombay Stock Exchange": "India",
+        "Toronto Stock Exchange Ventures": "Canada",
+        "Madrid Stock Exchange": "Spain"
+    };
+    return mapping[exchange] || "Unknown"; // Default to "Unknown" if not found
+};
+const enhanceDataWithLocation = (data) => {
+  return data.map(item => ({
+      ...item,
+      location: getGeoLocation(item.exchange)
+  }));
+};
+
+
   return (
     <Grid
       container
@@ -605,10 +642,11 @@ const OverviewTab = ({ setSelectedCompany }) => {
                 padding: 2,
               }}
             >
-              <text style={{ fontSize: 20, fontWeight: "bold" }}>
+              {/* <text style={{ fontSize: 20, fontWeight: "bold" }}>
                 Companies Passing Criteria Statistics
-              </text>
-              <Box sx={{ display: "flex", justifyContent: "space-around" }}>
+              </text> */}
+              <Box sx={{ display: "grid", justifyContent: "space-around", gridTemplateColumns:'1fr 1fr' }}>
+                
                 <Card
                   sx={{
                     padding: 4,
@@ -619,11 +657,14 @@ const OverviewTab = ({ setSelectedCompany }) => {
                   }}
                 >
                   <text> Companies Per Exchanges (%) </text>
-                  <PieChart
+                  {/* <PieChart
                     graphData={perExchangeKPI}
                     nameData={(item) => item.exchange}
-                  />
+                  /> */}
+                  <GeoChartComponent data={ enhanceDataWithLocation(perExchangeKPI)}/>
+                 
                 </Card>
+                <Box>
                 <Card
                   sx={{
                     padding: 4,
@@ -634,10 +675,7 @@ const OverviewTab = ({ setSelectedCompany }) => {
                   }}
                 >
                   <text> Companies Per Sector (%) </text>
-                  <PieChart
-                    graphData={perSectorKPI}
-                    nameData={(item) => item.sector}
-                  />
+                 <HorizontalBarChart data={perSectorKPI}/>
                 </Card>
                 <Card
                   sx={{
@@ -649,11 +687,14 @@ const OverviewTab = ({ setSelectedCompany }) => {
                   }}
                 >
                   <text> Companies Per Market Cap (%) </text>
-                  <PieChart
+                  <DonutPieChart data={perMarketKPI} dataKey={'total_count'} nameKey={'market_cap_class'} ></DonutPieChart>
+                  {/* <PieChart
                     graphData={perMarketKPI}
                     nameData={(item) => item.market_cap_class}
-                  />
+                  /> */}
                 </Card>
+                </Box>
+                
               </Box>
             </Card>
             <Card
