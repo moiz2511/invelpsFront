@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
 import * as echarts from "echarts";
+import { Card } from "@mui/material";
 
 const VerticalBarChart = ({ chartId, graphData }) => {
   const getRandomColor = () => {
@@ -49,7 +50,7 @@ const VerticalBarChart = ({ chartId, graphData }) => {
           type: "shadow",
         },
       },
-      legend: {},
+      // legend: {},
       grid: {
         left: "3%",
         right: "4%",
@@ -81,10 +82,11 @@ const VerticalBarChart = ({ chartId, graphData }) => {
   }, []);
 
   return (
-    <div
+    <Card
       id={chartId}
       style={{ width: "100%", height: "300px", alignSelf: "center" }}
-    />
+      sx={{ width: "100%", padding: 1, margin: 2 }}
+    ></Card>
   );
 };
 

@@ -20,7 +20,7 @@ import {
   Modal,
 } from "@mui/material";
 
-import { ArrowBack, ArrowForward } from "@mui/icons-material";
+import { ArrowBack, ArrowForward, Filter1Sharp } from "@mui/icons-material";
 import PageInfoBreadCrumbs from "../../Core/components/Layout/PageInfoBreadCrumbs";
 import TableCell, { tableCellClasses } from "@mui/material/TableCell";
 import TablePagination from "@mui/material/TablePagination";
@@ -35,10 +35,12 @@ import InvestorModal from "./InvestorModal";
 import { CgSpinner } from "react-icons/cg";
 import DonutPieChart from "./charts/DonoutChart";
 import { styled } from "@mui/material/styles";
-import { IoArrowDown, IoArrowUp } from "react-icons/io5";
+import { IoArrowDown, IoArrowUp, IoFilterSharp } from "react-icons/io5";
 import { useSwitch } from "../../../utils/context/SwitchContext";
 import HorizontalBarChart from "./charts/HorizontalBar";
 import GeoChartComponent from "./charts/GeoCharts";
+import { RiArrowUpDownLine } from "react-icons/ri";
+import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 
 const headCells = {
   data: [
@@ -131,19 +133,14 @@ const passingHeadCells = {
     // },
     {
       label: "Company Name",
-      key: "company_name",
-      isValueLink: false,
-      isDropDown: false,
-    },
-    {
-      label: "Logo",
       key: "",
       isValueLink: false,
       isDropDown: false,
     },
+    
     {
       label: "Ticker",
-      key: "symbol",
+      key: "",
       isValueLink: false,
       isDropDown: false,
     },
@@ -173,54 +170,44 @@ const passingHeadCells = {
     },
     {
       label: "Annualized Return (%)",
-      key: "annualized_return",
+      key: "",
       isValueLink: false,
       isDropDown: false,
     },
     {
       label: "Rolling Return (%)",
-      key: "rolling_return",
+      key: "",
       isValueLink: false,
       isDropDown: false,
     },
     {
       label: "Standard Deviation (%)",
-      key: "stdev_return",
+      key: "",
       isValueLink: false,
       isDropDown: false,
     },
     {
       label: "Max Drawdown (%)",
-      key: "max_drawdown",
+      key: "",
       isValueLink: false,
       isDropDown: false,
-    },
-    {
-      label: "Sharpe Ratio",
-      key: "sharpe_ratio",
-      isValueLink: false,
-      isDropDown: false,
-    },
-    {
-      label: "Sortino Ratio",
-      key: "sortino_ratio",
-      isValueLink: false,
-      isDropDown: false,
-    },
+    }
   ],
 };
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
     backgroundColor: ColorConstants.APP_TABLE_HEAD_COLOR,
-    color: theme.palette.common.white,
+    color: theme.palette.common.black,
     padding: 12,
     fontFamily: "Montserrat",
+    border: `1px solid ${theme.palette.divider}`,
   },
   [`&.${tableCellClasses.body}`]: {
     fontSize: 12,
     padding: 12,
     fontFamily: "Montserrat",
+   
   },
 }));
 
@@ -537,38 +524,8 @@ const OverviewTab = ({ setSelectedCompany }) => {
     setIsSwitch2(false);
   };
 
-  const getGeoLocation = (exchange) => {
-    const mapping = {
-        "National Stock Exchange Of India": "India",
-        "Taipei Exchange": "Taiwan",
-        "NASDAQ Global Market": "USA",
-        "Athens Stock Exchange": "Greece",
-        "Six Swiss Exchange": "Switzerland",
-        "Hong Kong Exchange": "Hong Kong",
-        "London Stock Exchange": "United Kingdom",
-        "Frankfurt Stock Exchange": "Germany",
-        "Johannesburg Stock Exchange": "South Africa",
-        "New York Stock Exchange": "USA",
-        "NASDAQ Capital Market": "USA",
-        "Shenzhen Stock Exchange": "China",
-        "Korea Exchange": "South Korea",
-        "Shanghai Stock Exchange": "China",
-        "Nyse Euronext - Euronext Brussels": "Belgium",
-        "Euronext Paris": "France",
-        "Australian Securities Exchange": "Australia",
-        "Tokyo Stock Exchange": "Japan",
-        "Bombay Stock Exchange": "India",
-        "Toronto Stock Exchange Ventures": "Canada",
-        "Madrid Stock Exchange": "Spain"
-    };
-    return mapping[exchange] || "Unknown"; // Default to "Unknown" if not found
-};
-const enhanceDataWithLocation = (data) => {
-  return data.map(item => ({
-      ...item,
-      location: getGeoLocation(item.exchange)
-  }));
-};
+
+
 
 
   return (
@@ -631,7 +588,7 @@ const enhanceDataWithLocation = (data) => {
               {" "}
               {selectedStrategy?.name}{" "}
             </text>
-            <Card
+            {/* <Card
               sx={{
                 my: 1,
                 display: "flex",
@@ -641,62 +598,79 @@ const enhanceDataWithLocation = (data) => {
                 gap: 5,
                 padding: 2,
               }}
-            >
-              {/* <text style={{ fontSize: 20, fontWeight: "bold" }}>
+            > */}
+            {/* <text style={{ fontSize: 20, fontWeight: "bold" }}>
                 Companies Passing Criteria Statistics
               </text> */}
-              <Box sx={{ display: "grid", justifyContent: "space-around", gridTemplateColumns:'1fr 1fr' }}>
-                
-                <Card
-                  sx={{
-                    padding: 4,
-                    gap: 5,
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: 4,
-                  }}
-                >
-                  <text> Companies Per Exchanges (%) </text>
-                  {/* <PieChart
+            <Box
+              sx={{
+                display: "grid",
+                justifyContent: "space-around",
+                gridTemplateColumns: {
+                  xs: "1fr",
+                  sm: "1fr",
+                  md: "1.5fr 1fr",
+                },
+                gap: 2,
+                my: 2,
+              }}
+            >
+              <Card
+                sx={{
+                  padding: 4,
+                  gap: 3,
+                  display: "flex",
+                  flexDirection: "column",
+                }}
+              >
+                <text style={{ fontWeight: "bolder" }}>
+                  {" "}
+                  Companies Per Exchanges (%){" "}
+                </text>
+                {/* <PieChart
                     graphData={perExchangeKPI}
                     nameData={(item) => item.exchange}
                   /> */}
-                  <GeoChartComponent data={ enhanceDataWithLocation(perExchangeKPI)}/>
-                 
-                </Card>
-                <Box>
+                <GeoChartComponent data={perExchangeKPI} />
+              </Card>
+              <Box style={{ display: "flex", gap: 6, flexDirection: "column" }}>
                 <Card
                   sx={{
-                    padding: 4,
-                    gap: 5,
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: 4,
+                    padding: 2,
                   }}
                 >
-                  <text> Companies Per Sector (%) </text>
-                 <HorizontalBarChart data={perSectorKPI}/>
+                  <text style={{ fontWeight: "bolder" }}>
+                    {" "}
+                    Companies Per Sector (%){" "}
+                  </text>
+                  <HorizontalBarChart data={perSectorKPI} />
                 </Card>
                 <Card
                   sx={{
                     padding: 4,
-                    gap: 5,
+                    paddingBottom:{xs:8,md:4},
                     display: "flex",
                     flexDirection: "column",
-                    gap: 4,
+                    height: 250,
                   }}
                 >
-                  <text> Companies Per Market Cap (%) </text>
-                  <DonutPieChart data={perMarketKPI} dataKey={'total_count'} nameKey={'market_cap_class'} ></DonutPieChart>
+                  <text style={{ fontWeight: "bolder" }}>
+                    {" "}
+                    Companies Per Market Cap (%){" "}
+                  </text>
+                  <DonutPieChart
+                    data={perMarketKPI}
+                    dataKey={"total_count"}
+                    nameKey={"market_cap_class"}
+                  ></DonutPieChart>
                   {/* <PieChart
                     graphData={perMarketKPI}
                     nameData={(item) => item.market_cap_class}
                   /> */}
                 </Card>
-                </Box>
-                
               </Box>
-            </Card>
+            </Box>
+            {/* </Card> */}
             <Card
               sx={{
                 width: "100%",
@@ -717,6 +691,10 @@ const enhanceDataWithLocation = (data) => {
                   value={searchValue}
                   onChange={handleSearchChange}
                 /> */}
+                {/* <Button title="Sort"></Button> */}
+                <Button startIcon={<RiArrowUpDownLine />} variant="outlined">
+                  Sorting
+                </Button>
               </Box>
               <TableContainer>
                 <Table
@@ -743,7 +721,7 @@ const enhanceDataWithLocation = (data) => {
                                     setSelectedSort(2);
                                   }}
                                   style={{
-                                    color: "white",
+                                    color: "black",
                                     background: "rgba(255, 255, 255, 0.3)",
                                     border: "none",
                                     borderRadius: "9999px",
@@ -754,12 +732,12 @@ const enhanceDataWithLocation = (data) => {
                                     justifyContent: "center",
                                   }}
                                 >
-                                  <IoArrowDown />
+                                  <IoFilterSharp />
                                 </button>
                               ) : (
                                 <button
                                   style={{
-                                    color: "white",
+                                    color: "black",
                                     background: "rgba(255, 255, 255, 0.3)",
                                     border: "none",
                                     borderRadius: "9999px",
@@ -774,7 +752,7 @@ const enhanceDataWithLocation = (data) => {
                                     setSelectedSort(1);
                                   }}
                                 >
-                                  <IoArrowUp />
+                                  <IoFilterSharp />
                                 </button>
                               ))}
                           </Box>
@@ -804,14 +782,22 @@ const enhanceDataWithLocation = (data) => {
                               style={{ cursor: "pointer" }}
                             >
                               <StyledTableCell>
-                                {data.company_name}
+                                <div
+                                  style={{
+                                    display: "grid",
+                                    justifyContent: "center",
+                                    alignItems: "center",
+                                    gridTemplateColumns: "1fr 3fr",
+                                  }}
+                                >
+                                  <img
+                                    src={data.image}
+                                    style={{ height: "30px", width: "35px" }}
+                                  />
+                                  {data.company_name}
+                                </div>
                               </StyledTableCell>
-                              <StyledTableCell>
-                                <img
-                                  src={data.image}
-                                  style={{ height: "30px", width: "35px" }}
-                                />
-                              </StyledTableCell>
+
                               <StyledTableCell> {data.symbol} </StyledTableCell>
                               <StyledTableCell>
                                 {" "}
@@ -826,6 +812,7 @@ const enhanceDataWithLocation = (data) => {
                                 sx={{
                                   color:
                                     data.total_return >= 0 ? "green" : "red",
+                                  fontWeight: "bolder",
                                 }}
                               >
                                 {" "}
@@ -837,6 +824,7 @@ const enhanceDataWithLocation = (data) => {
                                     data.annualized_return >= 0
                                       ? "green"
                                       : "red",
+                                  fontWeight: "bolder",
                                 }}
                               >
                                 {" "}
@@ -846,6 +834,7 @@ const enhanceDataWithLocation = (data) => {
                                 sx={{
                                   color:
                                     data.rolling_return >= 0 ? "green" : "red",
+                                  fontWeight: "bolder",
                                 }}
                               >
                                 {" "}
@@ -857,6 +846,7 @@ const enhanceDataWithLocation = (data) => {
                                     data.stdev_excess_return >= 0
                                       ? "green"
                                       : "red",
+                                  fontWeight: "bolder",
                                 }}
                               >
                                 {" "}
@@ -866,12 +856,13 @@ const enhanceDataWithLocation = (data) => {
                                 sx={{
                                   color:
                                     data.max_drawdown >= 0 ? "green" : "red",
+                                  fontWeight: "bolder",
                                 }}
                               >
                                 {" "}
                                 {data.max_drawdown}{" "}
                               </StyledTableCell>
-                              <StyledTableCell
+                              {/* <StyledTableCell
                                 sx={{
                                   color:
                                     data.sharpe_ratio >= 0 ? "green" : "red",
@@ -890,7 +881,7 @@ const enhanceDataWithLocation = (data) => {
                                 {data.sortino_ratio
                                   ? data.sortino_ratio
                                   : "-"}{" "}
-                              </StyledTableCell>
+                              </StyledTableCell> */}
                             </StyledTableRow>
                           </Tooltip>
                         );
@@ -911,6 +902,7 @@ const enhanceDataWithLocation = (data) => {
                 <Box display={"flex"} alignItems={"center"} gap={1}>
                   <label>Rows Per Page:</label>
                   <select
+                    style={{ border: "none", outline: "none" }}
                     value={currentRowsPerPage}
                     onChange={handleChangeRowsPerPage}
                   >
@@ -923,22 +915,21 @@ const enhanceDataWithLocation = (data) => {
                 </Box>
 
                 <Box display={"flex"} alignItems={"center"} px={2} gap={1}>
+                  <span style={{ fontFamily: "Montserrat" }}>
+                    {currentPage}-{currentRowsPerPage} of {totalPages}
+                  </span>
                   <IconButton
                     onClick={handlePrevPage}
                     disabled={currentPage === 1}
                   >
-                    <ArrowBack />
+                    <FaChevronLeft />
                   </IconButton>
-
-                  <span style={{ fontFamily: "Montserrat" }}>
-                    Page {currentPage} of {totalPages}
-                  </span>
 
                   <IconButton
                     onClick={handleNextPage}
                     disabled={currentPage === totalPages}
                   >
-                    <ArrowForward />
+                    <FaChevronRight />
                   </IconButton>
                 </Box>
               </Box>
@@ -954,6 +945,7 @@ const enhanceDataWithLocation = (data) => {
           flexDirection: "column",
           justifyContent: "center",
           alignItems: "center",
+         
           gap: 5,
         }}
       >
@@ -963,6 +955,7 @@ const enhanceDataWithLocation = (data) => {
             position: "relative",
             width: "calc(100vw - 30px)",
             overflowX: "hidden",
+            boxShadow:'none'
           }}
         >
           <Box px={2} py={2} width={"100%"}>
@@ -974,35 +967,41 @@ const enhanceDataWithLocation = (data) => {
                   fontWeight: "bold",
                 }}
               >
-                Strategies Performances and Risks ({strategiesCopy[0]?.duration}{" "}
-                years)
+                Strategies Performances and Risks{" "}
+                <span style={{ color: "gray" }}>
+                  ({strategiesCopy[0]?.duration} years)
+                </span>
               </text>
             </Box>
 
             <Box
               sx={{
                 display: "flex",
-                flexDirection: "row",
+                flexDirection: {xs:'column',sm:'row'},
                 marginTop: 6,
                 overflowX: "hidden",
               }}
             >
               {allStrategies.length > 0 ? (
                 <>
-                  <VerticalBarChart
-                    chartId={"bar-chart-1"}
-                    graphData={allStrategies}
-                  />
-
-                  <VerticalBarChart
-                    chartId={"bar-chart-2"}
-                    graphData={allStrategies}
-                  />
-
-                  <VerticalBarChart
-                    chartId={"bar-chart-3"}
-                    graphData={allStrategies}
-                  />
+             
+                   
+                      <VerticalBarChart
+                        chartId={"bar-chart-1"}
+                        graphData={allStrategies}
+                      />
+                    
+                      <VerticalBarChart
+                        chartId={"bar-chart-2"}
+                        graphData={allStrategies}
+                      />
+                    
+                      <VerticalBarChart
+                        chartId={"bar-chart-3"}
+                        graphData={allStrategies}
+                      />
+                   
+                
                 </>
               ) : (
                 <h1>Fetching...</h1>
@@ -1041,7 +1040,10 @@ const enhanceDataWithLocation = (data) => {
                   }}
                 >
                   {" "}
-                  Overview ({strategiesCopy[0]?.duration} years)
+                  Overview{" "}
+                  <span style={{ color: "gray" }}>
+                    ({strategiesCopy[0]?.duration} years)
+                  </span>
                 </text>
               </Box>
               <Box display="flex" gap={2} sx={{ mt: 0.5 }}>
@@ -1075,12 +1077,15 @@ const enhanceDataWithLocation = (data) => {
                       ))}
                     </Select>
                   </FormControl> */}
-                <TextField
+                {/* <TextField
                   sx={{ borderRadius: 10 }}
                   placeholder="Search"
                   value={searchValue}
                   onChange={handleSearchValueChange}
-                />
+                /> */}
+                <Button startIcon={<RiArrowUpDownLine />} variant="outlined">
+                  Sorting
+                </Button>
               </Box>
             </Box>
             <TableContainer>
@@ -1181,6 +1186,7 @@ const enhanceDataWithLocation = (data) => {
                         <StyledTableCell
                           sx={{
                             color: data.total_return >= 0 ? "green" : "red",
+                            fontWeight: "bolder",
                           }}
                         >
                           {" "}
@@ -1190,6 +1196,7 @@ const enhanceDataWithLocation = (data) => {
                           sx={{
                             color:
                               data.annualized_return >= 0 ? "green" : "red",
+                            fontWeight: "bolder",
                           }}
                         >
                           {" "}
@@ -1198,6 +1205,7 @@ const enhanceDataWithLocation = (data) => {
                         <StyledTableCell
                           sx={{
                             color: data.rolling_return >= 0 ? "green" : "red",
+                            fontWeight: "bolder",
                           }}
                         >
                           {" "}
@@ -1206,6 +1214,7 @@ const enhanceDataWithLocation = (data) => {
                         <StyledTableCell
                           sx={{
                             color: data.stdev_return >= 0 ? "green" : "red",
+                            fontWeight: "bolder",
                           }}
                         >
                           {" "}
@@ -1214,6 +1223,7 @@ const enhanceDataWithLocation = (data) => {
                         <StyledTableCell
                           sx={{
                             color: data.max_drawdown >= 0 ? "green" : "red",
+                            fontWeight: "bolder",
                           }}
                         >
                           {" "}
@@ -1222,6 +1232,7 @@ const enhanceDataWithLocation = (data) => {
                         <StyledTableCell
                           sx={{
                             color: data.sharpe_ratio >= 0 ? "green" : "red",
+                            fontWeight: "bolder",
                           }}
                         >
                           {" "}
@@ -1230,6 +1241,7 @@ const enhanceDataWithLocation = (data) => {
                         <StyledTableCell
                           sx={{
                             color: data.sortino_ratio >= 0 ? "green" : "red",
+                            fontWeight: "bolder",
                           }}
                         >
                           {" "}

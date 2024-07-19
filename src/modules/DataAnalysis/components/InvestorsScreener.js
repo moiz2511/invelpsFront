@@ -43,6 +43,11 @@ import CompanyFinancials from "./CompanyFinancials";
 import CompanyReturnTab from "./CompanyReturnTab";
 import CompanyRiskTab from "./CompanyRiskTab";
 import { useSwitch } from "../../../utils/context/SwitchContext";
+import AboutCompany from "./cards/About";
+import Description from "./cards/Description";
+import RadarChartComponent from "./charts/RadarChart";
+import MeterChart from "./charts/MeterChart";
+import MarketDataChart from "./charts/AreaChart";
 
 const headCells = {
   data: [
@@ -372,6 +377,26 @@ const InvestorsScreener = () => {
                 <Tab label="Backtest" {...a11yProps(2)} />
               </Tabs>
             </Box>
+
+            {/* company detail boxes are here */}
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "3fr  2fr 1fr",
+                padding: 3,
+                gap:3
+              }}
+            >
+              <AboutCompany />
+              <Description />
+
+              <div style={{ display: "flex" ,gap:3 }}>
+                <RadarChartComponent />
+                <MeterChart />
+                <MarketDataChart/>
+              </div>
+            </div>
+
             <CustomTabPanel value={valueCompanyDetails} index={0}>
               <CompanyFinancials
                 companyName={selectedCompany.company_name}
