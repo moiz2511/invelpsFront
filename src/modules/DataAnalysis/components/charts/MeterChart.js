@@ -6,7 +6,7 @@ function MeterChart() {
   return (
     <Card
       sx={{
-        height: 285,
+        height: 283,
         padding: 3,
         display: "flex",
         flexDirection: "column",
@@ -30,8 +30,8 @@ function MeterChart() {
         }}
       >
         <ReactSpeedometer
-          width={300} // Slightly less than the container to ensure it fits
-          height={290}
+          width={260} // Reduced width
+          height={160} // Reduced height
           maxValue={100}
           value={72.12}
           needleColor="black"
@@ -46,7 +46,7 @@ function MeterChart() {
             "#5BE12C",
           ]}
           needleHeightRatio={0.7}
-          ringWidth={30}
+          ringWidth={15} // Adjusted ring width to match the reduced size
           needleTransitionDuration={3333}
           needleTransition="easeElastic"
           currentValueText="Margin of Safety: 72.12%"

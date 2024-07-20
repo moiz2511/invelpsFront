@@ -524,7 +524,7 @@ const OverviewTab = ({ setSelectedCompany }) => {
     setIsSwitch2(false);
   };
 
-
+console.log("kpi", perExchangeKPI);
 
 
 

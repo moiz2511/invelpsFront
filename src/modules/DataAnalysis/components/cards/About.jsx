@@ -21,7 +21,7 @@ const AboutCompany = () => {
   };
 
   return (
-    <Card sx={{ padding: 2 ,height:300}}>
+    <Card sx={{ padding: 2 ,height:300,width:600}}>
       <Box
         sx={{
           display: "flex",
@@ -29,6 +29,7 @@ const AboutCompany = () => {
           alignItems: "center",
           marginBottom: 2,
           paddingRight: 5,
+
           
         }}
       >
@@ -38,7 +39,7 @@ const AboutCompany = () => {
         <img src={Logo} alt="Company Logo" style={{ height: 50 }} />
       </Box>
       <Grid container spacing={2}>
-        <Grid item xs={12} md={4} >
+        <Grid item  md={4} >
           <Typography variant="body1">{companyData.address}</Typography>
           <Typography variant="body1">{companyData.phone}</Typography>
           <Typography variant="body1">
@@ -51,7 +52,7 @@ const AboutCompany = () => {
             </a>
           </Typography>
         </Grid>
-        <Grid item xs={12} md={4}>
+        <Grid item  md={4}>
           <Typography variant="body1">
             <strong>Sector(s):</strong> {companyData.sector}
           </Typography>
@@ -62,7 +63,7 @@ const AboutCompany = () => {
             <strong>Full Time Employees:</strong> {companyData.employees}
           </Typography>
         </Grid>
-        <Grid item xs={12} md={4}>
+        <Grid item  md={4}>
           <Typography variant="body1">
             <strong>Market Cap:</strong> {companyData.marketCap}
           </Typography>

@@ -48,6 +48,8 @@ import Description from "./cards/Description";
 import RadarChartComponent from "./charts/RadarChart";
 import MeterChart from "./charts/MeterChart";
 import MarketDataChart from "./charts/AreaChart";
+import MarketAnalysis from "../MarketAnalysis";
+import Landescape from "./Landescape";
 
 const headCells = {
   data: [
@@ -375,27 +377,32 @@ const InvestorsScreener = () => {
                 <Tab label="Financials" {...a11yProps(0)} />
                 <Tab label="Returns and Risks" {...a11yProps(1)} />
                 <Tab label="Backtest" {...a11yProps(2)} />
+                <Tab label="Market Analysis" {...a11yProps(3)} />
+                <Tab label="Landescape" {...a11yProps(4)} />
               </Tabs>
             </Box>
 
             {/* company detail boxes are here */}
-            <div
-              style={{
+            <Box
+              sx={{
                 display: "grid",
-                gridTemplateColumns: "3fr  2fr 1fr",
-                padding: 3,
-                gap:3
+                gridTemplateColumns: { xs: "1fr", md: "3fr 1fr" },
+                paddingTop: 3,
+                gap: 1,
+                width: "100%",
               }}
             >
-              <AboutCompany />
-              <Description />
+              <Box sx={{ display: { xs: "block", md: "flex" }, gap: 2 }}>
+                <AboutCompany />
+                <Description />
+              </Box>
 
-              <div style={{ display: "flex" ,gap:3 }}>
+              <Box style={{ display: "flex", gap: 3 }}>
                 <RadarChartComponent />
                 <MeterChart />
-                <MarketDataChart/>
-              </div>
-            </div>
+                <MarketDataChart />
+              </Box>
+            </Box>
 
             <CustomTabPanel value={valueCompanyDetails} index={0}>
               <CompanyFinancials
@@ -416,6 +423,24 @@ const InvestorsScreener = () => {
             <CustomTabPanel value={valueCompanyDetails} index={2}>
               <div style={{ backgroundColor: "#DEDEDE", height: "150vh" }}>
                 <BackTest
+                  strategyLabel={selectedCompany.strategy_name}
+                  companySymbol={selectedCompany.symbol}
+                  companyLogo={selectedCompany.image}
+                />
+              </div>
+            </CustomTabPanel>
+            <CustomTabPanel value={valueCompanyDetails} index={3}>
+              <div style={{ backgroundColor: "#ffff", height: "150vh" }}>
+                <MarketAnalysis
+                  strategyLabel={selectedCompany.strategy_name}
+                  companySymbol={selectedCompany.symbol}
+                  companyLogo={selectedCompany.image}
+                />
+              </div>
+            </CustomTabPanel>
+            <CustomTabPanel value={valueCompanyDetails} index={4}>
+              <div style={{ backgroundColor: "#ffff", height: "150vh" }}>
+                <Landescape
                   strategyLabel={selectedCompany.strategy_name}
                   companySymbol={selectedCompany.symbol}
                   companyLogo={selectedCompany.image}

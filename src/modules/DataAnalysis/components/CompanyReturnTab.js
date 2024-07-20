@@ -386,7 +386,7 @@ const CompanyReturnTab = ({ companySymbol, companyName, companyImage }) => {
               <Box
                 sx={{
                   display: "grid",
-                  gridTemplateColumns: "1fr 1fr",
+                  gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" },
                   width: "100%",
                   gap: 5,
                 }}
@@ -722,7 +722,7 @@ const CompanyReturnTab = ({ companySymbol, companyName, companyImage }) => {
                   fontWeight: "bold",
                 }}
               >
-                Risk Adjusted Return
+                Risk
               </text>
             </Box>
           </Box>
@@ -730,13 +730,154 @@ const CompanyReturnTab = ({ companySymbol, companyName, companyImage }) => {
           <Box
             sx={{
               display: "grid",
-              gridTemplateColumns: "1fr 1fr",
+              gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" },
               gap: 3,
               alignItems: "center",
               fontFamily: "Montserrat",
             }}
           >
             <div>
+              <text
+                style={{
+                  padding: "5px",
+                  fontSize: "27px",
+                  fontWeight: "bold",
+                }}
+              >
+                Annual Drawdown
+              </text>
+              <CompanyLineBar
+                chartId={"CBR-chart-1"}
+                chartData={annualReturn}
+                years={years}
+              />
+              <TableContainer>
+                <Table
+                  sx={{ minWidth: "100%", maxWidth: "100%", mt: 1 }}
+                  size="medium"
+                >
+                  <TableHead>
+                    {/* <TableRow>
+                          <TableCell
+                            padding="normal"
+                            colSpan={1}
+                            sx={{
+                              backgroundColor: "#272727",
+                              color: "white",
+                              fontSize: 18,
+                              fontFamily: "Montserrat",
+                            }}
+                          >
+                            Company
+                          </TableCell>
+                          <TableCell
+                            colSpan={12}
+                            padding="normal"
+                            sx={{
+                              fontFamily: "Montserrat",
+                              color: "#fff",
+                              backgroundColor: "#427878",
+                              fontSize: 18,
+                              textAlign: "center",
+                            }}
+                          >
+                            Annual Returns %
+                          </TableCell>
+                        </TableRow> */}
+                    <TableRow>
+                      <TableCell
+                        padding="normal"
+                        colSpan={1}
+                        sx={{
+                          backgroundColor: "#e7ecef",
+                          color: "#427878",
+                          fontSize: 14,
+                          fontFamily: "Montserrat",
+                        }}
+                      >
+                        Company
+                      </TableCell>
+                      <TableCell
+                        padding="normal"
+                        colSpan={1}
+                        sx={{
+                          backgroundColor: "#e7ecef",
+                          color: "#427878",
+                          fontSize: 14,
+                          fontFamily: "Montserrat",
+                        }}
+                      >
+                        Trends
+                      </TableCell>
+                      {annualReturn.map((ann, index) => (
+                        <TableCell
+                          key={index}
+                          padding="normal"
+                          sx={{
+                            fontFamily: "Montserrat",
+                            color: "#427878",
+                            backgroundColor: "#e7ecef",
+                          }}
+                        >
+                          {ann.date_year}
+                        </TableCell>
+                      ))}
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    <StyledTableRow hover>
+                      <StyledTableCell
+                        sx={{
+                          cursor: "pointer",
+                          ":hover": {
+                            textDecoration: "underline",
+                            color: "blue",
+                          },
+                        }}
+                      >
+                        <img
+                          src={companyImage}
+                          style={{ height: "15px", width: "15px" }}
+                        />{" "}
+                        {annualReturn[0]?.symbol}
+                      </StyledTableCell>
+                      <StyledTableCell
+                        sx={{
+                          color: "green",
+                        }}
+                      >
+                        {calculateTrends(annualReturn)}
+                      </StyledTableCell>
+                      {annualReturn.map((ann, index) => (
+                        <StyledTableCell
+                          key={index}
+                          sx={{
+                            color:
+                              parseFloat(ann.annual_return) >= 0
+                                ? "green"
+                                : "red",
+                          }}
+                        >
+                          {ann.annual_return
+                            ? (ann.annual_return * 100).toFixed(2)
+                            : "-"}
+                        </StyledTableCell>
+                      ))}
+                    </StyledTableRow>
+                  </TableBody>
+                </Table>
+              </TableContainer>
+            </div>
+            <div>
+              <text
+                style={{
+                  padding: "5px",
+                  fontSize: "27px",
+                  fontWeight: "bold",
+                }}
+              >
+                Risk Adjustment Returns
+              </text>
               <CompanyScatterChart
                 chartId="companyScatterChart"
                 data={riskReturn}

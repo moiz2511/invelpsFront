@@ -6,7 +6,7 @@ function Description() {
     <Card sx={{
     height:300,
       padding: 2,
-
+      width:300, marginY:{xs:5 , md:0} 
      
     }}>
       <Typography variant='h5' component="h2" fontWeight='bold' sx={{ marginBottom: 2 }}>
