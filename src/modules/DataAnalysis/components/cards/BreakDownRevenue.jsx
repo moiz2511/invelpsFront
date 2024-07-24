@@ -20,12 +20,27 @@ const RevenueItem = ({ region, value, percentage, color }) => {
           borderRadius: "50%",
         }}
       />
-      <Typography variant="subtitle1" sx={{ fontWeight: "bold" }}>
-        {region}
-      </Typography>
-      <Typography
-        sx={{ marginLeft: "auto", fontWeight: "bold" }}
-      >{`${value} EURm (${percentage})`}</Typography>
+      <Box sx={{ display: "flex", flexDirection: "column" }}>
+        <Typography variant="subtitle1" sx={{ fontWeight: "bold" }}>
+          {region}
+        </Typography>
+        <Box
+          sx={{
+            display: "flex",
+            gap: 1,
+            justifyContent: "start",
+            alignItems: "center",
+          }}
+        >
+          <Typography sx={{ fontWeight: "bolder" }}>{`${value}`}</Typography>
+          <Typography
+            sx={{ fontWeight: "light" }}
+          >{`EURm `}</Typography>
+          <Typography
+            sx={{ fontWeight: "bolder" }}
+          >{`(${percentage})`}</Typography>
+        </Box>
+      </Box>
     </Box>
   );
 };

@@ -42,7 +42,7 @@ function ConsumerElectronics() {
       <Typography variant="h5" fontWeight="bolder" sx={{ marginBottom: 2 }}>
         Consumer Electronics
       </Typography>
-      <Box sx={{display:'grid' , gridTemplateColumns:'1fr 1fr'}}>
+      <Box sx={{display:'grid' , gridTemplateColumns:'1fr 1fr' , gap:5}}>
         <ConsumerCard heading="GLOBAL SIZE BY REVENUE" value="5M USD 20%" />
         <ConsumerCard heading="YEAR OVER YEAR REVENUE GROWTH" value="-14.01%" />
         <ConsumerCard heading="CONCENTRATION" value="HIGH" />

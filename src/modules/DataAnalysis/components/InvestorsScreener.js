@@ -50,6 +50,11 @@ import MeterChart from "./charts/MeterChart";
 import MarketDataChart from "./charts/AreaChart";
 import MarketAnalysis from "../MarketAnalysis";
 import Landescape from "./Landescape";
+import BreadcrumbsComponent from "../../Core/components/Layout/BreadCrumbs";
+import AssessmentIcon from '@mui/icons-material/Assessment'; // Icon for OVERVIEW
+import TrendingUpIcon from '@mui/icons-material/TrendingUp'; // Icon for RETURNS AND RISKS
+import PlaceIcon from '@mui/icons-material/Place'; // Icon for HISTORICAL PLACES
+import NavigationWithBreadcrumbs from "./Navigation";
 
 const headCells = {
   data: [
@@ -451,7 +456,7 @@ const InvestorsScreener = () => {
         </Grid>
       )}
       <Box sx={{ width: "100%" }}>
-        <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
+        {/* <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
           <Tabs
             value={value}
             onChange={handleChange}
@@ -462,8 +467,42 @@ const InvestorsScreener = () => {
             <Tab label="Risks" {...a11yProps(2)} />
             <Tab label="Historical Prices" {...a11yProps(3)} />
           </Tabs>
-        </Box>
-        <CustomTabPanel value={value} index={0}>
+        </Box> */}
+        {/* <BreadcrumbsComponent
+          parent={"Investor Screeners"}
+          child={"Overview"}
+        />
+        <Box padding={2} display={'flex'} gap={3}>
+          <Button
+            sx={{
+              background: "#427879",
+              color: "white",
+            }}
+            startIcon={<AssessmentIcon />}
+          >
+            OVERVIEW
+          </Button>
+          <Button
+            sx={{
+             
+              color: "black",
+            }}
+            startIcon={<TrendingUpIcon />}
+          >
+            RETURNS AND RISK
+          </Button>
+          <Button
+            sx={{
+             
+              color: "black",
+            }}
+            startIcon={<PlaceIcon />}
+          >
+            HISTORICAL
+          </Button>
+        </Box> */}
+        <NavigationWithBreadcrumbs setSelectedCompany={setSelectedCompany} />
+        {/* <CustomTabPanel value={value} index={0}>
           <OverviewTab
             setSelectedCompany={setSelectedCompany}
             // setCompanyDetails={setCompanyDetails}
@@ -477,7 +516,7 @@ const InvestorsScreener = () => {
         </CustomTabPanel>
         <CustomTabPanel value={value} index={3}>
           <BackTestTab />
-        </CustomTabPanel>
+        </CustomTabPanel> */}
       </Box>
     </Grid>
   );

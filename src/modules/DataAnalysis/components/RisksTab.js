@@ -84,7 +84,7 @@ const RisksTab = () => {
       try {
         const response = await fetch(
           `
-              https://api.invelps.com/api/strategies/getStrategiesRiskAdjustedReturns`,
+              http://127.0.0.1:8000/api/strategies/getStrategiesRiskAdjustedReturns`,
           {
             method: "POST",
             headers: {
@@ -470,7 +470,7 @@ const RisksTab = () => {
                         }}
                       >
                         {" "}
-                        {data.name}{" "}
+                        {data.startegy_label}{" "}
                       </StyledTableCell>
                       <StyledTableCell
                         sx={{

@@ -16,6 +16,8 @@ import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
 import RemoveIcon from "@mui/icons-material/Remove";
 import ColorConstants from "../../../Core/constants/ColorConstants.json"; // Make sure this path is correct and the JSON file is properly formatted
+import { RiArrowRightCircleFill, RiArrowRightCircleLine } from "react-icons/ri";
+import { ArrowLeftRounded, ArrowRight } from "@mui/icons-material";
 
 // Custom styles for TableCell
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -95,11 +97,39 @@ const rows = [
 function ChangeIcon({ change }) {
   switch (change) {
     case "increase":
-      return <ArrowUpwardIcon style={{ color: "red" }} />;
+      return (
+        <ArrowUpwardIcon
+          style={{
+            color: "green",
+            background: "#DEF2E8",
+            borderRadius: "20px",
+            padding: 5,
+          }}
+        />
+      );
     case "decrease":
-      return <ArrowDownwardIcon style={{ color: "green" }} />;
+      return (
+        <ArrowDownwardIcon
+          style={{
+            color: "red",
+            borderRadius: "20px",
+            padding: 5,
+            background: "#FDE6E7",
+          }}
+        />
+      );
     default:
-      return <RemoveIcon style={{ color: "grey" }} />;
+      return (
+        <ArrowDownwardIcon
+          style={{
+            color: "#FAC73D",
+            borderRadius: "20px",
+            padding: 5,
+            background: "#FEF6DE",
+            transform: "rotate(-90deg)",
+          }}
+        />
+      );
   }
 }
 

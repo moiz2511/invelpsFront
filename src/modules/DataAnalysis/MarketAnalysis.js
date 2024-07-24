@@ -21,7 +21,7 @@ function MarketAnalysis() {
           gridTemplateColumns: {
             xs: "1fr", // All items in a single column on extra-small devices
             sm: "1fr 1fr", // Two columns on small devices
-            md: "1fr 1fr 2fr", // Three columns on medium devices and larger
+            md: "2fr 1fr 2fr", // Three columns on medium devices and larger
           },
           gap: 2, // Space between grid items
           padding: 2, // Padding around the grid container

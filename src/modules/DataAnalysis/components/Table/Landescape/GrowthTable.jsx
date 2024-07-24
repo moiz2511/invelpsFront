@@ -14,6 +14,7 @@ import {
 import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import ColorConstants from '../../../../Core/constants/ColorConstants.json'
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   fontSize: "0.875rem", // 14px
@@ -27,6 +28,7 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
 const StyledTableHeadCell = styled(StyledTableCell)(({ theme }) => ({
   fontWeight: 600,
   color: theme.palette.text.secondary,
+  backgroundColor:ColorConstants.APP_TABLE_HEAD_COLOR
 }));
 
 const StyledTableRow = styled(TableRow)(({ theme }) => ({
@@ -38,11 +40,34 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 const TrendIcon = ({ trend }) => {
   switch (trend) {
     case "up":
-      return <ArrowUpwardIcon style={{ color: "green" }} />;
+      return (
+        <ArrowUpwardIcon
+          style={{ color: "green", background: "#DEF2E8", borderRadius: "20px",padding:5 }}
+        />
+      );
     case "down":
-      return <ArrowDownwardIcon style={{ color: "red" }} />;
+      return (
+        <ArrowDownwardIcon
+          style={{
+            color: "red",
+            borderRadius: "20px",
+            padding: 5,
+            background: "#FDE6E7",
+          }}
+        />
+      );
     default:
-      return <CheckCircleIcon style={{ color: "grey" }} />;
+      return (
+        <ArrowDownwardIcon
+          style={{
+            color: "#FAC73D",
+            borderRadius: "20px",
+            padding: 5,
+            background: "#FEF6DE",
+            transform: "rotate(-90deg)",
+          }}
+        />
+      );
   }
 };
 const GreenLinearProgress = styled(LinearProgress)(({ theme }) => ({
@@ -92,6 +117,9 @@ const GrowthTable = ({ data }) => {
         <TableHead>
           <TableRow>
             <StyledTableHeadCell sx={{ fontSize: 13 }}>
+             
+            </StyledTableHeadCell>
+            <StyledTableHeadCell sx={{ fontSize: 13 }}>
               TREND
             </StyledTableHeadCell>
             <StyledTableHeadCell sx={{ fontSize: 13 }}>
@@ -120,7 +148,7 @@ const GrowthTable = ({ data }) => {
               <StyledTableCell>{row.historicalAvg}</StyledTableCell>
               <StyledTableCell>{row.industryAvg}</StyledTableCell>
               <StyledTableCell>{row.target}</StyledTableCell>
-              <StyledTableCell>{row.score}%</StyledTableCell>
+              <StyledTableCell>{row.score}% </StyledTableCell>
             </StyledTableRow>
           ))}
         </TableBody>

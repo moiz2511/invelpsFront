@@ -13,8 +13,8 @@ const TreemapChart = ({ title, data, additionalInfo }) => {
   };
 
   return (
-    <Paper
-      elevation={3}
+    <Box
+    
       sx={{ padding: 3, borderRadius: "10px", maxWidth: 400, margin: "auto" }}
     >
       
@@ -41,7 +41,8 @@ const TreemapChart = ({ title, data, additionalInfo }) => {
           </Box>
         ))}
       </Box>
-    </Paper>
+      
+    </Box>
   );
 };
 

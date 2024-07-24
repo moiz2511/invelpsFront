@@ -11,16 +11,15 @@ const VerticalBarChart = ({ chartId, graphData }) => {
     }
     return color;
   };
+
   useEffect(() => {
-    console.log(graphData);
     const chartDom = document.getElementById(chartId);
     const myChart = echarts.init(chartDom);
-    const names = graphData.map((item, index) => item.name);
-    const totalReturn = graphData.map((item, index) => item.total_return);
-    const sharpeRatio = graphData.map((item, index) => item.sharpe_ratio);
-    const annualizedReturn = graphData.map(
-      (item, index) => item.annualized_return
-    );
+
+    const names = graphData.map((item) => item.strategy_label);
+    const totalReturn = graphData.map((item) => item.total_return);
+    const sharpeRatio = graphData.map((item) => item.sharpe_ratio);
+    const annualizedReturn = graphData.map((item) => item.annualized_return);
 
     const graphValues =
       chartId === "bar-chart-1"
@@ -29,7 +28,7 @@ const VerticalBarChart = ({ chartId, graphData }) => {
         ? sharpeRatio
         : chartId === "bar-chart-3"
         ? annualizedReturn
-        : null;
+        : [];
 
     const graphTitle =
       chartId === "bar-chart-1"
@@ -38,7 +37,7 @@ const VerticalBarChart = ({ chartId, graphData }) => {
         ? "Sharpe Ratio"
         : chartId === "bar-chart-3"
         ? "Annual Return"
-        : null;
+        : "";
 
     const option = {
       title: {
@@ -50,7 +49,6 @@ const VerticalBarChart = ({ chartId, graphData }) => {
           type: "shadow",
         },
       },
-      // legend: {},
       grid: {
         left: "3%",
         right: "4%",
@@ -60,6 +58,8 @@ const VerticalBarChart = ({ chartId, graphData }) => {
       xAxis: {
         type: "value",
         boundaryGap: [0, 0.01],
+        // Allow negative bars only for the Sharpe Ratio chart
+        min: chartId === "bar-chart-2" ? undefined : 0,
       },
       yAxis: {
         type: "category",
@@ -74,19 +74,21 @@ const VerticalBarChart = ({ chartId, graphData }) => {
       ],
       color: getRandomColor(),
     };
-    option && myChart.setOption(option);
+
+    if (myChart) {
+      myChart.setOption(option);
+    }
 
     return () => {
       myChart.dispose();
     };
-  }, []);
+  }, [chartId, graphData]); // Ensure effect updates if chartId or graphData changes
 
   return (
     <Card
       id={chartId}
       style={{ width: "100%", height: "300px", alignSelf: "center" }}
-      sx={{ width: "100%", padding: 1, margin: 2 }}
-    ></Card>
+    />
   );
 };
 

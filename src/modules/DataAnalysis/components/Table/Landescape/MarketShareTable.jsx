@@ -11,7 +11,7 @@ import {
   styled,
   IconButton,
 } from "@mui/material";
-
+import ColorConstants from '../../../../Core/constants/ColorConstants.json'
 import ArrowForwardOutlinedIcon from "@mui/icons-material/ArrowForwardOutlined";
 
 // Define custom TableCell styling
@@ -22,8 +22,24 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
 }));
 
 const StyledMarketShareCell = styled(TableCell)(({ value }) => ({
-  color: value.startsWith("-") ? "red" : "green",
-  fontWeight: "bold",
+  // color: value.startsWith("-") ? "red" : "green",
+  fontWeight: "light",
+}));
+const MarketShareCell = ({ value }) => {
+  const [firstValue, secondValue] = value.split(", ");
+
+  return (
+    <StyledMarketShareCell>
+      <span style={{ color: "black" }}>{firstValue}</span>,{" "}
+      <span style={{ color: "red" }}>{secondValue}</span>
+    </StyledMarketShareCell>
+  );
+};
+
+const StyledTableHeadCell = styled(StyledTableCell)(({ theme }) => ({
+  fontWeight: 600,
+  color: theme.palette.text.secondary,
+  backgroundColor: ColorConstants.APP_TABLE_HEAD_COLOR,
 }));
 
 const data = [
@@ -79,28 +95,33 @@ const data = [
 
 function MarketShareTable() {
   return (
-    <Paper sx={{ overflowX: "auto"  }}>
+    <Paper sx={{ overflowX: "auto" }}>
       <TableContainer>
         <Table aria-label="simple table">
           <TableHead>
             <TableRow>
-              <StyledTableCell>Peers</StyledTableCell>
-              <StyledTableCell>LY Market Share</StyledTableCell>
-              <StyledTableCell>Range</StyledTableCell>
-              <StyledTableCell>YOY</StyledTableCell>
+              <StyledTableHeadCell>Peers</StyledTableHeadCell>
+              <StyledTableHeadCell>LY Market Share</StyledTableHeadCell>
+              <StyledTableHeadCell>Range</StyledTableHeadCell>
+              <StyledTableHeadCell>YOY</StyledTableHeadCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {data.map((row, index) => (
               <TableRow key={index}>
                 <StyledTableCell>{row.peer}</StyledTableCell>
-                <StyledMarketShareCell value={row.marketShare.split(",")[1]}>
-                  {row.marketShare}
-                </StyledMarketShareCell>
+                <MarketShareCell value={row.marketShare} />
                 <StyledTableCell>{row.range}</StyledTableCell>
                 <StyledTableCell>
                   <IconButton>
-                    <ArrowForwardOutlinedIcon color="primary" />
+                    <ArrowForwardOutlinedIcon
+                      color="primary"
+                      sx={{
+                        background: "#E5F8FE",
+                        padding: "5px",
+                        borderRadius: "20px",
+                      }}
+                    />
                   </IconButton>
                 </StyledTableCell>
               </TableRow>

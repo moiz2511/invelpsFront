@@ -41,6 +41,7 @@ import HorizontalBarChart from "./charts/HorizontalBar";
 import GeoChartComponent from "./charts/GeoCharts";
 import { RiArrowUpDownLine } from "react-icons/ri";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
+import BreadcrumbsComponent from "../../Core/components/Layout/BreadCrumbs";
 
 const headCells = {
   data: [
@@ -137,7 +138,7 @@ const passingHeadCells = {
       isValueLink: false,
       isDropDown: false,
     },
-    
+
     {
       label: "Ticker",
       key: "",
@@ -191,7 +192,7 @@ const passingHeadCells = {
       key: "",
       isValueLink: false,
       isDropDown: false,
-    }
+    },
   ],
 };
 
@@ -207,7 +208,6 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
     fontSize: 12,
     padding: 12,
     fontFamily: "Montserrat",
-   
   },
 }));
 
@@ -389,7 +389,7 @@ const OverviewTab = ({ setSelectedCompany }) => {
         setPerExhangeKPI(data.data.companies_per_exchanges_KPI);
         setPerSectorKPI(data.data.companies_per_sector_KPI);
         setPerMarketKPI(data.data.companies_per_market_cap_KPI);
-         console.log("Exchange KPI",data.data.companies_per_exchanges_KPI);
+        console.log("Exchange KPI", data.data.companies_per_exchanges_KPI);
       } else {
         console.log("Unexpected status code:", response.status);
       }
@@ -524,9 +524,7 @@ const OverviewTab = ({ setSelectedCompany }) => {
     setIsSwitch2(false);
   };
 
-console.log("kpi", perExchangeKPI);
-
-
+  console.log("kpi", perExchangeKPI);
 
   return (
     <Grid
@@ -536,7 +534,8 @@ console.log("kpi", perExchangeKPI);
         width: "100%",
       }}
     >
-      <PageInfoBreadCrumbs data={pageLoc} />
+      {/* <PageInfoBreadCrumbs data={pageLoc} /> */}
+      {/* <BreadcrumbsComponent parent={'Investor Screeners'} child={'Overview'} /> */}
 
       {/* Strategies modal */}
       {isSwitch2 && (
@@ -648,7 +647,7 @@ console.log("kpi", perExchangeKPI);
                 <Card
                   sx={{
                     padding: 4,
-                    paddingBottom:{xs:8,md:4},
+                    paddingBottom: { xs: 8, md: 4 },
                     display: "flex",
                     flexDirection: "column",
                     height: 250,
@@ -945,7 +944,7 @@ console.log("kpi", perExchangeKPI);
           flexDirection: "column",
           justifyContent: "center",
           alignItems: "center",
-         
+
           gap: 5,
         }}
       >
@@ -955,7 +954,7 @@ console.log("kpi", perExchangeKPI);
             position: "relative",
             width: "calc(100vw - 30px)",
             overflowX: "hidden",
-            boxShadow:'none'
+            boxShadow: "none",
           }}
         >
           <Box px={2} py={2} width={"100%"}>
@@ -977,31 +976,27 @@ console.log("kpi", perExchangeKPI);
             <Box
               sx={{
                 display: "flex",
-                flexDirection: {xs:'column',sm:'row'},
+                flexDirection: { xs: "column", sm: "row" },
                 marginTop: 6,
                 overflowX: "hidden",
               }}
             >
               {allStrategies.length > 0 ? (
                 <>
-             
-                   
-                      <VerticalBarChart
-                        chartId={"bar-chart-1"}
-                        graphData={allStrategies}
-                      />
-                    
-                      <VerticalBarChart
-                        chartId={"bar-chart-2"}
-                        graphData={allStrategies}
-                      />
-                    
-                      <VerticalBarChart
-                        chartId={"bar-chart-3"}
-                        graphData={allStrategies}
-                      />
-                   
-                
+                  <VerticalBarChart
+                    chartId={"bar-chart-1"}
+                    graphData={allStrategies}
+                  />
+
+                  <VerticalBarChart
+                    chartId={"bar-chart-2"}
+                    graphData={allStrategies}
+                  />
+
+                  <VerticalBarChart
+                    chartId={"bar-chart-3"}
+                    graphData={allStrategies}
+                  />
                 </>
               ) : (
                 <h1>Fetching...</h1>
@@ -1164,7 +1159,7 @@ console.log("kpi", perExchangeKPI);
                           }}
                         >
                           {" "}
-                          {data.name}
+                          {data.strategy_label}
                         </StyledTableCell>
                         <StyledTableCell
                           onClick={() =>
