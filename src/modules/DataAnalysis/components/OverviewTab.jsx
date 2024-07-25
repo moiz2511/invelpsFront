@@ -250,6 +250,7 @@ const OverviewTab = ({ setSelectedCompany }) => {
   const [perSectorKPI, setPerSectorKPI] = useState([]);
   const [perMarketKPI, setPerMarketKPI] = useState([]);
   const [graphTableData, setGraphTableData] = useState([]);
+  const [graphTableDataCopy, setGraphTableDataCopy] = useState([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(3);
   const [totalPages, setTotalPages] = useState(null);
@@ -263,7 +264,7 @@ const OverviewTab = ({ setSelectedCompany }) => {
   const [selectedSort, setSelectedSort] = useState(0);
   const [selectedField, setSelectedField] = useState(sortingFields[0].key);
 
-  const [graphTableDataCopy, setGraphTableDataCopy] = useState([]);
+  
 
   const { isSwitch1, setIsSwitch1, isSwitch2, setIsSwitch2 } = useSwitch();
 
@@ -381,11 +382,12 @@ const OverviewTab = ({ setSelectedCompany }) => {
           body: JSON.stringify(body),
         }
       );
-
+     
       const data = await response.json();
 
       if (response.status === 200) {
-        console.log(data);
+         console.log("Company",data.data);
+        // console.log("Company",data);
         setPerExhangeKPI(data.data.companies_per_exchanges_KPI);
         setPerSectorKPI(data.data.companies_per_sector_KPI);
         setPerMarketKPI(data.data.companies_per_market_cap_KPI);
@@ -561,7 +563,7 @@ const OverviewTab = ({ setSelectedCompany }) => {
                 {" "}
                 Strategies Overview{" "}
               </span>{" "}
-              / {selectedStrategy?.name}
+              / {selectedStrategy?.strategy_label}
             </Typography>
           </Box>
           <Button
@@ -583,10 +585,10 @@ const OverviewTab = ({ setSelectedCompany }) => {
               padding: 1,
             }}
           >
-            <text style={{ fontSize: 25, fontWeight: "bold" }}>
+            {/* <text style={{ fontSize: 25, fontWeight: "bold" }}>
               {" "}
               {selectedStrategy?.name}{" "}
-            </text>
+            </text> */}
             {/* <Card
               sx={{
                 my: 1,
@@ -624,7 +626,7 @@ const OverviewTab = ({ setSelectedCompany }) => {
               >
                 <text style={{ fontWeight: "bolder" }}>
                   {" "}
-                  Companies Per Exchanges (%){" "}
+                  Companies Per Country{" "}
                 </text>
                 {/* <PieChart
                     graphData={perExchangeKPI}

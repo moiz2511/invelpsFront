@@ -27,8 +27,8 @@ const NavigationWithBreadcrumbs = ({ setSelectedCompany }) => {
       component: "ReturnsRiskContent",
     },
     {
-      id: "HISTORICAL",
-      label: "HISTORICAL",
+      id: "HISTORICAL PRICES",
+      label: "HISTORICAL PRICES",
       icon: <PlaceIcon />,
       component: "HistoricalPlacesContent",
     },
@@ -56,14 +56,17 @@ const NavigationWithBreadcrumbs = ({ setSelectedCompany }) => {
         ))}
       </Box>
       <Box>
-        {activeButton === "OVERVIEW" && <OverviewTab setSelectedCompany={setSelectedCompany}/>}
+        {activeButton === "OVERVIEW" && (
+          <OverviewTab setSelectedCompany={setSelectedCompany} />
+        )}
         {activeButton === "RETURNS AND RISK" && (
-        //   <RisksTab/>
-         <ReturnsTab/>
+          <Box>
+            <ReturnsTab />
+            {/* <RisksTab /> */}
+            <></>
+          </Box>
         )}
-        {activeButton === "HISTORICAL" && (
-         <BackTestTab/>
-        )}
+        {activeButton === "HISTORICAL PRICES" && <BackTestTab />}
       </Box>
     </>
   );

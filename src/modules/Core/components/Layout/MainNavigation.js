@@ -20,12 +20,13 @@ import KeyboardArrowRight from '@mui/icons-material/KeyboardArrowRight';
 import { styled } from '@mui/material/styles';
 import { useLocation } from 'react-router';
 import ColorConstants from '../../constants/ColorConstants.json';
-import { ButtonGroup, Container } from '@mui/material';
+import { ButtonGroup, Container, TextField } from '@mui/material';
 import AuthContext from '../../store/auth-context';
-
 import Logo from '../../../../assets/logos/Original.svg';
 
 import '../../../../assets/styles/Navbar.css';
+import NavigationMenu from './MainMenu';
+import SearchInput from './SearchComponent';
 
 const pages = [
   { label: 'Home', link: '/#home' },
@@ -43,7 +44,80 @@ const StyledListItemButton = styled(ListItemButton)(() => ({
 }));
 
 const Offset = styled('div')(({ theme }) => theme.mixins.toolbar);
-
+const mainNavData =[
+  {
+    id:1,
+    label:'Financial Plan',
+   
+    children :[
+      {
+        id:1,
+        label:'Define your goals',
+        href:''
+      },{
+        id:2,
+        label:'Setup your portfolio',
+        href:''
+      },{
+        id:3,
+        label:'Apply Strategy',
+        href:''
+      },{
+        id:4,
+        label:'Monitor your portfolio'
+      }
+    ]
+  },
+  {
+    id:2,
+    label:'Research',
+    children:[
+      {
+        id:5,
+        label:'Investors',
+        href:''
+      },{
+        id:6,
+        label:'Market',
+        href:''
+      },
+      {
+        id:7,
+        label:'Screener',
+        href:''
+      }
+    ]
+  },{
+    id:3,
+    label:'API Tools',
+    children:[
+      {
+        id:8,
+        label:'Profile',
+        href:''
+      },{
+        id:9,
+        label:'Financials',
+        href:''
+      },{
+        id:10,
+        label:'Key Metrics and Ratios',
+        href:''
+      },{
+        id:11,
+        label:'Historical Data',
+        href:''
+      },
+    ],
+  },{
+    id:4,
+    label:'Resources',
+    children:[{
+      id:12,
+      label:'Investing'
+    }]
+  }
+]
 const subNavItemsInitialData = [
   {
     id: 1,
@@ -209,22 +283,10 @@ const subNavItemsInitialData = [
         label: 'Ranges',
         path: '/dataanalysis/ranges',
       },
-      // {
-      //     id: 410,
-      //     label: 'Rates',
-      //     path: '/dataanalysis/rates'
-      // }
+    
     ],
   },
-  // {
-  //     id: 5,
-  //     isAdminNav: false,
-  //     label: 'Data Visualization',
-  //     path: '/datavisualization',
-  //     pathKey: 'datavisualization',
-  //     showSubItems: false,
-  //     children: []
-  // },
+ 
   {
     id: 6,
     isAdminNav: true,
@@ -302,154 +364,87 @@ const MainNavigation = () => {
   };
 
   return (
-    <Box sx={{ display: 'flex' }}>
+    <Box sx={{ display: "flex" }}>
       <AppBar
         elevation={2}
-        position='fixed'
+        position="fixed"
         sx={{
-          height: '90px',
-          justifyContent: 'center',
-          backgroundColor: '#407879',
+          height: "90px",
+          justifyContent: "center",
+          backgroundColor: "#407879",
           mb: 0,
           zIndex: (theme) => theme.zIndex.drawer + 4,
         }}
       >
-        <Container maxWidth='xl'>
+        <Container maxWidth="xl">
           <Toolbar
             elevation={2}
             disableGutters
             sx={{
-              justifyContent: 'space-between',
+              justifyContent: "space-between",
             }}
           >
             <div
               style={{
-                display: 'flex',
-                alignItems: 'center',
+                display: "flex",
+                alignItems: "center",
               }}
             >
               {authCtx.isLoggedIn && (
                 <IconButton
-                  size='large'
-                  aria-label='account of current user'
-                  aria-controls='menu-appbar'
-                  aria-haspopup='true'
+                  size="large"
+                  aria-label="account of current user"
+                  aria-controls="menu-appbar"
+                  aria-haspopup="true"
                   onClick={tooggleSideNavMenu}
-                // color="inherit"
+                  // color="inherit"
                 >
                   <MenuIcon />
                 </IconButton>
               )}
-              {/* <Typography
-                                variant="h6"
-                                noWrap
-                                component="div"
-                                sx={{ display: { xs: "none", md: "flex" } }}
-                            >
-                                LOGO
-                            </Typography> */}
-              {/* <img alt="tickers logo" width={100} height={50} src={Logo} /> */}
-              <img src={Logo} height='50px' alt='invelps' />
-              {/* <img alt="tickers logo2" width={100} height={50} src={logo2} /> */}
-              {/* <img alt="tickers logo3" width={100} height={50} src={logo3} /> */}
-            </div>
-            <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
-              {/* {pages.map((page) => (
-                                <Button
-                                    key={page.label}
-                                    component={RouterLink}
-                                    to={page.link}
-                                    sx={{ my: 2, color: 'white', display: 'block', textTransform: 'none', mr: 3 }}
-                                >
-                                    {page.label}
-                                </Button>
-                            ))} */}
-              <ul
-                className='navbar-list'
-                style={{ justifyContent: 'space-between' }}
-              >
-                <a href='/#home' style={achorStyle}>
-                  <li>Home</li>
-                </a>
-                <a href='/#solutions' style={achorStyle}>
-                  <li>Solutions</li>
-                </a>
-                <a href='/#applications' style={achorStyle}>
-                  <li>Applications</li>
-                </a>
-                <a href='/#aboutus' style={achorStyle}>
-                  <li>About Us</li>
-                </a>
-                <RouterLink to='/contact' style={achorStyle}>
-                  <li>Contact</li>
-                </RouterLink>
-                {isUserLoggeIn && (
-                  <RouterLink to='/profile/dashboard' style={achorStyle}>
-                    <li>Profile</li>
-                  </RouterLink>
-                )}
 
-                {!isUserLoggeIn && (
-                  <React.Fragment>
-                    <RouterLink to='/login' style={achorStyle}>
-                      <li>Login</li>
-                    </RouterLink>
-                    <RouterLink to='/signup' style={achorStyle}>
-                      <li>SignUp</li>
-                    </RouterLink>
-                  </React.Fragment>
+              <img src={Logo} height="50px" alt="invelps" />
+              <Box >
+                <SearchInput></SearchInput>
+              </Box>
+            </div>
+            <Box sx={{ display: { xs: "none", md: "flex" } }}>
+              <ul
+                style={{
+                  display: "flex",
+                  listStyle: "none",
+                  margin: 0,
+                  padding: 0,
+                }}
+              >
+                <NavigationMenu mainNavData={mainNavData} />
+                {isUserLoggeIn ? (
+                  <>
+                    {/* <li>
+                      <Button color="inherit">Profile</Button>
+                    </li> */}
+                    <li>
+                      <Button color="inherit" onClick={authCtx.logout}>
+                        Logout
+                      </Button>
+                    </li>
+                  </>
+                ) : (
+                  <>
+                    <li>
+                      <Button color="inherit">Login</Button>
+                    </li>
+                    <li>
+                      <Button color="inherit">SignUp</Button>
+                    </li>
+                  </>
                 )}
-                {
-                  isUserLoggeIn && (
-                    <RouterLink
-                      to='/logout'
-                      onClick={() => {
-                        authCtx.logout();
-                      }}
-                      style={achorStyle}
-                    >
-                      Logout
-                    </RouterLink>
-                  )
-                  // <Button
-                  //     key="logout"
-                  //     onClick={() => { authCtx.logout() }}
-                  //     sx={{ my: 2, color: 'white', display: 'block', textTransform: 'none' }}
-                  // >
-                  //     Logout
-                  // </Button>
-                }
               </ul>
-              {/* {!isUserLoggeIn && <React.Fragment>
-                                <ButtonGroup variant="outlined" aria-label="outlined primary button group">
-                                    <Button
-                                        key="login"
-                                        component={RouterLink}
-                                        to="/login"
-                                        sx={{ my: 2, color: 'white', display: 'block', textTransform: 'none' }}
-                                    >
-                                        Login
-                                    </Button>
-                                    <Button
-                                        key="signup"
-                                        component={RouterLink}
-                                        to="/signup"
-                                        sx={{ my: 2, color: 'white', display: 'block', textTransform: 'none' }}
-                                    >
-                                        SignUp
-                                    </Button>
-                                </ButtonGroup>
-                            </React.Fragment>} */}
-              {/* <Tooltip title="Open settings" sx={{ mr: 1 }}>
-                                <IconButton>
-                                    <Avatar>FR</Avatar>
-                                </IconButton>
-                            </Tooltip> */}
             </Box>
           </Toolbar>
         </Container>
         <Drawer
-          anchor='left'
+          anchor="left"
           open={state}
           onClose={tooggleSideNavMenu}
           sx={{
@@ -457,23 +452,23 @@ const MainNavigation = () => {
             flexShrink: 0,
             [`& .MuiDrawer-paper`]: {
               minWidth: 240,
-              boxSizing: 'border-box',
+              boxSizing: "border-box",
               backgroundColor: ColorConstants.APP_SIDE_NAV_BG_COLOR,
             },
           }}
         >
           <List
             sx={{
-              paddingTop: '95px',
-              width: '100%',
+              paddingTop: "95px",
+              width: "100%",
               maxWidth: 240,
               bgcolor: ColorConstants.APP_SIDE_NAV_BG_COLOR,
-              color: 'white',
+              color: "white",
             }}
-            component='nav'
+            component="nav"
           >
             {subNavItemsData.map((item) => {
-              if (item.isAdminNav && authCtx.role === 'Admin') {
+              if (item.isAdminNav && authCtx.role === "Admin") {
                 if (
                   (item.children !== null) | undefined &&
                   item.children.length > 0
@@ -492,10 +487,10 @@ const MainNavigation = () => {
                       </StyledListItemButton>
                       <Collapse
                         in={item.showSubItems}
-                        timeout='auto'
+                        timeout="auto"
                         unmountOnExit
                       >
-                        <List component='div' disablePadding>
+                        <List component="div" disablePadding>
                           {item.children.map((subItem) => (
                             <StyledListItemButton
                               key={subItem.id}
@@ -549,10 +544,10 @@ const MainNavigation = () => {
                       </StyledListItemButton>
                       <Collapse
                         in={item.showSubItems}
-                        timeout='auto'
+                        timeout="auto"
                         unmountOnExit
                       >
-                        <List component='div' disablePadding>
+                        <List component="div" disablePadding>
                           {item.children.map((subItem) => (
                             <StyledListItemButton
                               key={subItem.id}
@@ -592,7 +587,7 @@ const MainNavigation = () => {
           </List>
         </Drawer>
       </AppBar>
-      <Offset style={{ paddingTop: '40px' }} />
+      <Offset style={{ paddingTop: "40px" }} />
     </Box>
   );
 };

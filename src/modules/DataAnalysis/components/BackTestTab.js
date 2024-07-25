@@ -23,6 +23,9 @@ import ColorConstants from "../../Core/constants/ColorConstants.json";
 import PageInfoBreadCrumbs from "../../Core/components/Layout/PageInfoBreadCrumbs";
 import PieChart from "./PieChart";
 import { IoArrowDown, IoArrowUp } from "react-icons/io5";
+import HorizontalBarChart from "./charts/HorizontalBar";
+import DonutPieChart from "./charts/DonoutChart";
+import GeoChartComponent from "./charts/GeoCharts";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -70,6 +73,9 @@ const BackTestTab = () => {
   const [dividendTableData, setDividendTableData] = useState([]);
   const [annualPriceSwitch, setAnnualPriceSwitch] = useState(true);
   const [annualDevidendSwitch, setAnnualDevidendSwitch] = useState(true);
+  const [selectedStrategyLabel, setSelectedStrategyLabel] = useState("");
+  const [graphTableData, setGraphTableData] = useState([]);
+  const [graphTableDataCopy, setGraphTableDataCopy] = useState([]);
 
   const handlePriceSwitch = () => {
     setAnnualPriceSwitch(!annualPriceSwitch);
@@ -93,7 +99,7 @@ const BackTestTab = () => {
     const fetchStrategyAnnualPerformance = async () => {
       try {
         const response = await fetch(
-          `https://api.invelps.com/api/strategies/getStrategiesAnnualPerformance`,
+          `http://127.0.0.1:8000/api/strategies/getStrategiesAnnualPerformance`,
           {
             method: "POST",
             headers: {
@@ -105,9 +111,9 @@ const BackTestTab = () => {
         const data = await response.json();
 
         if (response.status === 200) {
-          console.log("Data:", data);
+          console.log("Historical Data:", data);
           setStrategyData(data.strategies);
-          console.log(strategyData);
+          // console.log(strategyData);
         } else {
           console.log("Unexpected status code:", response.status);
         }
@@ -126,7 +132,7 @@ const BackTestTab = () => {
       const firstStrategy = strategyData[0];
       const strategyKeys = Object.keys(firstStrategy);
       const filteredYears = strategyKeys.filter(
-        (key) => key !== "strategy_name_here"
+        (key) => key !== "strategy_name_here" && key != "strategy_label"
       );
       setYears(filteredYears);
     }
@@ -153,7 +159,7 @@ const BackTestTab = () => {
       );
 
       const data = await response.json();
-
+      console.log("GraphData", data);
       if (response.status === 200) {
         console.log(data);
         setPerExhangeKPI(data.data.companies_per_exchanges_KPI);
@@ -166,7 +172,39 @@ const BackTestTab = () => {
       console.error("Error:", error);
     }
   };
+  // const fetchGraphTableData = async () => {
+  //   try {
+  //     const body = {
+  //       strategy_name: selectedStrategy.name,
+  //       page: currentPage,
+  //       data_per_page: currentRowsPerPage,
+  //     };
+  //     const response = await fetch(
+  //       `https://api.invelps.com/api/strategies/getStrategyTableData`,
+  //       {
+  //         method: "POST",
+  //         headers: {
+  //           Authorization: `Bearer ${authToken}`,
+  //         },
+  //         body: JSON.stringify(body),
+  //       }
+  //     );
 
+  //     const data = await response.json();
+
+  //     if (response.status === 200) {
+  //       console.log(data.data);
+  //       setGraphTableData(data.data);
+  //       setGraphTableDataCopy(data.data);
+  //       setTotalPages(data.paginator.total_pages);
+  //       setPassingCriteria(data.companies_passing_criteris);
+  //     } else {
+  //       console.log("Unexpected status code:", response.status);
+  //     }
+  //   } catch (error) {
+  //     console.error("Error:", error);
+  //   }
+  // };
   const fetchDividendTableData = async () => {
     try {
       const body = {
@@ -207,7 +245,8 @@ const BackTestTab = () => {
   const handleDataVisualization = (strategy) => {
     setSelectedStrategy(null);
     setShowVisualData(!showVisualData);
-    setSelectedStrategy(strategy);
+    setSelectedStrategy(strategy.strategy_name_here);
+    setSelectedStrategyLabel(strategy.strategy_label);
   };
 
   const generateRandomInvestmentData = () => {
@@ -235,12 +274,12 @@ const BackTestTab = () => {
     let secondLastYear = years[years.length - 2];
     let lastYearValue = parseInt(
       type === "price"
-        ? data[lastYear]?.anualPrice
+        ? data[lastYear]?.anual_price
         : data[lastYear]?.annual_dividend
     );
     let secondLastYearValue = parseInt(
       type === "price"
-        ? data[secondLastYear]?.anualPrice
+        ? data[secondLastYear]?.anual_price
         : data[secondLastYear]?.annual_dividend
     );
     let dividendDiff = lastYearValue - secondLastYearValue;
@@ -257,12 +296,13 @@ const BackTestTab = () => {
     <>
       {showVisualData ? (
         <Box ml={2} mb={4}>
-          <Typography color={"rgba(0, 0, 0, 0.6)"}>
-            Strategies Overview / {selectedStrategy.name}
-          </Typography>
+          {/* <Typography color={"rgba(0, 0, 0, 0.6)"}>
+            Strategies Overview / {selectedStrategyLabel}
+          </Typography> */}
         </Box>
       ) : (
-        <PageInfoBreadCrumbs data={pageLoc} />
+        <></>
+        // <PageInfoBreadCrumbs data={pageLoc} />
       )}
       {showVisualData ? (
         <>
@@ -277,15 +317,8 @@ const BackTestTab = () => {
           >
             Back
           </Button>
-          <Card
-            sx={{
-              margin: 1,
-              display: "flex",
-              flexDirection: "column",
-              padding: 2,
-            }}
-          >
-            <text
+
+          {/* <text
               style={{
                 fontFamily: "Montserrat",
                 fontSize: 25,
@@ -293,87 +326,97 @@ const BackTestTab = () => {
               }}
             >
               {selectedStrategy.split("_").join(" ")}
-            </text>
+            </text> */}
+
+          <Box
+            sx={{
+              display: "grid",
+              justifyContent: "space-around",
+              gridTemplateColumns: {
+                xs: "1fr",
+                sm: "1fr",
+                md: "1.5fr 1fr",
+              },
+              gap: 2,
+              my: 2,
+            }}
+          >
             <Card
               sx={{
-                margin: 2,
+                padding: 4,
+                gap: 3,
                 display: "flex",
                 flexDirection: "column",
-                gap: 5,
-                padding: 3,
               }}
             >
-              <text style={{ fontSize: 20, fontWeight: "bold" }}>
-                Companies Passing Criteria Statistics
+              <text style={{ fontWeight: "bolder" }}>
+                {" "}
+                Companies Per Exchanges (%){" "}
               </text>
-              <Box sx={{ display: "flex", justifyContent: "space-around" }}>
-                <Card
-                  sx={{
-                    padding: 4,
-                    gap: 5,
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: 4,
-                  }}
-                >
-                  <text> Companies Per Exchanges (%) </text>
-                  <PieChart
+              {/* <PieChart
                     graphData={perExchangeKPI}
                     nameData={(item) => item.exchange}
-                  />
-                </Card>
-                <Card
-                  sx={{
-                    padding: 4,
-                    gap: 5,
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: 4,
-                  }}
-                >
-                  <text> Companies Per Sector (%) </text>
-                  <PieChart
-                    graphData={perSectorKPI}
-                    nameData={(item) => item.sector}
-                  />
-                </Card>
-                <Card
-                  sx={{
-                    padding: 4,
-                    gap: 5,
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: 4,
-                  }}
-                >
-                  <text> Companies Per Market Cap (%) </text>
-                  <PieChart
+                  /> */}
+
+              <GeoChartComponent data={perExchangeKPI} />
+            </Card>
+            <Box style={{ display: "flex", gap: 6, flexDirection: "column" }}>
+              <Card
+                sx={{
+                  padding: 2,
+                }}
+              >
+                <text style={{ fontWeight: "bolder" }}>
+                  {" "}
+                  Companies Per Sector (%){" "}
+                </text>
+                <HorizontalBarChart data={perSectorKPI} />
+              </Card>
+              <Card
+                sx={{
+                  padding: 4,
+                  paddingBottom: { xs: 8, md: 4 },
+                  display: "flex",
+                  flexDirection: "column",
+                  height: 250,
+                }}
+              >
+                <text style={{ fontWeight: "bolder" }}>
+                  {" "}
+                  Companies Per Market Cap (%){" "}
+                </text>
+                <DonutPieChart
+                  data={perMarketKPI}
+                  dataKey={"total_count"}
+                  nameKey={"market_cap_class"}
+                ></DonutPieChart>
+                {/* <PieChart
                     graphData={perMarketKPI}
                     nameData={(item) => item.market_cap_class}
-                  />
-                </Card>
-              </Box>
-            </Card>
+                  /> */}
+              </Card>
+            </Box>
+          </Box>
 
-            <Card
-              sx={{
-                margin: 2,
-                display: "flex",
-                flexDirection: "column",
-                gap: 5,
-                padding: 3,
-              }}
-            >
-              <text style={{ fontSize: 20, fontWeight: "bold" }}>
-                Annual Dividend ({dividendTableData.length} years)
-              </text>
+          <Card
+            sx={{
+              margin: 2,
+              display: "flex",
+              flexDirection: "column",
+              gap: 5,
+              padding: 3,
+            }}
+          >
+            <text style={{ fontSize: 20, fontWeight: "bold" }}>
+              Annual Dividend ({dividendTableData.length} years)
+            </text>
 
-              <TableContainer>
-                <Table
-                  sx={{ minWidth: "100%", maxWidth: "100%", mt: 1 }}
-                  size="medium"
-                >
-                  <TableHead>
+            <TableContainer>
+              <Table
+                sx={{ minWidth: "100%", maxWidth: "100%", mt: 1 }}
+                size="medium"
+              >
+                {/* <TableHead>
                     <TableRow>
                       <TableCell
                         padding="normal"
@@ -401,51 +444,50 @@ const BackTestTab = () => {
                         Annual Dividends (USD)
                       </TableCell>
                     </TableRow>
-                  </TableHead>
+                  </TableHead> */}
 
-                  <TableHead>
-                    <TableRow
-                      sx={{
-                        backgroundColor: "#e7ecef",
-                        color: "#272727",
-                        fontSize: 14,
-                      }}
-                    >
-                      <TableCell sx={{ fontFamily: "Montserrat" }}>
-                        Strategy
+                <TableHead>
+                  <TableRow
+                    sx={{
+                      backgroundColor: "#e7ecef",
+                      color: "#272727",
+                      fontSize: 14,
+                    }}
+                  >
+                    <TableCell sx={{ fontFamily: "Montserrat" }}>
+                      Strategy
+                    </TableCell>
+                    {dividendTableData.map((data, index) => (
+                      <TableCell
+                        key={index}
+                        padding="normal"
+                        sx={{ fontFamily: "Montserrat", color: "#427878" }}
+                      >
+                        {data.date_Year}
                       </TableCell>
-                      {dividendTableData.map((data, index) => (
-                        <TableCell
-                          key={index}
-                          padding="normal"
-                          sx={{ fontFamily: "Montserrat", color: "#427878" }}
-                        >
-                          {data.date_Year}
-                        </TableCell>
-                      ))}
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    <StyledTableRow hover sx={{ ml: 3 }}>
-                      <StyledTableCell>{selectedStrategy}</StyledTableCell>
-                      {dividendTableData.map((data, index) => (
-                        <StyledTableCell
-                          key={index}
-                          sx={{
-                            color:
-                              parseFloat(data.Annual_Dividend) >= 0
-                                ? "green"
-                                : "red",
-                          }}
-                        >
-                          {data.Annual_Dividend || "-"}
-                        </StyledTableCell>
-                      ))}
-                    </StyledTableRow>
-                  </TableBody>
-                </Table>
-              </TableContainer>
-            </Card>
+                    ))}
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  <StyledTableRow hover sx={{ ml: 3 }}>
+                    <StyledTableCell>{selectedStrategyLabel}</StyledTableCell>
+                    {dividendTableData.map((data, index) => (
+                      <StyledTableCell
+                        key={index}
+                        sx={{
+                          color:
+                            parseFloat(data.Annual_Dividend) >= 0
+                              ? "green"
+                              : "red",
+                        }}
+                      >
+                        {data.Annual_Dividend || "-"}
+                      </StyledTableCell>
+                    ))}
+                  </StyledTableRow>
+                </TableBody>
+              </Table>
+            </TableContainer>
           </Card>
         </>
       ) : (
@@ -462,7 +504,8 @@ const BackTestTab = () => {
                 Annual Prices (
                 {strategyData &&
                   strategyData[0] &&
-                  strategyData[0][Object.keys(strategyData[0])[0]]?.duration}{" "}
+                  strategyData[0][Object.keys(strategyData[0])[0]]
+                    ?.duration}{" "}
                 years)
               </text>
             </Box>
@@ -498,6 +541,87 @@ const BackTestTab = () => {
                 chartSwitch={annualPriceSwitch}
               />
             </Box>
+            <TableContainer
+              style={{
+                marginBottom: "50px",
+              }}
+            >
+              <Table
+                sx={{ minWidth: "100%", maxWidth: "100%", mt: 1 }}
+                size="medium"
+              >
+                <TableHead>
+                  <TableRow
+                    sx={{
+                      backgroundColor: "#e7ecef",
+                      color: "#272727",
+                      fontSize: 14,
+                    }}
+                  >
+                    <TableCell sx={{ fontFamily: "Montserrat" }}>
+                      Strategy
+                    </TableCell>
+                    <TableCell
+                      padding="normal"
+                      sx={{ fontFamily: "Montserrat", color: "#427878" }}
+                    >
+                      Trends
+                    </TableCell>
+                    {years.map((year, index) => (
+                      <TableCell
+                        key={index}
+                        padding="normal"
+                        sx={{ fontFamily: "Montserrat", color: "#427878" }}
+                      >
+                        {year}
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {strategyData.map((strategy, index) => (
+                    <StyledTableRow hover key={index} sx={{ ml: 3 }}>
+                      <StyledTableCell
+                        onClick={() => {
+                          handleDataVisualization(strategy);
+                        }}
+                        sx={{
+                          cursor: "pointer",
+                          ":hover": {
+                            textDecoration: "underline",
+                            color: "blue",
+                          },
+                        }}
+                      >
+                        {strategy?.strategy_label}
+                      </StyledTableCell>
+                      <StyledTableCell
+                        sx={{
+                          color: "green",
+                        }}
+                      >
+                        {claculateTrend(strategy, "price")}
+                      </StyledTableCell>
+                      {years.map((year, index) => (
+                        <StyledTableCell
+                          key={index}
+                          sx={{
+                            color:
+                              parseFloat(strategy[year]?.anual_price) >= 0
+                                ? "green"
+                                : "red",
+                          }}
+                        >
+                          {strategy[year]?.anual_price
+                            ? strategy[year]?.anual_price
+                            : "-"}
+                        </StyledTableCell>
+                      ))}
+                    </StyledTableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
           </Box>
 
           <Box p={3}>
@@ -512,7 +636,8 @@ const BackTestTab = () => {
                 Annual Dividend (
                 {strategyData &&
                   strategyData[0] &&
-                  strategyData[0][Object.keys(strategyData[0])[0]]?.duration}{" "}
+                  strategyData[0][Object.keys(strategyData[0])[0]]
+                    ?.duration}{" "}
                 years)
               </text>
             </Box>
@@ -551,162 +676,12 @@ const BackTestTab = () => {
             </Box>
           </Box>
 
-          <TableContainer
-            style={{
-              marginBottom: "50px",
-            }}
-          >
-            <Table
-              sx={{ minWidth: "100%", maxWidth: "100%", mt: 1 }}
-              size="medium"
-            >
-              <TableHead>
-                <TableRow>
-                  <TableCell
-                    padding="normal"
-                    colSpan={1}
-                    sx={{
-                      backgroundColor: "#272727",
-                      color: "white",
-                      fontSize: 18,
-                      fontFamily: "Montserrat",
-                    }}
-                  >
-                    Strategy Models (
-                    {strategyData &&
-                      strategyData[0] &&
-                      strategyData[0][2017]?.duration}{" "}
-                    years)
-                  </TableCell>
-                  <TableCell
-                    padding="normal"
-                    colSpan={8}
-                    align="center"
-                    sx={{
-                      backgroundColor: "#427878",
-                      color: "white",
-                      fontSize: 18,
-                      fontFamily: "Montserrat",
-                    }}
-                  >
-                    Annual Prices (USD)
-                  </TableCell>
-                </TableRow>
-              </TableHead>
-
-              <TableHead>
-                <TableRow
-                  sx={{
-                    backgroundColor: "#e7ecef",
-                    color: "#272727",
-                    fontSize: 14,
-                  }}
-                >
-                  <TableCell sx={{ fontFamily: "Montserrat" }}>
-                    Strategy
-                  </TableCell>
-                  <TableCell
-                    padding="normal"
-                    sx={{ fontFamily: "Montserrat", color: "#427878" }}
-                  >
-                    Trends
-                  </TableCell>
-                  {years.map((year, index) => (
-                    <TableCell
-                      key={index}
-                      padding="normal"
-                      sx={{ fontFamily: "Montserrat", color: "#427878" }}
-                    >
-                      {year}
-                    </TableCell>
-                  ))}
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {strategyData.map((strategy, index) => (
-                  <StyledTableRow hover key={index} sx={{ ml: 3 }}>
-                    <StyledTableCell
-                      onClick={() => {
-                        handleDataVisualization(strategy?.strategy_name_here);
-                      }}
-                      sx={{
-                        cursor: "pointer",
-                        ":hover": {
-                          textDecoration: "underline",
-                          color: "blue",
-                        },
-                      }}
-                    >
-                      {strategy?.strategy_name_here}
-                    </StyledTableCell>
-                    <StyledTableCell
-                      sx={{
-                        color: "green",
-                      }}
-                    >
-                      {claculateTrend(strategy, "price")}
-                    </StyledTableCell>
-                    {years.map((year, index) => (
-                      <StyledTableCell
-                        key={index}
-                        sx={{
-                          color:
-                            parseFloat(strategy[year]?.anualPrice) >= 0
-                              ? "green"
-                              : "red",
-                        }}
-                      >
-                        {strategy[year]?.anualPrice
-                          ? strategy[year]?.anualPrice
-                          : "-"}
-                      </StyledTableCell>
-                    ))}
-                  </StyledTableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
-
           <TableContainer>
             <Table
               sx={{ minWidth: "100%", maxWidth: "100%", mt: 1 }}
               size="medium"
             >
               <TableHead>
-                <TableRow>
-                  <TableCell
-                    padding="normal"
-                    colSpan={1}
-                    sx={{
-                      backgroundColor: "#272727",
-                      color: "white",
-                      fontSize: 18,
-                      fontFamily: "Montserrat",
-                    }}
-                  >
-                    Strategy Models (
-                    {strategyData &&
-                      strategyData[0] &&
-                      strategyData[0][2017]?.duration}{" "}
-                    years)
-                  </TableCell>
-                  <TableCell
-                    padding="normal"
-                    colSpan={8}
-                    align="center"
-                    sx={{
-                      backgroundColor: "#42787890",
-                      color: "white",
-                      fontSize: 18,
-                      fontFamily: "Montserrat",
-                    }}
-                  >
-                    Annual Dividend
-                  </TableCell>
-                </TableRow>
-              </TableHead>
-
-              <TableHead>
                 <TableRow
                   sx={{
                     backgroundColor: "#e7ecef",
@@ -740,7 +715,7 @@ const BackTestTab = () => {
                   <StyledTableRow hover key={index} sx={{ ml: 3 }}>
                     <StyledTableCell
                       onClick={() => {
-                        handleDataVisualization(strategy?.strategy_name_here);
+                        handleDataVisualization(strategy);
                       }}
                       sx={{
                         cursor: "pointer",
@@ -750,7 +725,7 @@ const BackTestTab = () => {
                         },
                       }}
                     >
-                      {strategy?.strategy_name_here}
+                      {strategy?.strategy_label}
                     </StyledTableCell>
 
                     <StyledTableCell

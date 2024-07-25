@@ -21,6 +21,9 @@ import AuthContext from "../../Core/store/auth-context";
 import PageInfoBreadCrumbs from "../../Core/components/Layout/PageInfoBreadCrumbs";
 import PieChart from "./PieChart";
 import { IoArrowDown, IoArrowUp } from "react-icons/io5";
+import GeoChartComponent from "./charts/GeoCharts";
+import HorizontalBarChart from "./charts/HorizontalBar";
+import DonutPieChart from "./charts/DonoutChart";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -211,7 +214,7 @@ const RisksTab = () => {
 
   return (
     <>
-      {showVisualData ? (
+      {/* {showVisualData ? (
         <Box ml={2} mb={4}>
           <Typography color={"rgba(0, 0, 0, 0.6)"}>
             Strategies Overview / {selectedStrategy.name}
@@ -219,7 +222,7 @@ const RisksTab = () => {
         </Box>
       ) : (
         <PageInfoBreadCrumbs data={pageLoc} />
-      )}
+      )} */}
       {showVisualData ? (
         <>
           <Button
@@ -233,79 +236,74 @@ const RisksTab = () => {
           >
             Go Back
           </Button>
-          <Card
+          <Box
             sx={{
-              margin: 1,
-              display: "flex",
-              flexDirection: "column",
-              padding: 2,
+              display: "grid",
+              justifyContent: "space-around",
+              gridTemplateColumns: {
+                xs: "1fr",
+                sm: "1fr",
+                md: "1.5fr 1fr",
+              },
+              gap: 2,
+              my: 2,
             }}
           >
-            <text style={{ fontSize: 25, fontWeight: "bold" }}>
-              {" "}
-              {selectedStrategy.name}{" "}
-            </text>
             <Card
               sx={{
-                margin: 2,
+                padding: 4,
+                gap: 3,
                 display: "flex",
                 flexDirection: "column",
-                gap: 5,
-                padding: 3,
               }}
             >
-              <text style={{ fontSize: 20, fontWeight: "bold" }}>
-                Companies Passing Criteria Statistics
+              <text style={{ fontWeight: "bolder" }}>
+                {" "}
+                Companies Per Exchanges (%){" "}
               </text>
-              <Box sx={{ display: "flex", justifyContent: "space-around" }}>
-                <Card
-                  sx={{
-                    padding: 4,
-                    gap: 5,
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: 4,
-                  }}
-                >
-                  <text> Companies Per Exchanges (%) </text>
-                  <PieChart
+              {/* <PieChart
                     graphData={perExchangeKPI}
                     nameData={(item) => item.exchange}
-                  />
-                </Card>
-                <Card
-                  sx={{
-                    padding: 4,
-                    gap: 5,
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: 4,
-                  }}
-                >
-                  <text> Companies Per Sector (%) </text>
-                  <PieChart
-                    graphData={perSectorKPI}
-                    nameData={(item) => item.sector}
-                  />
-                </Card>
-                <Card
-                  sx={{
-                    padding: 4,
-                    gap: 5,
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: 4,
-                  }}
-                >
-                  <text> Companies Per Market Cap (%) </text>
-                  <PieChart
+                  /> */}
+              <GeoChartComponent data={perExchangeKPI} />
+            </Card>
+            <Box style={{ display: "flex", gap: 6, flexDirection: "column" }}>
+              <Card
+                sx={{
+                  padding: 2,
+                }}
+              >
+                <text style={{ fontWeight: "bolder" }}>
+                  {" "}
+                  Companies Per Sector (%){" "}
+                </text>
+                <HorizontalBarChart data={perSectorKPI} />
+              </Card>
+              <Card
+                sx={{
+                  padding: 4,
+                  paddingBottom: { xs: 8, md: 4 },
+                  display: "flex",
+                  flexDirection: "column",
+                  height: 250,
+                }}
+              >
+                <text style={{ fontWeight: "bolder" }}>
+                  {" "}
+                  Companies Per Market Cap (%){" "}
+                </text>
+                <DonutPieChart
+                  data={perMarketKPI}
+                  dataKey={"total_count"}
+                  nameKey={"market_cap_class"}
+                ></DonutPieChart>
+                {/* <PieChart
                     graphData={perMarketKPI}
                     nameData={(item) => item.market_cap_class}
-                  />
-                </Card>
-              </Box>
-            </Card>
-          </Card>
+                  /> */}
+              </Card>
+            </Box>
+          </Box>
         </>
       ) : (
         <Card sx={{ m: 1, position: "relative", fontFamily: "Montserrat" }}>
@@ -353,7 +351,7 @@ const RisksTab = () => {
               sx={{ minWidth: "100%", maxWidth: "100%", mt: 1 }}
               size="medium"
             >
-              <TableHead>
+              {/* <TableHead>
                 <TableRow>
                   <TableCell
                     sx={{
@@ -378,7 +376,7 @@ const RisksTab = () => {
                     Risk Returns
                   </TableCell>
                 </TableRow>
-              </TableHead>
+              </TableHead> */}
               <TableHead>
                 <TableRow
                   sx={{
@@ -396,7 +394,7 @@ const RisksTab = () => {
                         sx={{ display: "flex", alignItems: "center", gap: 2 }}
                       >
                         <span>{category.label}</span>
-                        {category.key.trim() !== "" &&
+                        {/* {category.key.trim() !== "" &&
                           (selectedSort === 1 ? (
                             <button
                               onClick={() => {
@@ -437,7 +435,7 @@ const RisksTab = () => {
                             >
                               <IoArrowUp />
                             </button>
-                          ))}
+                          ))} */}
                       </Box>
                     </TableCell>
                   ))}

@@ -6,7 +6,7 @@ const BarChart = ({ chartId, chartTitle = 'Bar Chart', chartData }) => {
     const chartDom = document.getElementById(chartId);
     const myChart = echarts.init(chartDom);
     
-    const yAxisData = chartData.map(strategy => strategy.name);
+    const yAxisData = chartData.map((strategy) => strategy.strategy_label);
 
     const bestSeriesData = chartData.map(strategy => ({
       value: parseFloat(strategy.best_return),
