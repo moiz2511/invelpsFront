@@ -24,6 +24,9 @@ import { IoArrowDown, IoArrowUp } from "react-icons/io5";
 import GeoChartComponent from "./charts/GeoCharts";
 import HorizontalBarChart from "./charts/HorizontalBar";
 import DonutPieChart from "./charts/DonoutChart";
+import { useNavigate } from "react-router-dom";
+
+
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -72,6 +75,7 @@ const RisksTab = () => {
 
   const [selectedSort, setSelectedSort] = useState(0);
   const [selectedField, setSelectedField] = useState(null);
+  const navigate = useNavigate()
 
   useEffect(() => {
     const CheckUserSession = () => {
@@ -117,46 +121,24 @@ const RisksTab = () => {
 
   console.log(riskReturnCopy);
 
-  const fetchGraphData = async () => {
-    try {
-      const body = {
-        strategy_name: selectedStrategy,
-      };
-      const response = await fetch(
-        `
-            https://api.invelps.com/api/strategies/getStrategyGraphData`,
-        {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${authToken}`,
-          },
-          body: JSON.stringify(body),
-        }
-      );
 
-      const data = await response.json();
-
-      if (response.status === 200) {
-        console.log(data);
-        setPerExhangeKPI(data.data.companies_per_exchanges_KPI);
-        setPerSectorKPI(data.data.companies_per_sector_KPI);
-        setPerMarketKPI(data.data.companies_per_market_cap_KPI);
-      } else {
-        console.log("Unexpected status code:", response.status);
-      }
-    } catch (error) {
-      console.error("Error:", error);
-    }
-  };
-  useEffect(() => {
-    if (selectedStrategy !== null) {
-      fetchGraphData();
-    }
-  }, [selectedStrategy]);
+  // useEffect(() => {
+  //   if (selectedStrategy !== null) {
+  //     fetchGraphData();
+  //   }
+  // }, [selectedStrategy]);
 
   const handleDataVisualization = (strategy) => {
     setShowVisualData(!showVisualData);
-    setSelectedStrategy(strategy);
+    setSelectedStrategy(strategy.name);
+    console.log("visual",strategy);
+    navigate("/riskVisualization", {
+      state: {
+        selectedStrategy: strategy.name,
+        selectedStrategyLabel: strategy.startegy_label,
+      },
+    });
+    
   };
 
   const handleSortingFieldChange = (field) => {
@@ -225,7 +207,7 @@ const RisksTab = () => {
       )} */}
       {showVisualData ? (
         <>
-          <Button
+          {/* <Button
             onClick={() => setShowVisualData(!showVisualData)}
             sx={{
               alignSelf: "flex-start",
@@ -261,10 +243,7 @@ const RisksTab = () => {
                 {" "}
                 Companies Per Exchanges (%){" "}
               </text>
-              {/* <PieChart
-                    graphData={perExchangeKPI}
-                    nameData={(item) => item.exchange}
-                  /> */}
+              
               <GeoChartComponent data={perExchangeKPI} />
             </Card>
             <Box style={{ display: "flex", gap: 6, flexDirection: "column" }}>
@@ -297,13 +276,10 @@ const RisksTab = () => {
                   dataKey={"total_count"}
                   nameKey={"market_cap_class"}
                 ></DonutPieChart>
-                {/* <PieChart
-                    graphData={perMarketKPI}
-                    nameData={(item) => item.market_cap_class}
-                  /> */}
+                
               </Card>
             </Box>
-          </Box>
+          </Box> */}
         </>
       ) : (
         <Card sx={{ m: 1, position: "relative", fontFamily: "Montserrat" }}>
@@ -458,7 +434,7 @@ const RisksTab = () => {
                   return (
                     <StyledTableRow hover key={index} sx={{ ml: 3 }}>
                       <StyledTableCell
-                        onClick={() => handleDataVisualization(data.name)}
+                        onClick={() => handleDataVisualization(data)}
                         sx={{
                           cursor: "pointer",
                           ":hover": {

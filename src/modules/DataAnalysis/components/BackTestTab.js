@@ -76,6 +76,7 @@ const BackTestTab = () => {
   const [selectedStrategyLabel, setSelectedStrategyLabel] = useState("");
   const [graphTableData, setGraphTableData] = useState([]);
   const [graphTableDataCopy, setGraphTableDataCopy] = useState([]);
+  const [mapsData, setMapsData] = useState([]);
 
   const handlePriceSwitch = () => {
     setAnnualPriceSwitch(!annualPriceSwitch);
@@ -234,11 +235,42 @@ const BackTestTab = () => {
       console.error("Error:", error);
     }
   };
+  const fetchMapsData = async () => {
+    try {
+      const body = {
+        strategy_name: selectedStrategy,
+      };
+      const response = await fetch(
+        `
+            http://127.0.0.1:8000/api/strategies/getStrategyCountryData`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${authToken}`,
+          },
+          body: JSON.stringify(body),
+        }
+      );
 
+      const data = await response.json();
+
+      if (response.status === 200) {
+        console.log("Company", data.data);
+        setMapsData(data.data);
+        console.log("Countries Data", data.data);
+      } else {
+        console.log("Unexpected status code:", response.status);
+      }
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
   useEffect(() => {
     if (selectedStrategy !== null) {
       fetchGraphData();
       fetchDividendTableData();
+      fetchMapsData()
     }
   }, [selectedStrategy]);
 
@@ -318,16 +350,6 @@ const BackTestTab = () => {
             Back
           </Button>
 
-          {/* <text
-              style={{
-                fontFamily: "Montserrat",
-                fontSize: 25,
-                fontWeight: "bold",
-              }}
-            >
-              {selectedStrategy.split("_").join(" ")}
-            </text> */}
-
           <Box
             sx={{
               display: "grid",
@@ -349,16 +371,25 @@ const BackTestTab = () => {
                 flexDirection: "column",
               }}
             >
+              <text
+                style={{
+                  fontFamily: "Montserrat",
+                  fontSize: 25,
+                  fontWeight: "bold",
+                }}
+              >
+                {selectedStrategyLabel}
+              </text>
               <text style={{ fontWeight: "bolder" }}>
                 {" "}
-                Companies Per Exchanges (%){" "}
+                Companies Per Country (%){" "}
               </text>
               {/* <PieChart
                     graphData={perExchangeKPI}
                     nameData={(item) => item.exchange}
                   /> */}
 
-              <GeoChartComponent data={perExchangeKPI} />
+              <GeoChartComponent data={mapsData} />
             </Card>
             <Box style={{ display: "flex", gap: 6, flexDirection: "column" }}>
               <Card

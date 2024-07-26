@@ -136,8 +136,8 @@ const LineRaceChart = ({ chartId, chartData, years, type, chartSwitch }) => {
 
   return (
     <>
-      <div id={chartId} style={{ width: "100%", height: "400px" }} />
-      <Box>
+      <div id={chartId} style={{ width: "100%", height: "400px"  }} />
+      {/* <Box>
         <Button
           variant="outlined"
           onClick={loggedData}
@@ -145,7 +145,7 @@ const LineRaceChart = ({ chartId, chartData, years, type, chartSwitch }) => {
         >
           Log{" "}
         </Button>
-      </Box>
+      </Box> */}
     </>
   );
 };

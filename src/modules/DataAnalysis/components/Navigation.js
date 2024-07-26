@@ -9,6 +9,7 @@ import RisksTab from "./RisksTab";
 import BackTest from "./BackTest";
 import BackTestTab from "./BackTestTab";
 import ReturnsTab from "./ReturnsTab";
+import { FaBuilding } from "react-icons/fa";
 
 const NavigationWithBreadcrumbs = ({ setSelectedCompany }) => {
   const [activeButton, setActiveButton] = useState("OVERVIEW");
@@ -29,7 +30,7 @@ const NavigationWithBreadcrumbs = ({ setSelectedCompany }) => {
     {
       id: "HISTORICAL PRICES",
       label: "HISTORICAL PRICES",
-      icon: <PlaceIcon />,
+      icon: <FaBuilding />,
       component: "HistoricalPlacesContent",
     },
   ];
@@ -62,7 +63,7 @@ const NavigationWithBreadcrumbs = ({ setSelectedCompany }) => {
         {activeButton === "RETURNS AND RISK" && (
           <Box>
             <ReturnsTab />
-            {/* <RisksTab /> */}
+            <RisksTab />
             <></>
           </Box>
         )}

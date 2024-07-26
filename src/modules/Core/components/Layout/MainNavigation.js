@@ -7,7 +7,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
-import { Link as RouterLink } from 'react-router-dom';
+import { Link as RouterLink ,useNavigate} from 'react-router-dom';
 import Drawer from '@mui/material/Drawer';
 import List from '@mui/material/List';
 import ListItemText from '@mui/material/ListItemText';
@@ -27,6 +27,7 @@ import Logo from '../../../../assets/logos/Original.svg';
 import '../../../../assets/styles/Navbar.css';
 import NavigationMenu from './MainMenu';
 import SearchInput from './SearchComponent';
+
 
 const pages = [
   { label: 'Home', link: '/#home' },
@@ -314,6 +315,7 @@ const MainNavigation = () => {
   const isUserLoggeIn = authCtx.isLoggedIn;
   const location = useLocation();
   const pagePath = location.pathname;
+  const navigate = useNavigate()
   const [state, setState] = React.useState(false);
   const [selectedNavItem, setSelectedNavItem] = React.useState(11);
   const [subNavItemsData, setSubNavItemsData] = React.useState(
@@ -404,9 +406,11 @@ const MainNavigation = () => {
               )}
 
               <img src={Logo} height="50px" alt="invelps" />
+              {isUserLoggeIn ? (
               <Box >
                 <SearchInput></SearchInput>
               </Box>
+              ):(<></>)}
             </div>
             <Box sx={{ display: { xs: "none", md: "flex" } }}>
               <ul
@@ -432,10 +436,14 @@ const MainNavigation = () => {
                 ) : (
                   <>
                     <li>
-                      <Button color="inherit">Login</Button>
+                      <Button onClick={()=>{
+                        navigate("/login");
+                      }} color="inherit">Login</Button>
                     </li>
                     <li>
-                      <Button color="inherit">SignUp</Button>
+                      <Button onClick={()=>{
+                        navigate("/signup");
+                      }} color="inherit">SignUp</Button>
                     </li>
                   </>
                 )}

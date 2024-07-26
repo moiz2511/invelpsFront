@@ -2,33 +2,7 @@ import React from "react";
 import WorldMap from "react-svg-worldmap";
 import { Box, Typography, Paper, Stack } from "@mui/material";
 
-
 const GeoChartComponent = ({ data }) => {
-  const exchangeToCountryCode = {
-    // Mapping exchanges to country codes
-    "National Stock Exchange Of India": "IN",
-    "Taipei Exchange": "TW",
-    "NASDAQ Global Market": "US",
-    "Athens Stock Exchange": "GR",
-    "Six Swiss Exchange": "CH",
-    "Hong Kong Exchange": "HK",
-    "London Stock Exchange": "GB",
-    "Frankfurt Stock Exchange": "DE",
-    "Johannesburg Stock Exchange": "ZA",
-    "New York Stock Exchange": "US",
-    "NASDAQ Capital Market": "US",
-    "Shenzhen Stock Exchange": "CN",
-    "Korea Exchange": "KR",
-    "Shanghai Stock Exchange": "CN",
-    "Nyse Euronext - Euronext Brussels": "BE",
-    "Euronext Paris": "FR",
-    "Australian Securities Exchange": "AU",
-    "Tokyo Stock Exchange": "JP",
-    "Bombay Stock Exchange": "IN",
-    "Toronto Stock Exchange Ventures": "CA",
-    "Madrid Stock Exchange": "ES",
-  };
-
   // Define colors for visualization
   const colors = [
     "#FFD700",
@@ -43,34 +17,26 @@ const GeoChartComponent = ({ data }) => {
     "#FF69B4",
   ];
 
-  const mapExchangesToCountryCodes = (data) => {
-    return data.map((exchange, index) => {
-      const countryCode = exchangeToCountryCode[exchange[0]] || "Unknown";
-      const colorIndex = index % colors.length; // Cycle through colors
-      return {
-        country: countryCode,
-        value: exchange[1],
-        color: colors[colorIndex],
-      };
-    });
+  // Prepare data for the world map
+  const prepareDataForMap = (data) => {
+    return data.map((item, index) => ({
+      country: item.country_code,
+      value: item.total_count,
+      color: colors[index % colors.length], // Cycle through colors
+    }));
   };
 
-  const chartData = [
-    ["Exchange", "Total Count"],
-    ...data.map((item) => [item.exchange, item.total_count]),
-  ];
-
-  const mappedData = mapExchangesToCountryCodes(chartData);
+  const mapData = prepareDataForMap(data);
 
   return (
     <Box
       sx={{ width: "100%", maxWidth: 1200, margin: "auto", overflow: "hidden" }}
     >
       <WorldMap
-        color="red" // Default color, overridden by mappedData
+        color="red" // Default color, overridden by mapData
         valueSuffix="%"
         size="responsive"
-        data={mappedData}
+        data={mapData}
         style={{ width: "100%", height: "auto", maxHeight: "500px" }}
       />
       {/* Optional legend */}

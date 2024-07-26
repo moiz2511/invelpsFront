@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes  } from 'react-router-dom';
 import Layout from './modules/Core/components/Layout/Layout';
 import Landing from './modules/Core/components/LangingPage/Landing';
 import './App.css';
@@ -39,6 +39,7 @@ import InvestorsScreener from './modules/DataAnalysis/components/InvestorsScreen
 import DataController from './modules/DataAcquisition/components/DataController';
 import Dashboard from './modules/Profile/compoenents/Dashboard';
 import Footer from './modules/Core/components/Footer/Footer';
+import RiskVisualization from './modules/DataAnalysis/components/RiskVisualization';
 // import Virtualize from './modules/UIUtils/CustomSelect';
 
 function App() {
@@ -130,6 +131,7 @@ function App() {
               {/* <Route path='/dataanalysis/rates' element={<DARates />} />
 
             <Route path='/datavisualization' element={<DataVisualization />} /> */}
+              {/* <Footer /> */}
             </React.Fragment>
           )}
           {authCtx.isLoggedIn && authCtx.role === "Admin" && (
@@ -175,12 +177,19 @@ function App() {
                 path="/dataAcquisition/datacontrol"
                 element={<DataController />}
               />
+              <Route
+                path="/riskVisualization"
+                element={<RiskVisualization />}
+              />
 
               <Route path="/admin/manageUsers" element={<ManageUsers />} />
               <Route
                 path="/admin/manageContacts"
                 element={<ContactsManagement />}
               />
+              {/* <>
+                <Footer />
+              </> */}
             </React.Fragment>
           )}
 
@@ -193,9 +202,7 @@ function App() {
             <Route path='' element={<CompanyProfile />} />
           </Route> */}
         </Routes>
-        <Footer/>
       </Layout>
-     
     </Router>
   );
 }

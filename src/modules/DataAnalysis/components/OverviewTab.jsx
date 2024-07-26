@@ -259,7 +259,7 @@ const OverviewTab = ({ setSelectedCompany }) => {
   const [passingCriteria, setPassingCriteria] = useState(null);
   const [selectedInvestor, setSelectedInvestor] = useState(null);
   const [showInvestor, setShowInvestor] = useState(false);
-
+const [mapsData , setMapsData] = useState([])
   const [strategiesCopy, setStrategiesCopy] = useState([]);
   const [selectedSort, setSelectedSort] = useState(0);
   const [selectedField, setSelectedField] = useState(sortingFields[0].key);
@@ -432,9 +432,42 @@ const OverviewTab = ({ setSelectedCompany }) => {
       console.error("Error:", error);
     }
   };
+
+    const fetchMapsData = async () => {
+      try {
+        const body = {
+          strategy_name: selectedStrategy.name,
+        };
+        const response = await fetch(
+          `
+            http://127.0.0.1:8000/api/strategies/getStrategyCountryData`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${authToken}`,
+            },
+            body: JSON.stringify(body),
+          }
+        );
+
+        const data = await response.json();
+
+        if (response.status === 200) {
+          console.log("Company", data.data);
+          setMapsData(data.data)
+          console.log("Countries Data", data.data);
+        } else {
+          console.log("Unexpected status code:", response.status);
+        }
+      } catch (error) {
+        console.error("Error:", error);
+      }
+    };
   useEffect(() => {
     fetchGraphData();
     fetchGraphTableData();
+    fetchMapsData();
   }, [selectedStrategy, currentPage, currentRowsPerPage]);
 
   console.log(isSwitch1);
@@ -626,13 +659,13 @@ const OverviewTab = ({ setSelectedCompany }) => {
               >
                 <text style={{ fontWeight: "bolder" }}>
                   {" "}
-                  Companies Per Country{" "}
+                  Companies Per Country (%){" "}
                 </text>
                 {/* <PieChart
                     graphData={perExchangeKPI}
                     nameData={(item) => item.exchange}
                   /> */}
-                <GeoChartComponent data={perExchangeKPI} />
+                <GeoChartComponent data={mapsData} />
               </Card>
               <Box style={{ display: "flex", gap: 6, flexDirection: "column" }}>
                 <Card
