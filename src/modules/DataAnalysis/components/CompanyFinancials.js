@@ -13,23 +13,26 @@ import {
   FormLabel,
   RadioGroup,
   FormControlLabel,
-  Radio,
+  Radio,Box
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import TableCell, { tableCellClasses } from "@mui/material/TableCell";
 import Constants from "../../../Constants.json";
 import { MdOutlineCompassCalibration } from "react-icons/md";
 import { IoArrowDown, IoArrowUp } from "react-icons/io5";
+import FinancialTable from "./Table/FinancialTable";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
-    backgroundColor: "#CB6843",
-    color: theme.palette.common.white,
+    backgroundColor: "#FAFAFC",
+    color: theme.palette.common.black,
     padding: 12,
+    border: `1px solid ${theme.palette.divider}`,
   },
   [`&.${tableCellClasses.body}`]: {
     fontSize: 12,
     padding: 12,
+    
   },
 }));
 
@@ -314,7 +317,7 @@ const CompanyFinancials = ({
 
   return (
     <div>
-      <div
+      {/* <div
         style={{
           display: "flex",
           alignItems: "center",
@@ -331,12 +334,13 @@ const CompanyFinancials = ({
             {currency} {stockPrice}
           </span>
         </h1>
-      </div>
+      </div> */}
       <div
         style={{
           display: "flex",
-          flexDirection: "row",
+          flexDirection: "column",
           justifyContent: "space-between",
+          gap:5
         }}
       >
         <Tabs
@@ -357,47 +361,54 @@ const CompanyFinancials = ({
             label="Cash Flow Statement"
           />
         </Tabs>
-        <div style={{ display: "flex", alignItems: "center", gap: 2 }}>
-          <FormControl>
-            <FormLabel id="row-radio-buttons-group-label">
-              Value Scale
-            </FormLabel>
-            <RadioGroup
-              row
-              aria-labelledby="row-radio-buttons-group-label"
-              name="row-radio-buttons-group"
-              value={valueScale}
-              onChange={handleValueScaleChange}
-            >
-              <FormControlLabel
-                value="thousands"
-                control={<Radio />}
-                label="Thousands"
-              />
-              <FormControlLabel
-                value="millions"
-                control={<Radio />}
-                label="Millions"
-              />
-              <FormControlLabel
-                value="billions"
-                control={<Radio />}
-                label="Billions"
-              />
-            </RadioGroup>
-          </FormControl>
-
-          <Button variant="contained" onClick={() => setIsQuarter(false)}>
-            Annual
-          </Button>
-          <Button variant="contained" onClick={() => setIsQuarter(true)}>
-            Quarterly
-          </Button>
+        <div style={{ display: "flex", alignItems: "center", gap: 2 ,width:'100%'}}>
+          <Box sx={{display:'flex' ,  alignItems:'center' ,justifyContent:'space-between' , width:'100%'}}>
+            <FormControl>
+              <FormLabel
+                sx={{ fontWeight: "bolder", color: "black" , marginY:2}}
+                id="row-radio-buttons-group-label"
+              >
+                Value Scale
+              </FormLabel>
+              <RadioGroup
+                row
+                aria-labelledby="row-radio-buttons-group-label"
+                name="row-radio-buttons-group"
+                value={valueScale}
+                onChange={handleValueScaleChange}
+                sx={{marginY:2}}
+              >
+                <FormControlLabel
+                  value="thousands"
+                  control={<Radio />}
+                  label="Thousands"
+                />
+                <FormControlLabel
+                  value="millions"
+                  control={<Radio />}
+                  label="Millions"
+                />
+                <FormControlLabel
+                  value="billions"
+                  control={<Radio />}
+                  label="Billions"
+                />
+              </RadioGroup>
+            </FormControl>
+            <Box>
+              <Button variant="contained" onClick={() => setIsQuarter(false)}>
+                Annual
+              </Button>
+              <Button variant="contained" onClick={() => setIsQuarter(true)}>
+                Quarterly
+              </Button>
+            </Box>
+          </Box>
         </div>
       </div>
 
       <TableContainer>
-        <Table>
+        {/* <Table>
           <TableHead>
             <StyledTableRow>
               <StyledTableCell style={{ fontFamily: "Montserrat" }}>
@@ -436,7 +447,8 @@ const CompanyFinancials = ({
               </StyledTableRow>
             ))}
           </TableBody>
-        </Table>
+        </Table> */}
+        <FinancialTable/>
       </TableContainer>
     </div>
   );

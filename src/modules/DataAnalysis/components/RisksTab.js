@@ -21,6 +21,12 @@ import AuthContext from "../../Core/store/auth-context";
 import PageInfoBreadCrumbs from "../../Core/components/Layout/PageInfoBreadCrumbs";
 import PieChart from "./PieChart";
 import { IoArrowDown, IoArrowUp } from "react-icons/io5";
+import GeoChartComponent from "./charts/GeoCharts";
+import HorizontalBarChart from "./charts/HorizontalBar";
+import DonutPieChart from "./charts/DonoutChart";
+import { useNavigate } from "react-router-dom";
+
+
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -69,6 +75,7 @@ const RisksTab = () => {
 
   const [selectedSort, setSelectedSort] = useState(0);
   const [selectedField, setSelectedField] = useState(null);
+  const navigate = useNavigate()
 
   useEffect(() => {
     const CheckUserSession = () => {
@@ -84,7 +91,7 @@ const RisksTab = () => {
       try {
         const response = await fetch(
           `
-              https://api.invelps.com/api/strategies/getStrategiesRiskAdjustedReturns`,
+              http://127.0.0.1:8000/api/strategies/getStrategiesRiskAdjustedReturns`,
           {
             method: "POST",
             headers: {
@@ -114,46 +121,24 @@ const RisksTab = () => {
 
   console.log(riskReturnCopy);
 
-  const fetchGraphData = async () => {
-    try {
-      const body = {
-        strategy_name: selectedStrategy,
-      };
-      const response = await fetch(
-        `
-            https://api.invelps.com/api/strategies/getStrategyGraphData`,
-        {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${authToken}`,
-          },
-          body: JSON.stringify(body),
-        }
-      );
 
-      const data = await response.json();
-
-      if (response.status === 200) {
-        console.log(data);
-        setPerExhangeKPI(data.data.companies_per_exchanges_KPI);
-        setPerSectorKPI(data.data.companies_per_sector_KPI);
-        setPerMarketKPI(data.data.companies_per_market_cap_KPI);
-      } else {
-        console.log("Unexpected status code:", response.status);
-      }
-    } catch (error) {
-      console.error("Error:", error);
-    }
-  };
-  useEffect(() => {
-    if (selectedStrategy !== null) {
-      fetchGraphData();
-    }
-  }, [selectedStrategy]);
+  // useEffect(() => {
+  //   if (selectedStrategy !== null) {
+  //     fetchGraphData();
+  //   }
+  // }, [selectedStrategy]);
 
   const handleDataVisualization = (strategy) => {
     setShowVisualData(!showVisualData);
-    setSelectedStrategy(strategy);
+    setSelectedStrategy(strategy.name);
+    console.log("visual",strategy);
+    navigate("/riskVisualization", {
+      state: {
+        selectedStrategy: strategy.name,
+        selectedStrategyLabel: strategy.startegy_label,
+      },
+    });
+    
   };
 
   const handleSortingFieldChange = (field) => {
@@ -211,7 +196,7 @@ const RisksTab = () => {
 
   return (
     <>
-      {showVisualData ? (
+      {/* {showVisualData ? (
         <Box ml={2} mb={4}>
           <Typography color={"rgba(0, 0, 0, 0.6)"}>
             Strategies Overview / {selectedStrategy.name}
@@ -219,10 +204,10 @@ const RisksTab = () => {
         </Box>
       ) : (
         <PageInfoBreadCrumbs data={pageLoc} />
-      )}
+      )} */}
       {showVisualData ? (
         <>
-          <Button
+          {/* <Button
             onClick={() => setShowVisualData(!showVisualData)}
             sx={{
               alignSelf: "flex-start",
@@ -233,79 +218,68 @@ const RisksTab = () => {
           >
             Go Back
           </Button>
-          <Card
+          <Box
             sx={{
-              margin: 1,
-              display: "flex",
-              flexDirection: "column",
-              padding: 2,
+              display: "grid",
+              justifyContent: "space-around",
+              gridTemplateColumns: {
+                xs: "1fr",
+                sm: "1fr",
+                md: "1.5fr 1fr",
+              },
+              gap: 2,
+              my: 2,
             }}
           >
-            <text style={{ fontSize: 25, fontWeight: "bold" }}>
-              {" "}
-              {selectedStrategy.name}{" "}
-            </text>
             <Card
               sx={{
-                margin: 2,
+                padding: 4,
+                gap: 3,
                 display: "flex",
                 flexDirection: "column",
-                gap: 5,
-                padding: 3,
               }}
             >
-              <text style={{ fontSize: 20, fontWeight: "bold" }}>
-                Companies Passing Criteria Statistics
+              <text style={{ fontWeight: "bolder" }}>
+                {" "}
+                Companies Per Exchanges (%){" "}
               </text>
-              <Box sx={{ display: "flex", justifyContent: "space-around" }}>
-                <Card
-                  sx={{
-                    padding: 4,
-                    gap: 5,
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: 4,
-                  }}
-                >
-                  <text> Companies Per Exchanges (%) </text>
-                  <PieChart
-                    graphData={perExchangeKPI}
-                    nameData={(item) => item.exchange}
-                  />
-                </Card>
-                <Card
-                  sx={{
-                    padding: 4,
-                    gap: 5,
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: 4,
-                  }}
-                >
-                  <text> Companies Per Sector (%) </text>
-                  <PieChart
-                    graphData={perSectorKPI}
-                    nameData={(item) => item.sector}
-                  />
-                </Card>
-                <Card
-                  sx={{
-                    padding: 4,
-                    gap: 5,
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: 4,
-                  }}
-                >
-                  <text> Companies Per Market Cap (%) </text>
-                  <PieChart
-                    graphData={perMarketKPI}
-                    nameData={(item) => item.market_cap_class}
-                  />
-                </Card>
-              </Box>
+              
+              <GeoChartComponent data={perExchangeKPI} />
             </Card>
-          </Card>
+            <Box style={{ display: "flex", gap: 6, flexDirection: "column" }}>
+              <Card
+                sx={{
+                  padding: 2,
+                }}
+              >
+                <text style={{ fontWeight: "bolder" }}>
+                  {" "}
+                  Companies Per Sector (%){" "}
+                </text>
+                <HorizontalBarChart data={perSectorKPI} />
+              </Card>
+              <Card
+                sx={{
+                  padding: 4,
+                  paddingBottom: { xs: 8, md: 4 },
+                  display: "flex",
+                  flexDirection: "column",
+                  height: 250,
+                }}
+              >
+                <text style={{ fontWeight: "bolder" }}>
+                  {" "}
+                  Companies Per Market Cap (%){" "}
+                </text>
+                <DonutPieChart
+                  data={perMarketKPI}
+                  dataKey={"total_count"}
+                  nameKey={"market_cap_class"}
+                ></DonutPieChart>
+                
+              </Card>
+            </Box>
+          </Box> */}
         </>
       ) : (
         <Card sx={{ m: 1, position: "relative", fontFamily: "Montserrat" }}>
@@ -353,7 +327,7 @@ const RisksTab = () => {
               sx={{ minWidth: "100%", maxWidth: "100%", mt: 1 }}
               size="medium"
             >
-              <TableHead>
+              {/* <TableHead>
                 <TableRow>
                   <TableCell
                     sx={{
@@ -378,7 +352,7 @@ const RisksTab = () => {
                     Risk Returns
                   </TableCell>
                 </TableRow>
-              </TableHead>
+              </TableHead> */}
               <TableHead>
                 <TableRow
                   sx={{
@@ -396,7 +370,7 @@ const RisksTab = () => {
                         sx={{ display: "flex", alignItems: "center", gap: 2 }}
                       >
                         <span>{category.label}</span>
-                        {category.key.trim() !== "" &&
+                        {/* {category.key.trim() !== "" &&
                           (selectedSort === 1 ? (
                             <button
                               onClick={() => {
@@ -437,7 +411,7 @@ const RisksTab = () => {
                             >
                               <IoArrowUp />
                             </button>
-                          ))}
+                          ))} */}
                       </Box>
                     </TableCell>
                   ))}
@@ -460,7 +434,7 @@ const RisksTab = () => {
                   return (
                     <StyledTableRow hover key={index} sx={{ ml: 3 }}>
                       <StyledTableCell
-                        onClick={() => handleDataVisualization(data.name)}
+                        onClick={() => handleDataVisualization(data)}
                         sx={{
                           cursor: "pointer",
                           ":hover": {
@@ -470,7 +444,7 @@ const RisksTab = () => {
                         }}
                       >
                         {" "}
-                        {data.name}{" "}
+                        {data.startegy_label}{" "}
                       </StyledTableCell>
                       <StyledTableCell
                         sx={{

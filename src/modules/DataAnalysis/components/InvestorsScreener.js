@@ -43,6 +43,18 @@ import CompanyFinancials from "./CompanyFinancials";
 import CompanyReturnTab from "./CompanyReturnTab";
 import CompanyRiskTab from "./CompanyRiskTab";
 import { useSwitch } from "../../../utils/context/SwitchContext";
+import AboutCompany from "./cards/About";
+import Description from "./cards/Description";
+import RadarChartComponent from "./charts/RadarChart";
+import MeterChart from "./charts/MeterChart";
+import MarketDataChart from "./charts/AreaChart";
+import MarketAnalysis from "../MarketAnalysis";
+import Landescape from "./Landescape";
+import BreadcrumbsComponent from "../../Core/components/Layout/BreadCrumbs";
+import AssessmentIcon from '@mui/icons-material/Assessment'; // Icon for OVERVIEW
+import TrendingUpIcon from '@mui/icons-material/TrendingUp'; // Icon for RETURNS AND RISKS
+import PlaceIcon from '@mui/icons-material/Place'; // Icon for HISTORICAL PLACES
+import NavigationWithBreadcrumbs from "./Navigation";
 
 const headCells = {
   data: [
@@ -370,8 +382,33 @@ const InvestorsScreener = () => {
                 <Tab label="Financials" {...a11yProps(0)} />
                 <Tab label="Returns and Risks" {...a11yProps(1)} />
                 <Tab label="Backtest" {...a11yProps(2)} />
+                <Tab label="Market Analysis" {...a11yProps(3)} />
+                <Tab label="Landescape" {...a11yProps(4)} />
               </Tabs>
             </Box>
+
+            {/* company detail boxes are here */}
+            <Box
+              sx={{
+                display: "grid",
+                gridTemplateColumns: { xs: "1fr", md: "3fr 1fr" },
+                paddingTop: 3,
+                gap: 1,
+                width: "100%",
+              }}
+            >
+              <Box sx={{ display: { xs: "block", md: "flex" }, gap: 2 }}>
+                <AboutCompany />
+                <Description />
+              </Box>
+
+              <Box style={{ display: "flex", gap: 3 }}>
+                <RadarChartComponent />
+                <MeterChart />
+                <MarketDataChart />
+              </Box>
+            </Box>
+
             <CustomTabPanel value={valueCompanyDetails} index={0}>
               <CompanyFinancials
                 companyName={selectedCompany.company_name}
@@ -397,11 +434,29 @@ const InvestorsScreener = () => {
                 />
               </div>
             </CustomTabPanel>
+            <CustomTabPanel value={valueCompanyDetails} index={3}>
+              <div style={{ backgroundColor: "#ffff", height: "150vh" }}>
+                <MarketAnalysis
+                  strategyLabel={selectedCompany.strategy_name}
+                  companySymbol={selectedCompany.symbol}
+                  companyLogo={selectedCompany.image}
+                />
+              </div>
+            </CustomTabPanel>
+            <CustomTabPanel value={valueCompanyDetails} index={4}>
+              <div style={{ backgroundColor: "#ffff", height: "150vh" }}>
+                <Landescape
+                  strategyLabel={selectedCompany.strategy_name}
+                  companySymbol={selectedCompany.symbol}
+                  companyLogo={selectedCompany.image}
+                />
+              </div>
+            </CustomTabPanel>
           </Box>
         </Grid>
       )}
       <Box sx={{ width: "100%" }}>
-        <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
+        {/* <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
           <Tabs
             value={value}
             onChange={handleChange}
@@ -412,8 +467,42 @@ const InvestorsScreener = () => {
             <Tab label="Risks" {...a11yProps(2)} />
             <Tab label="Historical Prices" {...a11yProps(3)} />
           </Tabs>
-        </Box>
-        <CustomTabPanel value={value} index={0}>
+        </Box> */}
+        {/* <BreadcrumbsComponent
+          parent={"Investor Screeners"}
+          child={"Overview"}
+        />
+        <Box padding={2} display={'flex'} gap={3}>
+          <Button
+            sx={{
+              background: "#427879",
+              color: "white",
+            }}
+            startIcon={<AssessmentIcon />}
+          >
+            OVERVIEW
+          </Button>
+          <Button
+            sx={{
+             
+              color: "black",
+            }}
+            startIcon={<TrendingUpIcon />}
+          >
+            RETURNS AND RISK
+          </Button>
+          <Button
+            sx={{
+             
+              color: "black",
+            }}
+            startIcon={<PlaceIcon />}
+          >
+            HISTORICAL
+          </Button>
+        </Box> */}
+        <NavigationWithBreadcrumbs setSelectedCompany={setSelectedCompany} />
+        {/* <CustomTabPanel value={value} index={0}>
           <OverviewTab
             setSelectedCompany={setSelectedCompany}
             // setCompanyDetails={setCompanyDetails}
@@ -427,7 +516,7 @@ const InvestorsScreener = () => {
         </CustomTabPanel>
         <CustomTabPanel value={value} index={3}>
           <BackTestTab />
-        </CustomTabPanel>
+        </CustomTabPanel> */}
       </Box>
     </Grid>
   );

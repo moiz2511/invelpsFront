@@ -16,9 +16,9 @@ const LineRaceChart = ({ chartId, chartData, years, type, chartSwitch }) => {
 
       chartData.forEach((strategyData, index) => {
         const datasetId = "dataset_" + index;
-        const strategyName = strategyData.strategy_name_here;
+        const strategyName = strategyData.strategy_label;
         const strategyYears = Object.keys(strategyData).filter(
-          (key) => key !== "strategy_name_here"
+          (key) => key !== "strategy_name_here" 
         );
 
         const filteredData = log
@@ -26,7 +26,7 @@ const LineRaceChart = ({ chartId, chartData, years, type, chartSwitch }) => {
               return type === "price"
                 ? {
                     Year: year,
-                    Price: parseFloat(strategyData[year].anualPrice) || 0, // Using 0 if 'anual_return' is null
+                    Price: parseFloat(strategyData[year].anual_price) || 0, // Using 0 if 'anual_return' is null
                     Name: strategyName,
                   }
                 : type === "returns"
@@ -47,7 +47,7 @@ const LineRaceChart = ({ chartId, chartData, years, type, chartSwitch }) => {
                 ? {
                     Year: year,
                     Price:
-                      Math.log(parseFloat(strategyData[year].anualPrice)) || 0, // Using 0 if 'anual_return' is null
+                      Math.log(parseFloat(strategyData[year].anual_price)) || 0, // Using 0 if 'anual_return' is null
                     Name: strategyName,
                   }
                 : type === "returns"
@@ -136,8 +136,8 @@ const LineRaceChart = ({ chartId, chartData, years, type, chartSwitch }) => {
 
   return (
     <>
-      <div id={chartId} style={{ width: "100%", height: "400px" }} />
-      <Box>
+      <div id={chartId} style={{ width: "100%", height: "400px"  }} />
+      {/* <Box>
         <Button
           variant="outlined"
           onClick={loggedData}
@@ -145,7 +145,7 @@ const LineRaceChart = ({ chartId, chartData, years, type, chartSwitch }) => {
         >
           Log{" "}
         </Button>
-      </Box>
+      </Box> */}
     </>
   );
 };

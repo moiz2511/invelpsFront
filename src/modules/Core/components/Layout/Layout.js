@@ -1,14 +1,32 @@
-import { Fragment } from 'react';
-
-import classes from './Layout.module.css';
-import MainNavigation from './MainNavigation';
+import { Fragment } from "react";
+import MainNavigation from "./MainNavigation";
+import Footer from "../Footer/Footer";
+import { useLocation } from "react-router-dom";
 
 const Layout = (props) => {
+  const location = useLocation();
+
+  const shouldShowFooter = () => {
+    const pathsWithoutFooter = ["/login", "/signup"];
+    return !pathsWithoutFooter.includes(location.pathname);
+  };
+
+  // const layoutContainerStyle = {
+  //   display: "flex",
+  //   flexDirection: "column",
+  //   minHeight: "100vh",
+  // };
+
+  // const mainStyle = {
+  //   flex: 1,
+  // };
+
   return (
-    <Fragment>
+    <div >
       <MainNavigation />
-      <main className={classes.main}>{props.children}</main>
-    </Fragment>
+      <main >{props.children}</main>
+      {shouldShowFooter() && <Footer />}
+    </div>
   );
 };
 

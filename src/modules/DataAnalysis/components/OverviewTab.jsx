@@ -20,7 +20,7 @@ import {
   Modal,
 } from "@mui/material";
 
-import { ArrowBack, ArrowForward } from "@mui/icons-material";
+import { ArrowBack, ArrowForward, Filter1Sharp } from "@mui/icons-material";
 import PageInfoBreadCrumbs from "../../Core/components/Layout/PageInfoBreadCrumbs";
 import TableCell, { tableCellClasses } from "@mui/material/TableCell";
 import TablePagination from "@mui/material/TablePagination";
@@ -35,10 +35,13 @@ import InvestorModal from "./InvestorModal";
 import { CgSpinner } from "react-icons/cg";
 import DonutPieChart from "./charts/DonoutChart";
 import { styled } from "@mui/material/styles";
-import { IoArrowDown, IoArrowUp } from "react-icons/io5";
+import { IoArrowDown, IoArrowUp, IoFilterSharp } from "react-icons/io5";
 import { useSwitch } from "../../../utils/context/SwitchContext";
 import HorizontalBarChart from "./charts/HorizontalBar";
 import GeoChartComponent from "./charts/GeoCharts";
+import { RiArrowUpDownLine } from "react-icons/ri";
+import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
+import BreadcrumbsComponent from "../../Core/components/Layout/BreadCrumbs";
 
 const headCells = {
   data: [
@@ -131,19 +134,14 @@ const passingHeadCells = {
     // },
     {
       label: "Company Name",
-      key: "company_name",
-      isValueLink: false,
-      isDropDown: false,
-    },
-    {
-      label: "Logo",
       key: "",
       isValueLink: false,
       isDropDown: false,
     },
+
     {
       label: "Ticker",
-      key: "symbol",
+      key: "",
       isValueLink: false,
       isDropDown: false,
     },
@@ -173,37 +171,25 @@ const passingHeadCells = {
     },
     {
       label: "Annualized Return (%)",
-      key: "annualized_return",
+      key: "",
       isValueLink: false,
       isDropDown: false,
     },
     {
       label: "Rolling Return (%)",
-      key: "rolling_return",
+      key: "",
       isValueLink: false,
       isDropDown: false,
     },
     {
       label: "Standard Deviation (%)",
-      key: "stdev_return",
+      key: "",
       isValueLink: false,
       isDropDown: false,
     },
     {
       label: "Max Drawdown (%)",
-      key: "max_drawdown",
-      isValueLink: false,
-      isDropDown: false,
-    },
-    {
-      label: "Sharpe Ratio",
-      key: "sharpe_ratio",
-      isValueLink: false,
-      isDropDown: false,
-    },
-    {
-      label: "Sortino Ratio",
-      key: "sortino_ratio",
+      key: "",
       isValueLink: false,
       isDropDown: false,
     },
@@ -213,9 +199,10 @@ const passingHeadCells = {
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
     backgroundColor: ColorConstants.APP_TABLE_HEAD_COLOR,
-    color: theme.palette.common.white,
+    color: theme.palette.common.black,
     padding: 12,
     fontFamily: "Montserrat",
+    border: `1px solid ${theme.palette.divider}`,
   },
   [`&.${tableCellClasses.body}`]: {
     fontSize: 12,
@@ -263,6 +250,7 @@ const OverviewTab = ({ setSelectedCompany }) => {
   const [perSectorKPI, setPerSectorKPI] = useState([]);
   const [perMarketKPI, setPerMarketKPI] = useState([]);
   const [graphTableData, setGraphTableData] = useState([]);
+  const [graphTableDataCopy, setGraphTableDataCopy] = useState([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(3);
   const [totalPages, setTotalPages] = useState(null);
@@ -271,12 +259,12 @@ const OverviewTab = ({ setSelectedCompany }) => {
   const [passingCriteria, setPassingCriteria] = useState(null);
   const [selectedInvestor, setSelectedInvestor] = useState(null);
   const [showInvestor, setShowInvestor] = useState(false);
-
+const [mapsData , setMapsData] = useState([])
   const [strategiesCopy, setStrategiesCopy] = useState([]);
   const [selectedSort, setSelectedSort] = useState(0);
   const [selectedField, setSelectedField] = useState(sortingFields[0].key);
 
-  const [graphTableDataCopy, setGraphTableDataCopy] = useState([]);
+  
 
   const { isSwitch1, setIsSwitch1, isSwitch2, setIsSwitch2 } = useSwitch();
 
@@ -394,15 +382,16 @@ const OverviewTab = ({ setSelectedCompany }) => {
           body: JSON.stringify(body),
         }
       );
-
+     
       const data = await response.json();
 
       if (response.status === 200) {
-        console.log(data);
+         console.log("Company",data.data);
+        // console.log("Company",data);
         setPerExhangeKPI(data.data.companies_per_exchanges_KPI);
         setPerSectorKPI(data.data.companies_per_sector_KPI);
         setPerMarketKPI(data.data.companies_per_market_cap_KPI);
-         console.log("Exchange KPI",data.data.companies_per_exchanges_KPI);
+        console.log("Exchange KPI", data.data.companies_per_exchanges_KPI);
       } else {
         console.log("Unexpected status code:", response.status);
       }
@@ -443,9 +432,42 @@ const OverviewTab = ({ setSelectedCompany }) => {
       console.error("Error:", error);
     }
   };
+
+    const fetchMapsData = async () => {
+      try {
+        const body = {
+          strategy_name: selectedStrategy.name,
+        };
+        const response = await fetch(
+          `
+            http://127.0.0.1:8000/api/strategies/getStrategyCountryData`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${authToken}`,
+            },
+            body: JSON.stringify(body),
+          }
+        );
+
+        const data = await response.json();
+
+        if (response.status === 200) {
+          console.log("Company", data.data);
+          setMapsData(data.data)
+          console.log("Countries Data", data.data);
+        } else {
+          console.log("Unexpected status code:", response.status);
+        }
+      } catch (error) {
+        console.error("Error:", error);
+      }
+    };
   useEffect(() => {
     fetchGraphData();
     fetchGraphTableData();
+    fetchMapsData();
   }, [selectedStrategy, currentPage, currentRowsPerPage]);
 
   console.log(isSwitch1);
@@ -537,39 +559,7 @@ const OverviewTab = ({ setSelectedCompany }) => {
     setIsSwitch2(false);
   };
 
-  const getGeoLocation = (exchange) => {
-    const mapping = {
-        "National Stock Exchange Of India": "India",
-        "Taipei Exchange": "Taiwan",
-        "NASDAQ Global Market": "USA",
-        "Athens Stock Exchange": "Greece",
-        "Six Swiss Exchange": "Switzerland",
-        "Hong Kong Exchange": "Hong Kong",
-        "London Stock Exchange": "United Kingdom",
-        "Frankfurt Stock Exchange": "Germany",
-        "Johannesburg Stock Exchange": "South Africa",
-        "New York Stock Exchange": "USA",
-        "NASDAQ Capital Market": "USA",
-        "Shenzhen Stock Exchange": "China",
-        "Korea Exchange": "South Korea",
-        "Shanghai Stock Exchange": "China",
-        "Nyse Euronext - Euronext Brussels": "Belgium",
-        "Euronext Paris": "France",
-        "Australian Securities Exchange": "Australia",
-        "Tokyo Stock Exchange": "Japan",
-        "Bombay Stock Exchange": "India",
-        "Toronto Stock Exchange Ventures": "Canada",
-        "Madrid Stock Exchange": "Spain"
-    };
-    return mapping[exchange] || "Unknown"; // Default to "Unknown" if not found
-};
-const enhanceDataWithLocation = (data) => {
-  return data.map(item => ({
-      ...item,
-      location: getGeoLocation(item.exchange)
-  }));
-};
-
+  console.log("kpi", perExchangeKPI);
 
   return (
     <Grid
@@ -579,7 +569,8 @@ const enhanceDataWithLocation = (data) => {
         width: "100%",
       }}
     >
-      <PageInfoBreadCrumbs data={pageLoc} />
+      {/* <PageInfoBreadCrumbs data={pageLoc} /> */}
+      {/* <BreadcrumbsComponent parent={'Investor Screeners'} child={'Overview'} /> */}
 
       {/* Strategies modal */}
       {isSwitch2 && (
@@ -605,7 +596,7 @@ const enhanceDataWithLocation = (data) => {
                 {" "}
                 Strategies Overview{" "}
               </span>{" "}
-              / {selectedStrategy?.name}
+              / {selectedStrategy?.strategy_label}
             </Typography>
           </Box>
           <Button
@@ -627,11 +618,11 @@ const enhanceDataWithLocation = (data) => {
               padding: 1,
             }}
           >
-            <text style={{ fontSize: 25, fontWeight: "bold" }}>
+            {/* <text style={{ fontSize: 25, fontWeight: "bold" }}>
               {" "}
               {selectedStrategy?.name}{" "}
-            </text>
-            <Card
+            </text> */}
+            {/* <Card
               sx={{
                 my: 1,
                 display: "flex",
@@ -641,62 +632,79 @@ const enhanceDataWithLocation = (data) => {
                 gap: 5,
                 padding: 2,
               }}
-            >
-              {/* <text style={{ fontSize: 20, fontWeight: "bold" }}>
+            > */}
+            {/* <text style={{ fontSize: 20, fontWeight: "bold" }}>
                 Companies Passing Criteria Statistics
               </text> */}
-              <Box sx={{ display: "grid", justifyContent: "space-around", gridTemplateColumns:'1fr 1fr' }}>
-                
-                <Card
-                  sx={{
-                    padding: 4,
-                    gap: 5,
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: 4,
-                  }}
-                >
-                  <text> Companies Per Exchanges (%) </text>
-                  {/* <PieChart
+            <Box
+              sx={{
+                display: "grid",
+                justifyContent: "space-around",
+                gridTemplateColumns: {
+                  xs: "1fr",
+                  sm: "1fr",
+                  md: "1.5fr 1fr",
+                },
+                gap: 2,
+                my: 2,
+              }}
+            >
+              <Card
+                sx={{
+                  padding: 4,
+                  gap: 3,
+                  display: "flex",
+                  flexDirection: "column",
+                }}
+              >
+                <text style={{ fontWeight: "bolder" }}>
+                  {" "}
+                  Companies Per Country (%){" "}
+                </text>
+                {/* <PieChart
                     graphData={perExchangeKPI}
                     nameData={(item) => item.exchange}
                   /> */}
-                  <GeoChartComponent data={ enhanceDataWithLocation(perExchangeKPI)}/>
-                 
-                </Card>
-                <Box>
+                <GeoChartComponent data={mapsData} />
+              </Card>
+              <Box style={{ display: "flex", gap: 6, flexDirection: "column" }}>
                 <Card
                   sx={{
-                    padding: 4,
-                    gap: 5,
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: 4,
+                    padding: 2,
                   }}
                 >
-                  <text> Companies Per Sector (%) </text>
-                 <HorizontalBarChart data={perSectorKPI}/>
+                  <text style={{ fontWeight: "bolder" }}>
+                    {" "}
+                    Companies Per Sector (%){" "}
+                  </text>
+                  <HorizontalBarChart data={perSectorKPI} />
                 </Card>
                 <Card
                   sx={{
                     padding: 4,
-                    gap: 5,
+                    paddingBottom: { xs: 8, md: 4 },
                     display: "flex",
                     flexDirection: "column",
-                    gap: 4,
+                    height: 250,
                   }}
                 >
-                  <text> Companies Per Market Cap (%) </text>
-                  <DonutPieChart data={perMarketKPI} dataKey={'total_count'} nameKey={'market_cap_class'} ></DonutPieChart>
+                  <text style={{ fontWeight: "bolder" }}>
+                    {" "}
+                    Companies Per Market Cap (%){" "}
+                  </text>
+                  <DonutPieChart
+                    data={perMarketKPI}
+                    dataKey={"total_count"}
+                    nameKey={"market_cap_class"}
+                  ></DonutPieChart>
                   {/* <PieChart
                     graphData={perMarketKPI}
                     nameData={(item) => item.market_cap_class}
                   /> */}
                 </Card>
-                </Box>
-                
               </Box>
-            </Card>
+            </Box>
+            {/* </Card> */}
             <Card
               sx={{
                 width: "100%",
@@ -717,6 +725,10 @@ const enhanceDataWithLocation = (data) => {
                   value={searchValue}
                   onChange={handleSearchChange}
                 /> */}
+                {/* <Button title="Sort"></Button> */}
+                <Button startIcon={<RiArrowUpDownLine />} variant="outlined">
+                  Sorting
+                </Button>
               </Box>
               <TableContainer>
                 <Table
@@ -743,7 +755,7 @@ const enhanceDataWithLocation = (data) => {
                                     setSelectedSort(2);
                                   }}
                                   style={{
-                                    color: "white",
+                                    color: "black",
                                     background: "rgba(255, 255, 255, 0.3)",
                                     border: "none",
                                     borderRadius: "9999px",
@@ -754,12 +766,12 @@ const enhanceDataWithLocation = (data) => {
                                     justifyContent: "center",
                                   }}
                                 >
-                                  <IoArrowDown />
+                                  <IoFilterSharp />
                                 </button>
                               ) : (
                                 <button
                                   style={{
-                                    color: "white",
+                                    color: "black",
                                     background: "rgba(255, 255, 255, 0.3)",
                                     border: "none",
                                     borderRadius: "9999px",
@@ -774,7 +786,7 @@ const enhanceDataWithLocation = (data) => {
                                     setSelectedSort(1);
                                   }}
                                 >
-                                  <IoArrowUp />
+                                  <IoFilterSharp />
                                 </button>
                               ))}
                           </Box>
@@ -804,14 +816,22 @@ const enhanceDataWithLocation = (data) => {
                               style={{ cursor: "pointer" }}
                             >
                               <StyledTableCell>
-                                {data.company_name}
+                                <div
+                                  style={{
+                                    display: "grid",
+                                    justifyContent: "center",
+                                    alignItems: "center",
+                                    gridTemplateColumns: "1fr 3fr",
+                                  }}
+                                >
+                                  <img
+                                    src={data.image}
+                                    style={{ height: "30px", width: "35px" }}
+                                  />
+                                  {data.company_name}
+                                </div>
                               </StyledTableCell>
-                              <StyledTableCell>
-                                <img
-                                  src={data.image}
-                                  style={{ height: "30px", width: "35px" }}
-                                />
-                              </StyledTableCell>
+
                               <StyledTableCell> {data.symbol} </StyledTableCell>
                               <StyledTableCell>
                                 {" "}
@@ -826,6 +846,7 @@ const enhanceDataWithLocation = (data) => {
                                 sx={{
                                   color:
                                     data.total_return >= 0 ? "green" : "red",
+                                  fontWeight: "bolder",
                                 }}
                               >
                                 {" "}
@@ -837,6 +858,7 @@ const enhanceDataWithLocation = (data) => {
                                     data.annualized_return >= 0
                                       ? "green"
                                       : "red",
+                                  fontWeight: "bolder",
                                 }}
                               >
                                 {" "}
@@ -846,6 +868,7 @@ const enhanceDataWithLocation = (data) => {
                                 sx={{
                                   color:
                                     data.rolling_return >= 0 ? "green" : "red",
+                                  fontWeight: "bolder",
                                 }}
                               >
                                 {" "}
@@ -857,6 +880,7 @@ const enhanceDataWithLocation = (data) => {
                                     data.stdev_excess_return >= 0
                                       ? "green"
                                       : "red",
+                                  fontWeight: "bolder",
                                 }}
                               >
                                 {" "}
@@ -866,12 +890,13 @@ const enhanceDataWithLocation = (data) => {
                                 sx={{
                                   color:
                                     data.max_drawdown >= 0 ? "green" : "red",
+                                  fontWeight: "bolder",
                                 }}
                               >
                                 {" "}
                                 {data.max_drawdown}{" "}
                               </StyledTableCell>
-                              <StyledTableCell
+                              {/* <StyledTableCell
                                 sx={{
                                   color:
                                     data.sharpe_ratio >= 0 ? "green" : "red",
@@ -890,7 +915,7 @@ const enhanceDataWithLocation = (data) => {
                                 {data.sortino_ratio
                                   ? data.sortino_ratio
                                   : "-"}{" "}
-                              </StyledTableCell>
+                              </StyledTableCell> */}
                             </StyledTableRow>
                           </Tooltip>
                         );
@@ -911,6 +936,7 @@ const enhanceDataWithLocation = (data) => {
                 <Box display={"flex"} alignItems={"center"} gap={1}>
                   <label>Rows Per Page:</label>
                   <select
+                    style={{ border: "none", outline: "none" }}
                     value={currentRowsPerPage}
                     onChange={handleChangeRowsPerPage}
                   >
@@ -923,22 +949,21 @@ const enhanceDataWithLocation = (data) => {
                 </Box>
 
                 <Box display={"flex"} alignItems={"center"} px={2} gap={1}>
+                  <span style={{ fontFamily: "Montserrat" }}>
+                    {currentPage}-{currentRowsPerPage} of {totalPages}
+                  </span>
                   <IconButton
                     onClick={handlePrevPage}
                     disabled={currentPage === 1}
                   >
-                    <ArrowBack />
+                    <FaChevronLeft />
                   </IconButton>
-
-                  <span style={{ fontFamily: "Montserrat" }}>
-                    Page {currentPage} of {totalPages}
-                  </span>
 
                   <IconButton
                     onClick={handleNextPage}
                     disabled={currentPage === totalPages}
                   >
-                    <ArrowForward />
+                    <FaChevronRight />
                   </IconButton>
                 </Box>
               </Box>
@@ -954,6 +979,7 @@ const enhanceDataWithLocation = (data) => {
           flexDirection: "column",
           justifyContent: "center",
           alignItems: "center",
+
           gap: 5,
         }}
       >
@@ -963,6 +989,7 @@ const enhanceDataWithLocation = (data) => {
             position: "relative",
             width: "calc(100vw - 30px)",
             overflowX: "hidden",
+            boxShadow: "none",
           }}
         >
           <Box px={2} py={2} width={"100%"}>
@@ -974,15 +1001,17 @@ const enhanceDataWithLocation = (data) => {
                   fontWeight: "bold",
                 }}
               >
-                Strategies Performances and Risks ({strategiesCopy[0]?.duration}{" "}
-                years)
+                Strategies Performances and Risks{" "}
+                <span style={{ color: "gray" }}>
+                  ({strategiesCopy[0]?.duration} years)
+                </span>
               </text>
             </Box>
 
             <Box
               sx={{
                 display: "flex",
-                flexDirection: "row",
+                flexDirection: { xs: "column", sm: "row" },
                 marginTop: 6,
                 overflowX: "hidden",
               }}
@@ -1041,7 +1070,10 @@ const enhanceDataWithLocation = (data) => {
                   }}
                 >
                   {" "}
-                  Overview ({strategiesCopy[0]?.duration} years)
+                  Overview{" "}
+                  <span style={{ color: "gray" }}>
+                    ({strategiesCopy[0]?.duration} years)
+                  </span>
                 </text>
               </Box>
               <Box display="flex" gap={2} sx={{ mt: 0.5 }}>
@@ -1075,12 +1107,15 @@ const enhanceDataWithLocation = (data) => {
                       ))}
                     </Select>
                   </FormControl> */}
-                <TextField
+                {/* <TextField
                   sx={{ borderRadius: 10 }}
                   placeholder="Search"
                   value={searchValue}
                   onChange={handleSearchValueChange}
-                />
+                /> */}
+                <Button startIcon={<RiArrowUpDownLine />} variant="outlined">
+                  Sorting
+                </Button>
               </Box>
             </Box>
             <TableContainer>
@@ -1159,7 +1194,7 @@ const enhanceDataWithLocation = (data) => {
                           }}
                         >
                           {" "}
-                          {data.name}
+                          {data.strategy_label}
                         </StyledTableCell>
                         <StyledTableCell
                           onClick={() =>
@@ -1181,6 +1216,7 @@ const enhanceDataWithLocation = (data) => {
                         <StyledTableCell
                           sx={{
                             color: data.total_return >= 0 ? "green" : "red",
+                            fontWeight: "bolder",
                           }}
                         >
                           {" "}
@@ -1190,6 +1226,7 @@ const enhanceDataWithLocation = (data) => {
                           sx={{
                             color:
                               data.annualized_return >= 0 ? "green" : "red",
+                            fontWeight: "bolder",
                           }}
                         >
                           {" "}
@@ -1198,6 +1235,7 @@ const enhanceDataWithLocation = (data) => {
                         <StyledTableCell
                           sx={{
                             color: data.rolling_return >= 0 ? "green" : "red",
+                            fontWeight: "bolder",
                           }}
                         >
                           {" "}
@@ -1206,6 +1244,7 @@ const enhanceDataWithLocation = (data) => {
                         <StyledTableCell
                           sx={{
                             color: data.stdev_return >= 0 ? "green" : "red",
+                            fontWeight: "bolder",
                           }}
                         >
                           {" "}
@@ -1214,6 +1253,7 @@ const enhanceDataWithLocation = (data) => {
                         <StyledTableCell
                           sx={{
                             color: data.max_drawdown >= 0 ? "green" : "red",
+                            fontWeight: "bolder",
                           }}
                         >
                           {" "}
@@ -1222,6 +1262,7 @@ const enhanceDataWithLocation = (data) => {
                         <StyledTableCell
                           sx={{
                             color: data.sharpe_ratio >= 0 ? "green" : "red",
+                            fontWeight: "bolder",
                           }}
                         >
                           {" "}
@@ -1230,6 +1271,7 @@ const enhanceDataWithLocation = (data) => {
                         <StyledTableCell
                           sx={{
                             color: data.sortino_ratio >= 0 ? "green" : "red",
+                            fontWeight: "bolder",
                           }}
                         >
                           {" "}

@@ -10,18 +10,20 @@ const CompanyNegativeBar = ({
     const chartDom = document.getElementById(chartId);
     const myChart = echarts.init(chartDom);
 
-    const yAxisData = chartData.company_name;
+    // Axis data
+    const xAxisData = chartData.company_name;
 
+    // Series data with colors matching the legend
     const bestSeriesData = [
       {
         value: parseFloat(chartData.best_return),
         itemStyle: {
-          color: parseFloat(chartData.best_return) >= 0 ? "blue" : "orange",
+          color: "blue", // Color for "Best Return"
         },
         label: {
-          show: parseFloat(chartData.best_return) >= 0,
-          position: "right",
-          formatter: "{b}",
+          show: true,
+          position: "top",
+          formatter: "{c}",
         },
       },
     ];
@@ -30,12 +32,12 @@ const CompanyNegativeBar = ({
       {
         value: parseFloat(chartData.worst_return),
         itemStyle: {
-          color: parseFloat(chartData.worst_return) >= 0 ? "blue" : "orange",
+          color: "orange", // Color for "Worst Return"
         },
         label: {
-          show: parseFloat(chartData.worst_return) >= 0,
-          position: "left",
-          formatter: "{b}",
+          show: true,
+          position: "top",
+          formatter: "{c}",
         },
       },
     ];
@@ -45,14 +47,9 @@ const CompanyNegativeBar = ({
         text: chartTitle,
       },
       legend: {
-        data: ["Best Return", "Worst Return"], // Legend labels
+        data: ["Best Return", "Worst Return"],
         itemGap: 20,
       },
-      itemStyle: {
-        height: 50,
-        borderRadius: 4,
-      },
-
       tooltip: {
         trigger: "axis",
         axisPointer: {
@@ -60,53 +57,44 @@ const CompanyNegativeBar = ({
         },
       },
       grid: {
-        top: 80,
-        bottom: 30,
+        left: "3%",
+        right: "4%",
+        bottom: "3%",
+        containLabel: true,
       },
       xAxis: {
-        type: "value",
-        position: "top",
-        splitLine: {
-          lineStyle: {
-            type: "dashed",
-          },
+        type: "category",
+        data: xAxisData,
+        axisTick: {
+          alignWithLabel: true,
         },
       },
       yAxis: {
-        type: "category",
-        axisLine: { show: false },
-        axisLabel: { show: false },
-        axisTick: { show: false },
-        splitLine: { show: false },
-        data: yAxisData,
+        type: "value",
       },
       series: [
         {
           name: "Best Return",
           type: "bar",
-          stack: "Total",
-          label: {
-            show: true,
-            formatter: "{c}",
-          },
+          barWidth: "60%",
           data: bestSeriesData,
-          color: "blue",
+          itemStyle: {
+            color: "blue", // Ensure the bar color matches the legend color
+          },
         },
         {
           name: "Worst Return",
           type: "bar",
-          stack: "Total",
-          label: {
-            show: true,
-            formatter: "{c}",
-          },
+          barWidth: "60%",
           data: worstSeriesData,
-          color: "orange",
+          itemStyle: {
+            color: "orange", // Ensure the bar color matches the legend color
+          },
         },
       ],
     };
 
-    option && myChart.setOption(option);
+    myChart.setOption(option);
 
     return () => {
       myChart.dispose();

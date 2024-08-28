@@ -1,53 +1,94 @@
 import React from "react";
-import "../../../../assets/styles/Footer.css";
-import { Link } from "react-router-dom";
+import { Box, Container, Grid, Link, Typography, Stack } from "@mui/material";
+import FacebookIcon from "@mui/icons-material/Facebook";
+import InstagramIcon from "@mui/icons-material/Instagram";
+import TwitterIcon from "@mui/icons-material/Twitter";
+import LinkedInIcon from "@mui/icons-material/LinkedIn";
+import YouTubeIcon from "@mui/icons-material/YouTube";
 import Logo from "../../../../assets/logos/Original.svg";
-import FacebookLogo from "../../../../assets/images/facebook.png";
-import InstagramLogo from "../../../../assets/images/instagram.png";
-import TwitterLogo from "../../../../assets/images/twitter.png";
 
-const achorStyle = { textDecoration: "none", color: "var(--primary-color)" };
-
-function Footer() {
+const Footer = () => {
   return (
-    <div className="footer">
-      <div className="footer-top">
-        {/* <img src={Logo} alt="invelps" /> */}
-        <ul className="footer-top-list">
-          <Link to="/contact" style={achorStyle}>
-            <li>Contact</li>
-          </Link>
-          <a href="#services" style={achorStyle}>
-            <li>Terms of use</li>
-          </a>
-          <a href="#aboutus" style={achorStyle}>
-            <li>Privacy Policy</li>
-          </a>
-        </ul>
-        {/* <ul className="footer-top-list footer-top-list-second">
-          <li>Term Of Use</li>
-          <li>Privacy Policy</li>
-        </ul> */}
-      </div>
-      <div className="footer-bottom">
-        <img src={Logo} alt="invelps" />
-        <div className="footer-bottom-container">
-          <ul className="footer-bottom-list">
-            <li>
-              <img src={FacebookLogo} alt="facebook" />
-            </li>
-            <li>
-              <img src={InstagramLogo} alt="instagram" />
-            </li>
-            <li>
-              <img src={TwitterLogo} alt="twitter" />
-            </li>
-          </ul>
-          <p style={{ color: "#fff" }}>Copyright @2022 All right reserved</p>
-        </div>
-      </div>
-    </div>
+    <Box sx={{ bgcolor: "#427879", color: "white", p: 3 }}>
+      <Container maxWidth="lg">
+        <Grid container spacing={5}>
+          <Grid item xs={12} sm={4}>
+            <img src={Logo} alt="INVELPS Logo" width={200} height={100} />
+            <Typography variant="subtitle1" gutterBottom>
+              Investment help strategies
+            </Typography>
+          </Grid>
+          <Grid item xs={6} sm={2}>
+            <Typography variant="h6" gutterBottom>
+              Company
+            </Typography>
+            <Stack spacing={2}>
+              <Link sx={{ textDecoration: "none" }} href="#" color="inherit">
+                Home
+              </Link>
+              <Link sx={{ textDecoration: "none" }} href="#" color="inherit">
+                About us
+              </Link>
+              <Link sx={{ textDecoration: "none" }} href="#" color="inherit">
+                Blog
+              </Link>
+            </Stack>
+          </Grid>
+          <Grid item xs={6} sm={3}>
+            <Typography variant="h6" gutterBottom>
+              Features
+            </Typography>
+            <Stack spacing={2}>
+              <Link sx={{ textDecoration: "none" }} href="#" color="inherit">
+                Risk & Return
+              </Link>
+              <Link sx={{ textDecoration: "none" }} href="#" color="inherit">
+                Market Analysis
+              </Link>
+              <Link sx={{ textDecoration: "none" }} href="#" color="inherit">
+                Applications
+              </Link>
+              <Link sx={{ textDecoration: "none" }} href="#" color="inherit">
+                Solutions
+              </Link>
+            </Stack>
+          </Grid>
+          <Grid item xs={12} sm={3}>
+            <Typography variant="h6" gutterBottom>
+              Contact Info
+            </Typography>
+            <Typography variant="body2">
+              24 Commercial Avenue PO Box 249 Kilcoy QLD 4515
+            </Typography>
+            <Typography variant="body2">+07 5687 1450 00</Typography>
+            <Typography variant="body2">help@invelps.com</Typography>
+          </Grid>
+        </Grid>
+        <Box sx={{ display: "flex", justifyContent: "space-between", pt: 4 }}>
+          <Box sx={{ display: "flex", gap: 2 }}>
+            <Link href="#" color="inherit">
+              <LinkedInIcon />
+            </Link>
+            <Link href="#" color="inherit">
+              <InstagramIcon />
+            </Link>
+            <Link href="#" color="inherit">
+              <FacebookIcon />
+            </Link>
+            <Link href="#" color="inherit">
+              <TwitterIcon />
+            </Link>
+            <Link href="#" color="inherit">
+              <YouTubeIcon />
+            </Link>
+          </Box>
+        </Box>
+        <Typography variant="body2" textAlign={"center"} sx={{ pt: 3 }}>
+          Invelps © 2023 All Rights Reserved
+        </Typography>
+      </Container>
+    </Box>
   );
-}
+};
 
 export default Footer;
