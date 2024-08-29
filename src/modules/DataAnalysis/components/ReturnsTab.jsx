@@ -236,7 +236,7 @@ const [selectedLabel , setSelectedLabel] = useState("")
       try {
         const response = await fetch(
           `
-               http://127.0.0.1:8000/api/strategies/getStrategiesAnnualPerformance`,
+               https://api.invelps.com/api/strategies/getStrategiesAnnualPerformance`,
           {
             method: "POST",
             headers: {
@@ -264,7 +264,7 @@ const [selectedLabel , setSelectedLabel] = useState("")
       try {
         const response = await fetch(
           `
-              http://127.0.0.1:8000/api/strategies/getStrategiesBestWorstPerformance`,
+              https://api.invelps.com/api/strategies/getStrategiesBestWorstPerformance`,
           {
             method: "POST",
             headers: {
@@ -296,7 +296,7 @@ const [selectedLabel , setSelectedLabel] = useState("")
         };
         const response = await fetch(
           `
-            http://127.0.0.1:8000/api/strategies/getStrategyCountryData`,
+            https://api.invelps.com/api/strategies/getStrategyCountryData`,
           {
             method: "POST",
             headers: {

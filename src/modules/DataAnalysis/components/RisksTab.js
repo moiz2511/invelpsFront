@@ -91,7 +91,7 @@ const RisksTab = () => {
       try {
         const response = await fetch(
           `
-              http://127.0.0.1:8000/api/strategies/getStrategiesRiskAdjustedReturns`,
+              https://api.invelps.com/api/strategies/getStrategiesRiskAdjustedReturns`,
           {
             method: "POST",
             headers: {

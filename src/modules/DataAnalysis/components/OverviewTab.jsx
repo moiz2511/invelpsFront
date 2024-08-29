@@ -440,7 +440,7 @@ const [mapsData , setMapsData] = useState([])
         };
         const response = await fetch(
           `
-            http://127.0.0.1:8000/api/strategies/getStrategyCountryData`,
+            https://api.invelps.com/api/strategies/getStrategyCountryData`,
           {
             method: "POST",
             headers: {

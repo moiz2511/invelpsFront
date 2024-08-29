@@ -100,7 +100,7 @@ const BackTestTab = () => {
     const fetchStrategyAnnualPerformance = async () => {
       try {
         const response = await fetch(
-          `http://127.0.0.1:8000/api/strategies/getStrategiesAnnualPerformance`,
+          `https://api.invelps.com/api/strategies/getStrategiesAnnualPerformance`,
           {
             method: "POST",
             headers: {
@@ -242,7 +242,7 @@ const BackTestTab = () => {
       };
       const response = await fetch(
         `
-            http://127.0.0.1:8000/api/strategies/getStrategyCountryData`,
+            https://api.invelps.com/api/strategies/getStrategyCountryData`,
         {
           method: "POST",
           headers: {
