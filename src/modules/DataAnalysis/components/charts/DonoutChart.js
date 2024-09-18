@@ -33,12 +33,15 @@ const DonutPieChart = ({ data, dataKey, nameKey }) => {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
+  // Calculate the total sum for the percentage calculation
+  const total = data.reduce((sum, entry) => sum + entry[dataKey], 0);
+
   return (
-    <ResponsiveContainer width="100%" height={370} >
+    <ResponsiveContainer width="100%" height={370}>
       <PieChart>
         <Pie
           data={data}
-          cx={isMobile?"50%":"30%"}
+          cx={isMobile ? "50%" : "30%"}
           cy="35%"
           innerRadius="40%"
           outerRadius="60%"
@@ -53,15 +56,17 @@ const DonutPieChart = ({ data, dataKey, nameKey }) => {
         </Pie>
         <Tooltip />
         <Legend
-          formatter={(value, entry) =>
-            ` ${entry.value}`
-          }
+          formatter={(value, entry, index) => {
+            const percentage = ((data[index][dataKey] / total) * 100).toFixed(
+              1
+            );
+            return `${value} (${percentage}%)`;
+          }}
           layout={isMobile ? "horizontal" : "vertical"}
           align={isMobile ? "center" : "right"}
           verticalAlign={isMobile ? "top" : "top"}
           wrapperStyle={{
-            paddingLeft:  "20px",
-           
+            paddingLeft: "20px",
           }}
         />
       </PieChart>

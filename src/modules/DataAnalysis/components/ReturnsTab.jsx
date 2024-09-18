@@ -28,7 +28,7 @@ import NegativeBarChart from "./NegativeBarChart";
 
 import TableCell, { tableCellClasses } from "@mui/material/TableCell";
 import ColorConstants from "../../Core/constants/ColorConstants.json";
-
+import Constants from "../../../Constants.json";
 import { IoArrowDown, IoArrowUp } from "react-icons/io5";
 import { IoArrowUpOutline } from "react-icons/io5";
 import { ArrowBack, ArrowForward } from "@mui/icons-material";
@@ -39,6 +39,7 @@ import { CgSpinner } from "react-icons/cg";
 import GeoChartComponent from "./charts/GeoCharts";
 import HorizontalBarChart from "./charts/HorizontalBar";
 import DonutPieChart from "./charts/DonoutChart";
+import { Flex } from "@chakra-ui/react";
 
 const headYears = [
   2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023,
@@ -196,7 +197,7 @@ const ReturnsTab = ({ setSelectedCompany }) => {
   const [bestWorstData, setBestWorstData] = useState([]);
   const [selectedStrategy, setSelectedStrategy] = useState(null);
   const [showVisualData, setShowVisualData] = useState(false);
-const [selectedLabel , setSelectedLabel] = useState("")
+  const [selectedLabel, setSelectedLabel] = useState("");
   const [bestWorstDataCopy, setBestWorstDataCopy] = useState([]);
   const [selectedSort, setSelectedSort] = useState(0);
   const [selectedField, setSelectedField] = useState();
@@ -212,7 +213,7 @@ const [selectedLabel , setSelectedLabel] = useState("")
   const [totalPages, setTotalPages] = useState(null);
   const [strategiesCopy, setStrategiesCopy] = useState([]);
   const [chartSwitch, setChartSwitch] = useState(true);
-  const [mapsData , setMapsData] = useState([])
+  const [mapsData, setMapsData] = useState([]);
 
   const handleChartSwitchChange = () => {
     setChartSwitch(!chartSwitch);
@@ -235,8 +236,8 @@ const [selectedLabel , setSelectedLabel] = useState("")
     const fetchStrategyAnnualPerformance = async () => {
       try {
         const response = await fetch(
-          `
-               http://127.0.0.1:8000/api/strategies/getStrategiesAnnualPerformance`,
+          Constants.BACKEND_SERVER_BASE_URL +
+            "/strategies/getStrategiesAnnualPerformance",
           {
             method: "POST",
             headers: {
@@ -263,8 +264,8 @@ const [selectedLabel , setSelectedLabel] = useState("")
     const fetchStrategyBestWorstPerformance = async () => {
       try {
         const response = await fetch(
-          `
-              http://127.0.0.1:8000/api/strategies/getStrategiesBestWorstPerformance`,
+          Constants.BACKEND_SERVER_BASE_URL +
+            "/strategies/getStrategiesBestWorstPerformance",
           {
             method: "POST",
             headers: {
@@ -287,7 +288,6 @@ const [selectedLabel , setSelectedLabel] = useState("")
       }
     };
 
-
     const fetchMapsData = async () => {
       try {
         console.log(selectedStrategy);
@@ -295,8 +295,8 @@ const [selectedLabel , setSelectedLabel] = useState("")
           strategy_name: selectedStrategy,
         };
         const response = await fetch(
-          `
-            http://127.0.0.1:8000/api/strategies/getStrategyCountryData`,
+          Constants.BACKEND_SERVER_BASE_URL +
+            "/strategies/getStrategyCountryData",
           {
             method: "POST",
             headers: {
@@ -324,18 +324,16 @@ const [selectedLabel , setSelectedLabel] = useState("")
     if (authToken) {
       fetchStrategyAnnualPerformance();
       fetchStrategyBestWorstPerformance();
-      fetchMapsData()
+      fetchMapsData();
     }
-  }, [authToken,selectedStrategy]);
-
-
+  }, [authToken, selectedStrategy]);
 
   useEffect(() => {
     if (strategyData && strategyData?.length > 0) {
       const firstStrategy = strategyData[0];
       const strategyKeys = Object.keys(firstStrategy);
       const filteredYears = strategyKeys.filter(
-        (key) => key !== "strategy_name_here" && key !=='strategy_label'
+        (key) => key !== "strategy_name_here" && key !== "strategy_label"
       );
       setYears(filteredYears);
     }
@@ -437,7 +435,7 @@ const [selectedLabel , setSelectedLabel] = useState("")
     setShowVisualData(!showVisualData);
     setIsSwitch2(true);
     setSelectedStrategy(strategy.strategy_name_here);
-    setSelectedLabel(strategy.strategy_label)
+    setSelectedLabel(strategy.strategy_label);
   };
 
   const handleSortChange = (e) => {
@@ -501,10 +499,10 @@ const [selectedLabel , setSelectedLabel] = useState("")
     return () => {
       isMounted = false;
     };
-  }, [selectedSort, selectedField,selectedLabel]);
+  }, [selectedSort, selectedField, selectedLabel]);
 
   console.log("startegyData", selectedLabel);
-// console.log('selected', selectedStrategy);
+  // console.log('selected', selectedStrategy);
 
   return showVisualData && isSwitch2 ? (
     <div
@@ -585,10 +583,7 @@ const [selectedLabel , setSelectedLabel] = useState("")
               flexDirection: "column",
             }}
           >
-            <text style={{ fontWeight: "bolder" }}>
-              {" "}
-              Companies Per Country{" "}
-            </text>
+            <text style={{ fontWeight: "bolder" }}> Companies Per Country</text>
             {/* <PieChart
                     graphData={perExchangeKPI}
                     nameData={(item) => item.exchange}
@@ -875,17 +870,47 @@ const [selectedLabel , setSelectedLabel] = useState("")
       >
         <Card sx={{ m: 1 }}>
           <Box p={3}>
-            <Box spacing={1} sx={{ mt: 0.5 }}>
-              <text
-                style={{
-                  padding: "5px",
-                  fontSize: "27px",
-                  fontWeight: "bold",
-                }}
-              >
-                Annual Returns
-              </text>
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "row",
+                alignItems: "center",
+                width: "100%",
+                justifyContent: "space-between",
+              }}
+            >
+              <Box sx={{ mt: 0.5, mr: 1 }}>
+                <Typography
+                  variant="h6"
+                  component="span"
+                  sx={{
+                    padding: "5px",
+                    fontSize: "27px",
+                    fontWeight: "bold",
+                  }}
+                >
+                  Annual Returns
+                </Typography>
+              </Box>
+
+              <Box>
+                <label
+                  htmlFor="annualDevidendSwitch"
+                  style={{ marginLeft: 10 }}
+                >
+                  Line Chart
+                </label>
+
+                <Switch
+                  id="annualDevidendSwitch"
+                  checked={chartSwitch}
+                  onChange={handleChartSwitchChange}
+                  inputProps={{ "aria-label": "controlled" }}
+                />
+                <label htmlFor="annualDevidendSwitch"> Bar Chart</label>
+              </Box>
             </Box>
+
             {/* <div
               style={{
                 width: "100%",
@@ -914,7 +939,7 @@ const [selectedLabel , setSelectedLabel] = useState("")
               />
               <label htmlFor="annualDevidendSwitch"> Bar Chart</label>
             </div> */}
-            <Box sx={{ padding: 2 }}>
+            {/* <Box sx={{ padding: 2 }}>
               <text
                 style={{
                   boxShadow: "2px 2px 5px rgba(0, 0, 0, 0.5)",
@@ -923,18 +948,8 @@ const [selectedLabel , setSelectedLabel] = useState("")
               >
                 {bestWorstDataCopy[0]?.duration} years
               </text>
-            </Box>
-            <label htmlFor="annualDevidendSwitch" style={{ marginLeft: 10 }}>
-              {" "}
-              Line Chart
-            </label>
-            <Switch
-              id="annualDevidendSwitch"
-              checked={chartSwitch}
-              onChange={handleChartSwitchChange}
-              inputProps={{ "aria-label": "controlled" }}
-            />
-            <label htmlFor="annualDevidendSwitch"> Bar Chart</label>
+            </Box> */}
+
             <Box
               sx={{
                 display: "flex",
@@ -1063,7 +1078,7 @@ const [selectedLabel , setSelectedLabel] = useState("")
                 sx={{
                   minWidth: "100%",
                   maxWidth: "100%",
-                  mt: 1,
+                  mt: 2,
                   fontFamily: "Montserrat",
                 }}
                 size="medium"

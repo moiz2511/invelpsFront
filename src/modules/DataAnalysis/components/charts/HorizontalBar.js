@@ -8,6 +8,7 @@ import {
   Legend,
   ResponsiveContainer,
   Cell,
+  LabelList,
 } from "recharts";
 import { Container, useTheme, useMediaQuery } from "@mui/material";
 
@@ -29,13 +30,16 @@ const HorizontalBarChart = ({ data }) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
+  // Calculate the total count for percentage calculation
+  const totalCount = data.reduce((sum, entry) => sum + entry.total_count, 0);
+
   return (
     <Container maxWidth="lg" sx={{ height: "100%", py: 4 }}>
-      <ResponsiveContainer width='100%' height={isMobile ? 300 : 400}>
+      <ResponsiveContainer width="100%" height={isMobile ? 300 : 400}>
         <BarChart
           data={data}
           layout="vertical"
-          margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+          margin={{ top: 20, right: 50, left: 20, bottom: 5 }}
         >
           <XAxis type="number" />
           <YAxis
@@ -55,6 +59,16 @@ const HorizontalBarChart = ({ data }) => {
                 fill={COLORS[index % COLORS.length]}
               />
             ))}
+
+            {/* Add labels to display the percentage */}
+            <LabelList
+              dataKey="total_count"
+              position="right"
+              formatter={(value) =>
+                `${((value / totalCount) * 100).toFixed(1)}%`
+              }
+              fill="#000"
+            />
           </Bar>
         </BarChart>
       </ResponsiveContainer>

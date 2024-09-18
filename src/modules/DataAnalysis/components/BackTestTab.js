@@ -26,6 +26,7 @@ import { IoArrowDown, IoArrowUp } from "react-icons/io5";
 import HorizontalBarChart from "./charts/HorizontalBar";
 import DonutPieChart from "./charts/DonoutChart";
 import GeoChartComponent from "./charts/GeoCharts";
+import Constants from "../../../Constants.json";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -100,7 +101,8 @@ const BackTestTab = () => {
     const fetchStrategyAnnualPerformance = async () => {
       try {
         const response = await fetch(
-          `http://127.0.0.1:8000/api/strategies/getStrategiesAnnualPerformance`,
+          Constants.BACKEND_SERVER_BASE_URL +
+            "/strategies/getStrategiesAnnualPerformance",
           {
             method: "POST",
             headers: {
@@ -241,8 +243,8 @@ const BackTestTab = () => {
         strategy_name: selectedStrategy,
       };
       const response = await fetch(
-        `
-            http://127.0.0.1:8000/api/strategies/getStrategyCountryData`,
+        Constants.BACKEND_SERVER_BASE_URL +
+          "/strategies/getStrategyCountryData",
         {
           method: "POST",
           headers: {
@@ -270,7 +272,7 @@ const BackTestTab = () => {
     if (selectedStrategy !== null) {
       fetchGraphData();
       fetchDividendTableData();
-      fetchMapsData()
+      fetchMapsData();
     }
   }, [selectedStrategy]);
 

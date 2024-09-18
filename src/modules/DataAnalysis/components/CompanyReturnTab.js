@@ -9,7 +9,11 @@ import {
   TableRow,
   TableBody,
   Switch,
-  Radio,RadioGroup,FormControl,FormLabel,FormControlLabel
+  Radio,
+  RadioGroup,
+  FormControl,
+  FormLabel,
+  FormControlLabel,
 } from "@mui/material";
 
 // getAnnualAndRollingRtrnsForCompany
@@ -77,9 +81,9 @@ const CompanyReturnTab = ({ companySymbol, companyName, companyImage }) => {
   const [companyProfile, setCompanyProfile] = useState(null);
   const [chartSwitch, setChartSwitch] = useState(true);
   const [chartType, setChartType] = useState("line");
- const handleChartTypeChange = (event) => {
-   setChartType(event.target.value);
- };
+  const handleChartTypeChange = (event) => {
+    setChartType(event.target.value);
+  };
 
   useEffect(() => {
     const CheckUserSession = () => {
@@ -744,7 +748,7 @@ const CompanyReturnTab = ({ companySymbol, companyName, companyImage }) => {
                   fontWeight: "bold",
                 }}
               >
-                Annual Drawdown
+                Max Drawdown
               </text>
               <CompanyLineBar
                 chartId={"CBR-chart-1"}

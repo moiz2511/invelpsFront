@@ -1,89 +1,103 @@
-import React, { useEffect, useState } from 'react'
-import Chart from '../../UIUtils/Charts/ChartComponent';
-import ColorConstants from '../../Core/constants/ColorConstants.json'
-import { Button, Grid, TextField, MenuItem, Card, Box, CircularProgress, Backdrop, Tooltip, Chip, InputLabel } from '@mui/material';
+import React, { useEffect, useState } from "react";
+import Chart from "../../UIUtils/Charts/ChartComponent";
+import ColorConstants from "../../Core/constants/ColorConstants.json";
+import {
+  Button,
+  Grid,
+  TextField,
+  MenuItem,
+  Card,
+  Box,
+  CircularProgress,
+  Backdrop,
+  Tooltip,
+  Chip,
+  InputLabel,
+} from "@mui/material";
 
 // import CustomizedTable from '../../UIUtils/Table/TableContentComponent';
-import FundamentalChartService from '../services/FundamentalChartService';
-import { useSearchParams } from 'react-router-dom';
+import FundamentalChartService from "../services/FundamentalChartService";
+import { useSearchParams } from "react-router-dom";
 
-import TableCell, { tableCellClasses } from '@mui/material/TableCell';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
-import Autocomplete, { autocompleteClasses } from '@mui/material/Autocomplete';
-import Popper from '@mui/material/Popper';
-import { useTheme, styled } from '@mui/material/styles';
-import { VariableSizeList } from 'react-window';
-import Typography from '@mui/material/Typography';
-import PropTypes from 'prop-types';
-import useMediaQuery from '@mui/material/useMediaQuery';
+import TableCell, { tableCellClasses } from "@mui/material/TableCell";
+import TableHead from "@mui/material/TableHead";
+import TableRow from "@mui/material/TableRow";
+import Autocomplete, { autocompleteClasses } from "@mui/material/Autocomplete";
+import Popper from "@mui/material/Popper";
+import { useTheme, styled } from "@mui/material/styles";
+import { VariableSizeList } from "react-window";
+import Typography from "@mui/material/Typography";
+import PropTypes from "prop-types";
+import useMediaQuery from "@mui/material/useMediaQuery";
 
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableContainer from '@mui/material/TableContainer';
-import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
-import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
-import AnalysisModelService from '../../Context/services/AnalysisModelService';
-import PageInfoBreadCrumbs from '../../Core/components/Layout/PageInfoBreadCrumbs';
-import DatePicker from 'react-datepicker';
-import 'react-datepicker/dist/react-datepicker.css';
+import Table from "@mui/material/Table";
+import TableBody from "@mui/material/TableBody";
+import TableContainer from "@mui/material/TableContainer";
+import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
+import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
+import AnalysisModelService from "../../Context/services/AnalysisModelService";
+import PageInfoBreadCrumbs from "../../Core/components/Layout/PageInfoBreadCrumbs";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 const compareFilters = [
-  'industryAvg',
-  'industryMedian',
-  'sectorAvg',
-  'sectorMedian'
+  "industryAvg",
+  "industryMedian",
+  "sectorAvg",
+  "sectorMedian",
 ];
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
     backgroundColor: ColorConstants.APP_TABLE_HEAD_COLOR,
     color: theme.palette.common.white,
-    padding: 12
+    padding: 12,
   },
   [`&.${tableCellClasses.body}`]: {
     fontSize: 12,
-    padding: 12
+    padding: 12,
   },
 }));
 
 const StyledTableRow = styled(TableRow)(({ theme }) => ({
-  '&:nth-of-type()': {
+  "&:nth-of-type()": {
     backgroundColor: theme.palette.action.hover,
   },
   // hide last border
-  '&:last-child td, &:last-child th': {
+  "&:last-child td, &:last-child th": {
     border: 0,
   },
 }));
 
 const DeStructureAnalysisApiData = async (apiData) => {
-
   let data = {
     labels: apiData.date_range,
     yUnit: apiData.yUnit,
-    datasets: []
-  }
-  let dataLists = []
+    datasets: [],
+  };
+  let dataLists = [];
   for (let [dataIndex, companyData] of apiData.return_list.entries()) {
-    let subList = []
-    let obj = {}
-    obj.label = companyData.company_name + "::" + companyData.metric
-    obj.borderColor = ColorConstants.CHART_COLORS[dataIndex]
-    obj.backgroundColor = ColorConstants.CHART_COLORS[dataIndex]
-    data.datasets.push(obj)
+    let subList = [];
+    let obj = {};
+    obj.label = companyData.company_name + "::" + companyData.metric;
+    obj.borderColor = ColorConstants.CHART_COLORS[dataIndex];
+    obj.backgroundColor = ColorConstants.CHART_COLORS[dataIndex];
+    data.datasets.push(obj);
     for (let [index, key] of apiData.date_range.entries()) {
-      subList.push(typeof (companyData[key]) === "string" ? companyData[key].replace("M", "") : companyData[key]);
+      subList.push(
+        typeof companyData[key] === "string"
+          ? companyData[key].replace("M", "")
+          : companyData[key]
+      );
     }
     dataLists.push(subList);
   }
   for (let [index, object] of data.datasets.entries()) {
-    object.data = dataLists[index]
+    object.data = dataLists[index];
   }
   console.log(data);
   return data;
-}
-
+};
 
 const LISTBOX_PADDING = 8; // px
 
@@ -94,7 +108,7 @@ function renderRow(props) {
     ...style,
     top: style.top + LISTBOX_PADDING,
     fontSize: 12,
-    width: '100%'
+    width: "100%",
   };
 
   return (
@@ -122,7 +136,10 @@ function useResetCache(data) {
 }
 
 // Adapter for react-window
-const ListboxComponent = React.forwardRef(function ListboxComponent(props, ref) {
+const ListboxComponent = React.forwardRef(function ListboxComponent(
+  props,
+  ref
+) {
   const { children, ...other } = props;
   const itemData = [];
   children.forEach((item) => {
@@ -131,7 +148,7 @@ const ListboxComponent = React.forwardRef(function ListboxComponent(props, ref) 
   });
 
   const theme = useTheme();
-  const smUp = useMediaQuery(theme.breakpoints.up('sm'), {
+  const smUp = useMediaQuery(theme.breakpoints.up("sm"), {
     noSsr: true,
   });
 
@@ -177,8 +194,8 @@ ListboxComponent.propTypes = {
 
 const StyledPopper = styled(Popper)({
   [`& .${autocompleteClasses.listbox}`]: {
-    boxSizing: 'border-box',
-    '& ul': {
+    boxSizing: "border-box",
+    "& ul": {
       padding: 0,
       margin: 0,
     },
@@ -186,53 +203,56 @@ const StyledPopper = styled(Popper)({
 });
 
 const FormatTableContent = (data, unit, dateRange) => {
-  let response = []
+  let response = [];
   for (let record of data) {
-    let trendVal = 0
+    let trendVal = 0;
     let mean = 1;
     let cagr = 1;
     for (let year of dateRange) {
       if (unit === "percent") {
-        mean = mean * (1 + (record[year] / 100));
-        cagr = mean
+        mean = mean * (1 + record[year] / 100);
+        cagr = mean;
       } else {
-        mean = mean * record[year]
+        mean = mean * record[year];
       }
     }
-    let prevVal = null
+    let prevVal = null;
     for (let year of dateRange) {
       if (prevVal == null) {
-        prevVal = parseFloat(record[year])
-      }
-      else {
+        prevVal = parseFloat(record[year]);
+      } else {
         if (parseFloat(record[year]) > prevVal) {
-          trendVal += 1
+          trendVal += 1;
         }
         if (parseFloat(record[year]) < prevVal) {
-          trendVal -= 1
+          trendVal -= 1;
         }
-        prevVal = parseFloat(record[year])
+        prevVal = parseFloat(record[year]);
       }
     }
-    record['trendVal'] = trendVal
+    record["trendVal"] = trendVal;
     if (unit === "percent") {
-      mean = ((mean ** (1 / dateRange.length)) / 100);
+      mean = mean ** (1 / dateRange.length) / 100;
       if (cagr < 0) {
-        cagr = ((0 - cagr) ** (1 / dateRange.length)) - 1;
+        cagr = (0 - cagr) ** (1 / dateRange.length) - 1;
       } else {
-        cagr = ((cagr) ** (1 / dateRange.length)) - 1;
+        cagr = cagr ** (1 / dateRange.length) - 1;
       }
     } else {
-      mean = ((mean ** (1 / dateRange.length)) / 100);
-      cagr = ((parseFloat(record[dateRange.slice(-1)]) / parseFloat(record[dateRange[0]])) ** (1 / dateRange.length)) - 1
+      mean = mean ** (1 / dateRange.length) / 100;
+      cagr =
+        (parseFloat(record[dateRange.slice(-1)]) /
+          parseFloat(record[dateRange[0]])) **
+          (1 / dateRange.length) -
+        1;
     }
     // record['mean'] = parseFloat(mean*100).toFixed(2);
-    console.log("here is mean=> ", record)
-    record['cagr'] = parseFloat(cagr * 100).toFixed(2);
+    console.log("here is mean=> ", record);
+    record["cagr"] = parseFloat(cagr * 100).toFixed(2);
     response.push(record);
   }
   return response;
-}
+};
 
 const DAFundamentalChart = () => {
   let pageLoc = window.location.pathname;
@@ -240,7 +260,9 @@ const DAFundamentalChart = () => {
   const restClient = new FundamentalChartService();
   const restClientAnalysisModel = new AnalysisModelService();
 
-  let company = searchParams.get("company", "") ? searchParams.get("company") : "";
+  let company = searchParams.get("company", "")
+    ? searchParams.get("company")
+    : "";
   let tool = searchParams.get("tool") ? searchParams.get("tool") : "";
   // let measure = searchParams.get("measure") ? searchParams.get("measure") : "";
   // let category = searchParams.get("category") ? searchParams.get("category") : "";
@@ -248,13 +270,15 @@ const DAFundamentalChart = () => {
   let from = searchParams.get("from") ? searchParams.get("from") : "";
   let to = searchParams.get("to") ? searchParams.get("to") : "";
   let ranges = searchParams.get("range") ? searchParams.get("range") : "";
-  ranges = ranges.split(",")
-  ranges = ranges.map((range) => range.trim())
-  metrics = metrics.split(",")
+  ranges = ranges.split(",");
+  ranges = ranges.map((range) => range.trim());
+  metrics = metrics.split(",");
   if (metrics !== null && metrics.length > 0 && metrics[0] !== "") {
-    metrics = metrics.map((metric) => { return { metric: metric.trim() } })
+    metrics = metrics.map((metric) => {
+      return { metric: metric.trim() };
+    });
   } else {
-    metrics = []
+    metrics = [];
   }
   useEffect(() => {
     getCompaniesDropDown();
@@ -262,15 +286,16 @@ const DAFundamentalChart = () => {
       getMetricsDropDown(tool);
     }
     if (metrics !== null && metrics.length > 0 && metrics.length === 1) {
-      getRangesDropDown(metrics[0]['metric']);
+      getRangesDropDown(metrics[0]["metric"]);
     }
     getToolsDropDownOptions();
-  }, []
-  );
+  }, []);
   const [headCellsData, setHeadCellsData] = useState({});
   const [yUnitC, setyUnitC] = useState("");
 
-  const [companiesDropDownValues, setCompaniesDropDownValues] = useState([{ company_name: company }]);
+  const [companiesDropDownValues, setCompaniesDropDownValues] = useState([
+    { company_name: company },
+  ]);
   const [companyFilter, setCompanyFilter] = useState({ company_name: company });
   const [toolFilter, setToolFilter] = useState(tool);
   const [toolsDropDownValues, setToolsDropDownValues] = useState([]);
@@ -289,8 +314,9 @@ const DAFundamentalChart = () => {
   const [rangesFilter, setRangesFilter] = useState(ranges);
   const [rangesDropDownValues, setRangesDropDownValues] = useState([]);
   const [chartInputData, setChartInputData] = useState({});
-  const [onSubmitResponseReceived, setOnSubmitResponseReceived] = useState(false);
-  const [chartTableContent, setChartTableContent] = useState([])
+  const [onSubmitResponseReceived, setOnSubmitResponseReceived] =
+    useState(false);
+  const [chartTableContent, setChartTableContent] = useState([]);
   const [chartApiResponse, setChartApiResponse] = useState("");
   const [showCircularProgress, setCircularProgress] = useState(false);
   const [enableSubmitButton, setEnableSubmitButton] = useState(true);
@@ -299,7 +325,7 @@ const DAFundamentalChart = () => {
   const setToolFilterHandler = (event) => {
     setToolFilter(event.target.value);
     getMetricsDropDown(event.target.value);
-  }
+  };
 
   // const setMetricsFilterHandler = (event) => {
   //   const {
@@ -313,11 +339,11 @@ const DAFundamentalChart = () => {
   // }
 
   const setFromFilterHandler = (event) => {
-    setFromFilter(event.target.value)
-  }
+    setFromFilter(event.target.value);
+  };
   const setToFilterHandler = (event) => {
-    setToFilter(event.target.value)
-  }
+    setToFilter(event.target.value);
+  };
 
   const setRangesFilterHandler = (event) => {
     const {
@@ -325,12 +351,13 @@ const DAFundamentalChart = () => {
     } = event;
     setRangesFilter(
       // On autofill we get a stringified value.
-      typeof value === 'string' ? value.split(',') : value,
+      typeof value === "string" ? value.split(",") : value
     );
-  }
+  };
 
   async function getMetricsDropDown(tool) {
-    await restClient.getMetricsByTool({ tool })
+    await restClient
+      .getMetricsByTool({ tool })
       .then((response) => {
         setMetricsDropDownValues(response.data.resp_data);
       })
@@ -340,7 +367,8 @@ const DAFundamentalChart = () => {
   }
 
   async function getRangesDropDown(metric) {
-    await restClient.getRangesByMetric(metric)
+    await restClient
+      .getRangesByMetric(metric)
       .then((response) => {
         setRangesDropDownValues(response.data);
       })
@@ -350,7 +378,8 @@ const DAFundamentalChart = () => {
   }
 
   async function getCompaniesDropDown() {
-    await restClientAnalysisModel.getAllCompanies()
+    await restClientAnalysisModel
+      .getAllCompanies()
       .then((response) => {
         // console.log(response)
         // let companies = response.data.companies_data.map((item) => { return { "value": item.company_name, "label": item.company_name } })
@@ -362,7 +391,8 @@ const DAFundamentalChart = () => {
       });
   }
   async function getToolsDropDownOptions() {
-    await restClientAnalysisModel.getAllTools()
+    await restClientAnalysisModel
+      .getAllTools()
       .then((response) => {
         // console.log(response)
         // let companies = response.data.companies_data.map((item) => { return { "value": item.company_name, "label": item.company_name } })
@@ -379,21 +409,28 @@ const DAFundamentalChart = () => {
     setCircularProgress(true);
     setEnableSubmitButton(false);
     let body = {
-      "companies": [companyFilter.company_name],
-      "types": toolFilter,
-      "from": fromFilter,
-      "to": toFilter,
-      "metrics": metricsFilter.map((item) => { return item.metric }),
-      "rangemetrics": rangesFilter,
-      "filters": compareFilter
-    }
-    await restClient.submitData(body)
+      companies: [companyFilter.company_name],
+      types: toolFilter,
+      from: fromFilter,
+      to: toFilter,
+      metrics: metricsFilter.map((item) => {
+        return item.metric;
+      }),
+      rangemetrics: rangesFilter,
+      filters: compareFilter,
+    };
+    await restClient
+      .submitData(body)
       .then(async (response) => {
         const data = await DeStructureAnalysisApiData(response.data);
         const localHeadCells = await buildTableHeadCells(response.data);
         setChartApiResponse(response.data);
-        const tableRecords = FormatTableContent(response.data.return_list, response.data.yUnit, response.data.date_range)
-        setyUnitC(response.data.yUnit)
+        const tableRecords = FormatTableContent(
+          response.data.return_list,
+          response.data.yUnit,
+          response.data.date_range
+        );
+        setyUnitC(response.data.yUnit);
         setChartTableContent(tableRecords);
         setHeadCellsData(localHeadCells);
         setChartInputData(data);
@@ -407,8 +444,7 @@ const DAFundamentalChart = () => {
         setCircularProgress(false);
         setEnableSubmitButton(true);
       });
-
-  }
+  };
 
   // useEffect(() => {
   //   console.log("USE EFFECT TRIGGERED");
@@ -419,99 +455,101 @@ const DAFundamentalChart = () => {
     let localHeadCells = {
       data: [
         {
-          id: 'company_name',
-          label: 'Company',
+          id: "company_name",
+          label: "Company",
           isValueLink: false,
         },
         {
-          id: 'symbol',
-          label: 'Symbol',
+          id: "symbol",
+          label: "Symbol",
           isValueLink: false,
         },
         {
-          id: 'metric',
-          label: 'Metric(' + apiData.yUnit + ')',
+          id: "metric",
+          label: "Metric(" + apiData.yUnit + ")",
           isValueLink: false,
-        }
-      ]
+        },
+      ],
     };
     for (let [index, year] of apiData.date_range.entries()) {
       localHeadCells.data.push({
         id: year,
         label: year,
-        isValueLink: false
-      })
+        isValueLink: false,
+      });
     }
     localHeadCells.data.push({
       id: "mean",
       label: "Mean",
-      isValueLink: false
-    })
+      isValueLink: false,
+    });
     localHeadCells.data.push({
       id: "cagr",
       label: "CAGR",
-      isValueLink: false
-    })
+      isValueLink: false,
+    });
     localHeadCells.data.push({
       id: "sd",
       label: "SD",
-      isValueLink: false
-    })
+      isValueLink: false,
+    });
     localHeadCells.data.push({
       id: "rsd",
       label: "RSD",
-      isValueLink: false
-    })
+      isValueLink: false,
+    });
     localHeadCells.data.push({
       id: "n_years",
       label: "NbrOfYears",
-      isValueLink: false
-    })
+      isValueLink: false,
+    });
     localHeadCells.data.push({
       id: "trend_value",
       label: "Trend",
-      isValueLink: false
-    })
+      isValueLink: false,
+    });
     localHeadCells.data.push({
       id: "range",
       label: "Range",
-      isValueLink: false
-    })
+      isValueLink: false,
+    });
     localHeadCells.data.push({
       id: "comment",
       label: "Mean vs Range",
-      isValueLink: false
-    })
+      isValueLink: false,
+    });
     return localHeadCells;
-  }
+  };
 
   // const emptyRows =
   //   page > 0 ? Math.max(0, (1 + page) * rowsPerPage - resultItemsCount) : 0;
   const handleFromChange = (date) => {
-    setFromFilterVal(date)
-    console.log(date)
-    var da = date.toString().split(' ')[3]
-    console.log(da)
+    setFromFilterVal(date);
+    console.log(date);
+    var da = date.toString().split(" ")[3];
+    console.log(da);
     setFromFilter(da);
-  }
+  };
   const handleToChange = (date) => {
-    var da = date.toString().split(' ')[3]
-    setToFilterVal(date)
+    var da = date.toString().split(" ")[3];
+    setToFilterVal(date);
     setToFilter(da);
-  }
+  };
   return (
     <React.Fragment>
       <Grid container>
         <PageInfoBreadCrumbs data={pageLoc} />
         <Box sx={{ marginLeft: 1 }}>
-          <Grid container
+          <Grid
+            container
             spacing={1}
             component="form"
             sx={{
-              '& .MuiTextField-root': { minWidth: '20ch' },
+              "& .MuiTextField-root": { minWidth: "20ch" },
             }}
             noValidate
-            autoComplete="off">
+            autoComplete="off"
+          >
             <Grid item sx={{ marginTop: 1 }}>
               {/* <div style={{ width: '240px', fontSize: '12px', fontWeight: 'bold' }}>
                 <label style={{ fontSize: '11px', fontWeight: 'normal' }} htmlFor='companiesFilter'>Company</label>
@@ -532,7 +570,9 @@ const DAFundamentalChart = () => {
                 sx={{ width: 240 }}
                 disableListWrap
                 getOptionLabel={(option) => option.company_name}
-                isOptionEqualToValue={(option, value) => option.company_name === value.company_name}
+                isOptionEqualToValue={(option, value) =>
+                  option.company_name === value.company_name
+                }
                 PopperComponent={StyledPopper}
                 ListboxComponent={ListboxComponent}
                 options={companiesDropDownValues}
@@ -543,12 +583,19 @@ const DAFundamentalChart = () => {
                 renderTags={(value, getTagProps) =>
                   value.map((option, index) => (
                     <Tooltip key={index} title={option.company_name}>
-                      <Chip size='small' sx={{ width: "65%" }} variant="contained" label={option.company_name} {...getTagProps({ index })} />
+                      <Chip
+                        size="small"
+                        sx={{ width: "65%" }}
+                        variant="contained"
+                        label={option.company_name}
+                        {...getTagProps({ index })}
+                      />
                     </Tooltip>
                   ))
                 }
-                renderInput={(params) => <TextField
-                  {...params} label="Company" variant='standard' />}
+                renderInput={(params) => (
+                  <TextField {...params} label="Company" variant="standard" />
+                )}
                 renderOption={(props, option) => [props, option]}
               />
             </Grid>
@@ -600,18 +647,31 @@ const DAFundamentalChart = () => {
                 // selectOnFocus={true}
                 id="metricsFilter"
                 getOptionLabel={(option) => option.metric}
-                isOptionEqualToValue={(option, value) => option.metric === value.metric}
+                isOptionEqualToValue={(option, value) =>
+                  option.metric === value.metric
+                }
                 options={metricsDropDownValues}
                 onChange={(event, newValue) => {
                   setMetricsFilter(newValue);
                   if (newValue.length === 1) {
-                    getRangesDropDown(newValue[0]['metric']);
+                    getRangesDropDown(newValue[0]["metric"]);
                   }
                 }}
                 // onChange={setMetricsFilter}
                 value={metricsFilter}
                 sx={{ minWidth: 240, mt: 0.4 }}
-                renderInput={(params) => <TextField SelectProps={{ autoWidth: true, displayEmpty: true, defaultOpen: true }} {...params} variant="standard" label="Metrics" />}
+                renderInput={(params) => (
+                  <TextField
+                    SelectProps={{
+                      autoWidth: true,
+                      displayEmpty: true,
+                      defaultOpen: true,
+                    }}
+                    {...params}
+                    variant="standard"
+                    label="Metrics"
+                  />
+                )}
               />
             </Grid>
             {/* <Grid item sx={{ marginTop: 0.75 }}>
@@ -635,10 +695,16 @@ const DAFundamentalChart = () => {
               />
             </Grid> */}
             <Grid item sx={{ marginTop: 0.75 }}>
-              <InputLabel sx={{
-                fontFamily: "Helvetica",
-                fontSize: "12px", marginTop: '8px'
-              }} > From:</InputLabel>
+              <InputLabel
+                sx={{
+                  fontFamily: "Helvetica",
+                  fontSize: "12px",
+                  marginTop: "8px",
+                }}
+              >
+                {" "}
+                From:
+              </InputLabel>
               {/* <Box sx={{ marginTop: 0.45 }}> */}
               <DatePicker
                 selected={fromFilterVal}
@@ -652,13 +718,18 @@ const DAFundamentalChart = () => {
               {/* </Box> */}
             </Grid>
             <Grid item sx={{ marginTop: 0.75 }}>
-              <InputLabel sx={{
-                fontFamily: "Helvetica",
-                fontSize: "12px", marginTop: '8px'
-              }} > To:</InputLabel>
+              <InputLabel
+                sx={{
+                  fontFamily: "Helvetica",
+                  fontSize: "12px",
+                  marginTop: "8px",
+                }}
+              >
+                {" "}
+                To:
+              </InputLabel>
               {/* <Box sx={{ marginTop: 0.45 }}> */}
               <DatePicker
-
                 selected={toFilterVal}
                 onChange={(date) => handleToChange(date)}
                 dateFormat="yyyy"
@@ -669,25 +740,27 @@ const DAFundamentalChart = () => {
               />
               {/* </Box> */}
             </Grid>
-            {metricsFilter.length < 2 && <Grid item sx={{ marginTop: 0.75 }}>
-              <TextField
-                select
-                id="rangesFilter"
-                label="Ranges"
-                variant="standard"
-                onChange={setRangesFilterHandler}
-                value={rangesFilter}
-              >
-                <MenuItem key="default-value" value="">
-                  <em>Select Ranges</em>
-                </MenuItem>
-                {rangesDropDownValues.map((item) => (
-                  <MenuItem key={item} value={item}>
-                    {item}
+            {metricsFilter.length < 2 && (
+              <Grid item sx={{ marginTop: 0.75 }}>
+                <TextField
+                  select
+                  id="rangesFilter"
+                  label="Ranges"
+                  variant="standard"
+                  onChange={setRangesFilterHandler}
+                  value={rangesFilter}
+                >
+                  <MenuItem key="default-value" value="">
+                    <em>Select Ranges</em>
                   </MenuItem>
-                ))}
-              </TextField>
-            </Grid>}
+                  {rangesDropDownValues.map((item) => (
+                    <MenuItem key={item} value={item}>
+                      {item}
+                    </MenuItem>
+                  ))}
+                </TextField>
+              </Grid>
+            )}
             <Grid item sx={{ marginTop: 0.75 }}>
               <Autocomplete
                 limitTags={1}
@@ -706,11 +779,33 @@ const DAFundamentalChart = () => {
                 // onChange={setMetricsFilter}
                 value={compareFilter}
                 sx={{ minWidth: 240, mt: 0.4 }}
-                renderInput={(params) => <TextField SelectProps={{ autoWidth: true, displayEmpty: true, defaultOpen: true }} {...params} variant="standard" label="Comparators" />}
+                renderInput={(params) => (
+                  <TextField
+                    SelectProps={{
+                      autoWidth: true,
+                      displayEmpty: true,
+                      defaultOpen: true,
+                    }}
+                    {...params}
+                    variant="standard"
+                    label="Comparators"
+                  />
+                )}
               />
             </Grid>
             <Grid item sx={{ marginTop: 0.75 }}>
-              <Button disabled={!enableSubmitButton} id="profilePageButton" type="submit" variant="contained" onClick={onSubmit} size="medium" sx={{ mt: 1.5 }} > Submit </Button>
+              <Button
+                disabled={!enableSubmitButton}
+                id="profilePageButton"
+                type="submit"
+                variant="contained"
+                onClick={onSubmit}
+                size="medium"
+                sx={{ mt: 1.5 }}
+              >
+                {" "}
+                Submit{" "}
+              </Button>
             </Grid>
           </Grid>
         </Box>
@@ -719,67 +814,76 @@ const DAFundamentalChart = () => {
         </Grid> */}
       </Grid>
 
-      <Card sx={{ width: '98%', m: 1, position: 'relative' }}>
-        {showCircularProgress && <Box sx={{ display: 'flex', justifyContent: 'center' }}><CircularProgress /></Box>}
-        {showCircularProgress && <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-          <Backdrop
-            sx={{ color: '#fff', position: 'absolute', zIndex: (theme) => theme.zIndex.drawer - 1, opacity: 0.5 }}
-            open={showCircularProgress}
-          >
+      <Card sx={{ width: "98%", m: 1, position: "relative" }}>
+        {showCircularProgress && (
+          <Box sx={{ display: "flex", justifyContent: "center" }}>
             <CircularProgress />
-          </Backdrop>
-        </Box>}
-        {onSubmitResponseReceived && <React.Fragment><Chart yAxisUnit={chartInputData.yUnit} data={chartInputData} plotLineValue={chartTableContent[0].range} />
-          <Box sx={{ width: '100%' }}>
-            {/* <Paper sx={{ width: '100%', mb: 2 }}> */}
-            <TableContainer>
-              <Table
-                sx={{ minWidth: '98%', maxWidth: '99%', mt: 1 }}
-                aria-labelledby="tableTitle"
-                size='medium'
-              >
-                <TableHead>
-                  <TableRow>
-                    {headCellsData.data.map((headCell) => (
-                      <StyledTableCell
-                        key={headCell.id}
-                        padding='normal'
-                      >
-                        {headCell.label}
-                      </StyledTableCell>
-                    ))}
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {chartTableContent
-                    // .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                    .map((row, index) => {
-                      let mean = row.mean
-                      if (chartInputData.yUnit === "percent") {
-                        mean = parseFloat(mean).toFixed(2)
-                        mean = String(mean) + "%";
-                      } else if (chartInputData.yUnit === "millions") {
-                        mean = parseFloat(mean).toLocaleString();
-                      }
-                      return (
-                        <StyledTableRow
-                          hover
-                          tabIndex={-1}
-                          key={index}
-                          sx={{ ml: 3 }}
-                        >
-                          <StyledTableCell>
-                            {row.company_name}
-                          </StyledTableCell>
-                          <StyledTableCell>
-                            {row.symbol}
-                          </StyledTableCell>
-                          <StyledTableCell>
-                            {row.metric}
-                          </StyledTableCell>
-                          {
-                            chartApiResponse.date_range.map((field, index) => {
-                              let value = row[field]
+          </Box>
+        )}
+        {showCircularProgress && (
+          <Box sx={{ display: "flex", justifyContent: "center" }}>
+            <Backdrop
+              sx={{
+                color: "#fff",
+                position: "absolute",
+                zIndex: (theme) => theme.zIndex.drawer - 1,
+                opacity: 0.5,
+              }}
+              open={showCircularProgress}
+            >
+              <CircularProgress />
+            </Backdrop>
+          </Box>
+        )}
+        {onSubmitResponseReceived && (
+          <React.Fragment>
+            <Chart
+              yAxisUnit={chartInputData.yUnit}
+              data={chartInputData}
+              plotLineValue={chartTableContent[0].range}
+            />
+            <Box sx={{ width: "100%" }}>
+              {/* <Paper sx={{ width: '100%', mb: 2 }}> */}
+              <TableContainer>
+                <Table
+                  sx={{ minWidth: "98%", maxWidth: "99%", mt: 1 }}
+                  aria-labelledby="tableTitle"
+                  size="medium"
+                >
+                  <TableHead>
+                    <TableRow>
+                      {headCellsData.data.map((headCell) => (
+                        <StyledTableCell key={headCell.id} padding="normal">
+                          {headCell.label}
+                        </StyledTableCell>
+                      ))}
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {chartTableContent
+                      // .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                      .map((row, index) => {
+                        let mean = row.mean;
+                        if (chartInputData.yUnit === "percent") {
+                          mean = parseFloat(mean).toFixed(2);
+                          mean = String(mean) + "%";
+                        } else if (chartInputData.yUnit === "millions") {
+                          mean = parseFloat(mean).toLocaleString();
+                        }
+                        return (
+                          <StyledTableRow
+                            hover
+                            tabIndex={-1}
+                            key={index}
+                            sx={{ ml: 3 }}
+                          >
+                            <StyledTableCell>
+                              {row.company_name}
+                            </StyledTableCell>
+                            <StyledTableCell>{row.symbol}</StyledTableCell>
+                            <StyledTableCell>{row.metric}</StyledTableCell>
+                            {chartApiResponse.date_range.map((field, index) => {
+                              let value = row[field];
                               if (chartInputData.yUnit === "percent") {
                                 value = String(value) + "%";
                               } else if (chartInputData.yUnit === "millions") {
@@ -790,52 +894,162 @@ const DAFundamentalChart = () => {
                                   {value}
                                 </StyledTableCell>
                               );
-                            })
-                          }
-                          <StyledTableCell>
-                            {mean}
-                          </StyledTableCell>
-                          <StyledTableCell>
-                            {row.cagr + "%"}
-                          </StyledTableCell>
-                          <StyledTableCell>
-                            {row.sd} {yUnitC == 'percent' ? '%' : ''}
-                          </StyledTableCell>
-                          <StyledTableCell>
-                            {row.rsd}
-                          </StyledTableCell>
-                          <StyledTableCell>
-                            {row.n_years}
-                          </StyledTableCell>
-                          <StyledTableCell>
-                            {row.trendVal > 0 ? <div style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap' }}><span style={{ color: row.condition ? "#00B050" : "#FF0000", fontSize: 10, fontWeight: "bold" }}></span><ArrowUpwardIcon sx={{ color: "#00B050" }} /></div> :
-                              row.trendVal < 0 ? <div style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap' }}><span style={{ color: row.condition ? "#00B050" : "#FF0000", fontSize: 10, fontWeight: "bold" }}></span><ArrowDownwardIcon sx={{ color: "#FF0000"  }} /></div> :
-                                (<div style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap' }}>
-                                  <span style={{ color: "#00B050", fontWeight: "bold" }}></span>
-                                  <div style={{ width: 40, height: 3, backgroundColor: "#00B050" }} />
+                            })}
+                            <StyledTableCell>{mean}</StyledTableCell>
+                            <StyledTableCell>{row.cagr + "%"}</StyledTableCell>
+                            <StyledTableCell>
+                              {row.sd} {yUnitC == "percent" ? "%" : ""}
+                            </StyledTableCell>
+                            <StyledTableCell>{row.rsd}</StyledTableCell>
+                            <StyledTableCell>{row.n_years}</StyledTableCell>
+                            <StyledTableCell>
+                              {row.trendVal > 0 ? (
+                                <div
+                                  style={{
+                                    display: "flex",
+                                    alignItems: "center",
+                                    flexWrap: "wrap",
+                                  }}
+                                >
+                                  <span
+                                    style={{
+                                      color: row.condition
+                                        ? "#00B050"
+                                        : "#FF0000",
+                                      fontSize: 10,
+                                      fontWeight: "bold",
+                                    }}
+                                  ></span>
+                                  <ArrowUpwardIcon sx={{ color: "#00B050" }} />
                                 </div>
-                                )}
-                          </StyledTableCell>
-                          <StyledTableCell>
-                            {chartInputData.yUnit === "percent" ? row.range + "%" : row.range}
-                          </StyledTableCell>
-                          <StyledTableCell>
-                            {row.comment === "Above" ? <div style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap' }}><span style={{ color: row.condition ? "#00B050" : "#FF0000", fontSize: 10, fontWeight: "bold" }}>{row.comment}</span><ArrowUpwardIcon sx={{ color: row.condition ? "#00B050" : "#FF0000" }} /></div> :
-                              row.comment === "Below" ? <div style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap' }}><span style={{ color: row.condition ? "#00B050" : "#FF0000", fontSize: 10, fontWeight: "bold" }}>{row.comment}</span><ArrowDownwardIcon sx={{ color: row.condition ? "#00B050" : "#FF0000" }} /></div> :
-                                <span style={{ color: "#00B050", fontWeight: "bold" }}>{row.comment}</span>}
-                          </StyledTableCell>
-                        </StyledTableRow>
-                      );
-                    })}
-                </TableBody>
-              </Table>
-            </TableContainer>
-          </Box>
-        </React.Fragment>
-        }
+                              ) : row.trendVal < 0 ? (
+                                <div
+                                  style={{
+                                    display: "flex",
+                                    alignItems: "center",
+                                    flexWrap: "wrap",
+                                  }}
+                                >
+                                  <span
+                                    style={{
+                                      color: row.condition
+                                        ? "#00B050"
+                                        : "#FF0000",
+                                      fontSize: 10,
+                                      fontWeight: "bold",
+                                    }}
+                                  ></span>
+                                  <ArrowDownwardIcon
+                                    sx={{ color: "#FF0000" }}
+                                  />
+                                </div>
+                              ) : (
+                                <div
+                                  style={{
+                                    display: "flex",
+                                    alignItems: "center",
+                                    flexWrap: "wrap",
+                                  }}
+                                >
+                                  <span
+                                    style={{
+                                      color: "#00B050",
+                                      fontWeight: "bold",
+                                    }}
+                                  ></span>
+                                  <div
+                                    style={{
+                                      width: 40,
+                                      height: 3,
+                                      backgroundColor: "#00B050",
+                                    }}
+                                  />
+                                </div>
+                              )}
+                            </StyledTableCell>
+                            <StyledTableCell>
+                              {chartInputData.yUnit === "percent"
+                                ? row.range + "%"
+                                : row.range}
+                            </StyledTableCell>
+                            <StyledTableCell>
+                              {row.comment === "Above" ? (
+                                <div
+                                  style={{
+                                    display: "flex",
+                                    alignItems: "center",
+                                    flexWrap: "wrap",
+                                  }}
+                                >
+                                  <span
+                                    style={{
+                                      color: row.condition
+                                        ? "#00B050"
+                                        : "#FF0000",
+                                      fontSize: 10,
+                                      fontWeight: "bold",
+                                    }}
+                                  >
+                                    {row.comment}
+                                  </span>
+                                  <ArrowUpwardIcon
+                                    sx={{
+                                      color: row.condition
+                                        ? "#00B050"
+                                        : "#FF0000",
+                                    }}
+                                  />
+                                </div>
+                              ) : row.comment === "Below" ? (
+                                <div
+                                  style={{
+                                    display: "flex",
+                                    alignItems: "center",
+                                    flexWrap: "wrap",
+                                  }}
+                                >
+                                  <span
+                                    style={{
+                                      color: row.condition
+                                        ? "#00B050"
+                                        : "#FF0000",
+                                      fontSize: 10,
+                                      fontWeight: "bold",
+                                    }}
+                                  >
+                                    {row.comment}
+                                  </span>
+                                  <ArrowDownwardIcon
+                                    sx={{
+                                      color: row.condition
+                                        ? "#00B050"
+                                        : "#FF0000",
+                                    }}
+                                  />
+                                </div>
+                              ) : (
+                                <span
+                                  style={{
+                                    color: "#00B050",
+                                    fontWeight: "bold",
+                                  }}
+                                >
+                                  {row.comment}
+                                </span>
+                              )}
+                            </StyledTableCell>
+                          </StyledTableRow>
+                        );
+                      })}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+            </Box>
+          </React.Fragment>
+        )}
       </Card>
     </React.Fragment>
   );
-}
+};
 
 export default DAFundamentalChart;

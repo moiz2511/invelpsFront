@@ -25,8 +25,7 @@ import GeoChartComponent from "./charts/GeoCharts";
 import HorizontalBarChart from "./charts/HorizontalBar";
 import DonutPieChart from "./charts/DonoutChart";
 import { useNavigate } from "react-router-dom";
-
-
+import Constants from "../../../Constants.json";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -75,7 +74,7 @@ const RisksTab = () => {
 
   const [selectedSort, setSelectedSort] = useState(0);
   const [selectedField, setSelectedField] = useState(null);
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   useEffect(() => {
     const CheckUserSession = () => {
@@ -90,8 +89,8 @@ const RisksTab = () => {
     const fetchStrategyRiskAdjustedReturns = async () => {
       try {
         const response = await fetch(
-          `
-              http://127.0.0.1:8000/api/strategies/getStrategiesRiskAdjustedReturns`,
+          Constants.BACKEND_SERVER_BASE_URL +
+            "/strategies/getStrategiesRiskAdjustedReturns",
           {
             method: "POST",
             headers: {
@@ -121,7 +120,6 @@ const RisksTab = () => {
 
   console.log(riskReturnCopy);
 
-
   // useEffect(() => {
   //   if (selectedStrategy !== null) {
   //     fetchGraphData();
@@ -131,14 +129,13 @@ const RisksTab = () => {
   const handleDataVisualization = (strategy) => {
     setShowVisualData(!showVisualData);
     setSelectedStrategy(strategy.name);
-    console.log("visual",strategy);
+    console.log("visual", strategy);
     navigate("/riskVisualization", {
       state: {
         selectedStrategy: strategy.name,
         selectedStrategyLabel: strategy.startegy_label,
       },
     });
-    
   };
 
   const handleSortingFieldChange = (field) => {
@@ -282,7 +279,14 @@ const RisksTab = () => {
           </Box> */}
         </>
       ) : (
-        <Card sx={{ m: 1, position: "relative", fontFamily: "Montserrat" }}>
+        <Card
+          sx={{
+            m: 1,
+            position: "relative",
+            fontFamily: "Montserrat",
+            width: "50%",
+          }}
+        >
           <Box p={3}>
             <Box spacing={1} sx={{ mt: 0.5 }}>
               <text

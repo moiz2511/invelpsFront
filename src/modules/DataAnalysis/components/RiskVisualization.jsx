@@ -1,103 +1,102 @@
-import React, { useContext, useState,useEffect } from 'react'
-import HorizontalBarChart from './charts/HorizontalBar';
-import DonutPieChart from './charts/DonoutChart';
-import GeoChartComponent from './charts/GeoCharts';
-import AuthContext from '../../Core/store/auth-context';
-import { useLocation, useNavigate } from 'react-router-dom';
-import { Box,Card } from '@mui/material';
-
+import React, { useContext, useState, useEffect } from "react";
+import HorizontalBarChart from "./charts/HorizontalBar";
+import DonutPieChart from "./charts/DonoutChart";
+import GeoChartComponent from "./charts/GeoCharts";
+import AuthContext from "../../Core/store/auth-context";
+import { useLocation, useNavigate } from "react-router-dom";
+import { Box, Card } from "@mui/material";
+import Constants from "../../../Constants.json";
 
 const RiskVisualization = () => {
-    
-      const [perExchangeKPI, setPerExhangeKPI] = useState([]);
-      const [perSectorKPI, setPerSectorKPI] = useState([]);
-      const [perMarketKPI, setPerMarketKPI] = useState([]);
-      const [authToken, setAuthToken] = useState(null);
-      const [mapsData , setMapsData] = useState([])
-      const authCtx = useContext(AuthContext)
-      const location = useLocation();
-      const selectedStrategy = location.state.selectedStrategy
-      const selectedLabel = location.state.selectedStrategyLabel
-      const navigation = useNavigate()
-    //   console.log('selected Strategy',selectedLabel);
-        useEffect(() => {
-          const CheckUserSession = () => {
-            return authCtx.isLoggedIn ? authCtx.token : "";
-          };
+  const [perExchangeKPI, setPerExhangeKPI] = useState([]);
+  const [perSectorKPI, setPerSectorKPI] = useState([]);
+  const [perMarketKPI, setPerMarketKPI] = useState([]);
+  const [authToken, setAuthToken] = useState(null);
+  const [mapsData, setMapsData] = useState([]);
+  const authCtx = useContext(AuthContext);
+  const location = useLocation();
+  const selectedStrategy = location.state.selectedStrategy;
+  const selectedLabel = location.state.selectedStrategyLabel;
+  const navigation = useNavigate();
+  //   console.log('selected Strategy',selectedLabel);
+  useEffect(() => {
+    const CheckUserSession = () => {
+      return authCtx.isLoggedIn ? authCtx.token : "";
+    };
 
-          const userToken = CheckUserSession();
-          setAuthToken(userToken);
-        }, []);
+    const userToken = CheckUserSession();
+    setAuthToken(userToken);
+  }, []);
 
-        const fetchGraphData = async () => {
-          try {
-            const body = {
-              strategy_name: selectedStrategy,
-            };
-            const response = await fetch(
-              `
+  const fetchGraphData = async () => {
+    try {
+      const body = {
+        strategy_name: selectedStrategy,
+      };
+      const response = await fetch(
+        `
             https://api.invelps.com/api/strategies/getStrategyGraphData`,
-              {
-                method: "POST",
-                headers: {
-                  Authorization: `Bearer ${authToken}`,
-                },
-                body: JSON.stringify(body),
-              }
-            );
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+          },
+          body: JSON.stringify(body),
+        }
+      );
 
-            const data = await response.json();
+      const data = await response.json();
 
-            if (response.status === 200) {
-              console.log(data);
-              setPerExhangeKPI(data.data.companies_per_exchanges_KPI);
-              setPerSectorKPI(data.data.companies_per_sector_KPI);
-              setPerMarketKPI(data.data.companies_per_market_cap_KPI);
-            } else {
-              console.log("Unexpected status code:", response.status);
-            }
-          } catch (error) {
-            console.error("Error:", error);
-          }
-        };
+      if (response.status === 200) {
+        console.log(data);
+        setPerExhangeKPI(data.data.companies_per_exchanges_KPI);
+        setPerSectorKPI(data.data.companies_per_sector_KPI);
+        setPerMarketKPI(data.data.companies_per_market_cap_KPI);
+      } else {
+        console.log("Unexpected status code:", response.status);
+      }
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
 
-          const fetchMapsData = async () => {
-            try {
-              const body = {
-                strategy_name: selectedStrategy,
-              };
-              const response = await fetch(
-                `
-            http://127.0.0.1:8000/api/strategies/getStrategyCountryData`,
-                {
-                  method: "POST",
-                  headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${authToken}`,
-                  },
-                  body: JSON.stringify(body),
-                }
-              );
+  const fetchMapsData = async () => {
+    try {
+      const body = {
+        strategy_name: selectedStrategy,
+      };
+      const response = await fetch(
+        Constants.BACKEND_SERVER_BASE_URL +
+          "/strategies/getStrategyCountryData",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${authToken}`,
+          },
+          body: JSON.stringify(body),
+        }
+      );
 
-              const data = await response.json();
+      const data = await response.json();
 
-              if (response.status === 200) {
-                console.log("Company", data.data);
-                setMapsData(data.data);
-                console.log("Countries Data", data.data);
-              } else {
-                console.log("Unexpected status code:", response.status);
-              }
-            } catch (error) {
-              console.error("Error:", error);
-            }
-          };
-         useEffect(() => {
-           if (selectedStrategy !== null) {
-             fetchGraphData();
-             fetchMapsData();
-           }
-         }, [selectedStrategy, authToken]);
+      if (response.status === 200) {
+        console.log("Company", data.data);
+        setMapsData(data.data);
+        console.log("Countries Data", data.data);
+      } else {
+        console.log("Unexpected status code:", response.status);
+      }
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
+  useEffect(() => {
+    if (selectedStrategy !== null) {
+      fetchGraphData();
+      fetchMapsData();
+    }
+  }, [selectedStrategy, authToken]);
   return (
     <>
       {/* <Button
@@ -111,13 +110,18 @@ const RiskVisualization = () => {
       >
         Go Back
       </Button> */}
-      <text   onClick={()=>{navigation("/dataanalysis/investorscreeners");}} style={{ fontSize: 15 ,cursor:'pointer' }}>
+      <text
+        onClick={() => {
+          navigation("/dataanalysis/investorscreeners");
+        }}
+        style={{ fontSize: 15, cursor: "pointer" }}
+      >
         Invester Screener {">"}{" "}
         <span
           style={{
             color: "#427879",
             fontWeight: "bold",
-            cursor:'pointer'
+            cursor: "pointer",
           }}
         >
           {selectedLabel}
@@ -153,10 +157,7 @@ const RiskVisualization = () => {
             {" "}
             {selectedLabel}
           </text>
-          <text style={{ fontWeight: "bolder" }}>
-            {" "}
-            Companies Per Country{" "}
-          </text>
+          <text style={{ fontWeight: "bolder" }}> Companies Per Country</text>
           {/* <PieChart
                     graphData={perExchangeKPI}
                     nameData={(item) => item.exchange}
@@ -202,6 +203,6 @@ const RiskVisualization = () => {
       </Box>
     </>
   );
-}
+};
 
-export default RiskVisualization
+export default RiskVisualization;
