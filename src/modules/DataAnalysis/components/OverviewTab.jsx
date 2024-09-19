@@ -18,6 +18,7 @@ import {
   Typography,
   Tooltip,
   Modal,
+  Breadcrumbs,
 } from "@mui/material";
 
 import { ArrowBack, ArrowForward, Filter1Sharp } from "@mui/icons-material";
@@ -43,6 +44,9 @@ import { RiArrowUpDownLine } from "react-icons/ri";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import BreadcrumbsComponent from "../../Core/components/Layout/BreadCrumbs";
 import Constants from "../../../Constants.json";
+import AssessmentIcon from "@mui/icons-material/Assessment";
+import TrendingUpIcon from "@mui/icons-material/TrendingUp";
+import { FaBuilding } from "react-icons/fa";
 
 const headCells = {
   data: [
@@ -236,7 +240,13 @@ const sortingFields = [
   { key: "duration", label: "Duration" },
 ];
 
-const OverviewTab = ({ setSelectedCompany }) => {
+const OverviewTab = ({
+  setSelectedCompany,
+  activeButton,
+  setActiveButton,
+  showVisualData,
+  setShowVisualData,
+}) => {
   let pageLoc = window.location.pathname;
 
   const [showTableHead, setShowTableHead] = useState(false);
@@ -266,7 +276,7 @@ const OverviewTab = ({ setSelectedCompany }) => {
   const [searchValue, setSearchValue] = useState("");
   const [dropdown1Value, setDropdown1Value] = useState("");
   const [dropdown2Value, setDropdown2Value] = useState("");
-  const [showVisualData, setShowVisualData] = useState(false);
+  // const [showVisualData, setShowVisualData] = useState(false);
   const [selectedStrategy, setSelectedStrategy] = useState(null);
   const [allStrategies, setAllStrategies] = useState([]);
   const authCtx = useContext(AuthContext);
@@ -584,6 +594,26 @@ const OverviewTab = ({ setSelectedCompany }) => {
 
   console.log("kpi", perExchangeKPI);
 
+  const buttons = [
+    {
+      id: "OVERVIEW",
+      label: "OVERVIEW",
+      icon: <AssessmentIcon />,
+      component: "OverviewContent",
+    },
+    {
+      id: "RETURNS AND RISK",
+      label: "RETURNS AND RISK",
+      icon: <TrendingUpIcon />,
+      component: "ReturnsRiskContent",
+    },
+    {
+      id: "HISTORICAL PRICES",
+      label: "HISTORICAL PRICES",
+      icon: <FaBuilding />,
+      component: "HistoricalPlacesContent",
+    },
+  ];
   return (
     <Grid
       container
@@ -613,14 +643,52 @@ const OverviewTab = ({ setSelectedCompany }) => {
             overflowY: "auto",
           }}
         >
-          <Box ml={2} mb={4}>
-            <Typography color={"rgba(0, 0, 0, 0.6)"}>
-              <span onClick={handleGoBack} style={{ cursor: "pointer" }}>
-                {" "}
-                Strategies Overview{" "}
-              </span>{" "}
-              / {selectedStrategy?.strategy_label}
+          <Breadcrumbs separator={">"} aria-label="breadcrumb" sx={{ ml: 2 }}>
+            <Typography
+              onClick={handleGoBack}
+              style={{ cursor: "pointer" }}
+              color="inherit"
+            >
+              Strategies Overview
             </Typography>
+
+            <Typography
+              sx={{ color: "#427879", fontWeight: "bold" }}
+              color="inherit"
+            >
+              {activeButton}
+            </Typography>
+            <Typography
+              sx={{ color: "#427879", fontWeight: "bold" }}
+              color="inherit"
+            >
+              {selectedStrategy?.strategy_label}
+            </Typography>
+          </Breadcrumbs>
+
+          <Box padding={2} display={"flex"} gap={3}>
+            {buttons.map((button) => (
+              <Button
+                key={button.id}
+                sx={{
+                  backgroundColor:
+                    activeButton === button.id ? "#427879" : "white",
+                  color: activeButton === button.id ? "white" : "black",
+                  "&:hover": {
+                    backgroundColor:
+                      activeButton === button.id ? "#427879" : "#427879",
+                    color: activeButton === button.id ? "white" : "white",
+                  },
+                }}
+                startIcon={button.icon}
+                onClick={() => {
+                  setActiveButton(button.id);
+                  setShowVisualData(false);
+                }}
+              >
+                {button.label}
+              </Button>
+            ))}
           </Box>
           <Button
             onClick={handleGoBack}
@@ -682,7 +750,7 @@ const OverviewTab = ({ setSelectedCompany }) => {
               >
                 <text style={{ fontWeight: "bolder" }}>
                   {" "}
-                  Companies Per Country (%){" "}
+                  Companies Per Country(%){" "}
                 </text>
                 {/* <PieChart
                     graphData={perExchangeKPI}

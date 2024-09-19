@@ -10,9 +10,12 @@ import BackTest from "./BackTest";
 import BackTestTab from "./BackTestTab";
 import ReturnsTab from "./ReturnsTab";
 import { FaBuilding } from "react-icons/fa";
+import { useBreadcrumbs } from "../../Core/store/BreadcrumbsContext";
 
 const NavigationWithBreadcrumbs = ({ setSelectedCompany }) => {
   const [activeButton, setActiveButton] = useState("OVERVIEW");
+  const [selectedStrategyLabel, setSelectedStrategyLabel] = useState(null);
+  const [showVisualData, setShowVisualData] = useState(false);
 
   const buttons = [
     {
@@ -39,18 +42,31 @@ const NavigationWithBreadcrumbs = ({ setSelectedCompany }) => {
     <>
       <BreadcrumbsComponent
         parent={"Investor Screener"}
+        subParent={selectedStrategyLabel}
         child={activeButton}
       ></BreadcrumbsComponent>
+
       <Box padding={2} display={"flex"} gap={3}>
         {buttons.map((button) => (
           <Button
             key={button.id}
             sx={{
-              background: activeButton === button.id ? "#427879" : "white",
+              backgroundColor: activeButton === button.id ? "#427879" : "white",
               color: activeButton === button.id ? "white" : "black",
+              "&:hover": {
+                backgroundColor:
+                  activeButton === button.id ? "#427879" : "#427879",
+                color: activeButton === button.id ? "white" : "white",
+              },
             }}
             startIcon={button.icon}
-            onClick={() => setActiveButton(button.id)}
+            onClick={() => {
+              setActiveButton(button.id);
+              if (selectedStrategyLabel) {
+                setSelectedStrategyLabel(null);
+                setShowVisualData(!showVisualData);
+              }
+            }}
           >
             {button.label}
           </Button>
@@ -58,16 +74,44 @@ const NavigationWithBreadcrumbs = ({ setSelectedCompany }) => {
       </Box>
       <Box>
         {activeButton === "OVERVIEW" && (
-          <OverviewTab setSelectedCompany={setSelectedCompany} />
+          <OverviewTab
+            selectedStrategyLabel={selectedStrategyLabel}
+            activeButton={activeButton}
+            setActiveButton={setActiveButton}
+            setSelectedCompany={setSelectedCompany}
+            setSelectedStrategyLabel={setSelectedStrategyLabel}
+            setShowVisualData={setShowVisualData}
+          />
         )}
         {activeButton === "RETURNS AND RISK" && (
           <Box>
-            <ReturnsTab />
-            <RisksTab />
+            <ReturnsTab
+              selectedStrategyLabel={selectedStrategyLabel}
+              activeButton={activeButton}
+              setActiveButton={setActiveButton}
+              setSelectedCompany={setSelectedCompany}
+              setSelectedStrategyLabel={setSelectedStrategyLabel}
+              setShowVisualData={setShowVisualData}
+            />
+            <RisksTab
+              selectedStrategyLabel={selectedStrategyLabel}
+              activeButton={activeButton}
+              setActiveButton={setActiveButton}
+              setSelectedCompany={setSelectedCompany}
+              setSelectedStrategyLabel={setSelectedStrategyLabel}
+              setShowVisualData={setShowVisualData}
+            />
             <></>
           </Box>
         )}
-        {activeButton === "HISTORICAL PRICES" && <BackTestTab />}
+        {activeButton === "HISTORICAL PRICES" && (
+          <BackTestTab
+            selectedStrategyLabel={selectedStrategyLabel}
+            setSelectedStrategyLabel={setSelectedStrategyLabel}
+            showVisualData={showVisualData}
+            setShowVisualData={setShowVisualData}
+          />
+        )}
       </Box>
     </>
   );

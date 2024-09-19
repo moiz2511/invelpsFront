@@ -4,10 +4,11 @@ import DonutPieChart from "./charts/DonoutChart";
 import GeoChartComponent from "./charts/GeoCharts";
 import AuthContext from "../../Core/store/auth-context";
 import { useLocation, useNavigate } from "react-router-dom";
-import { Box, Card } from "@mui/material";
+import { Box, Breadcrumbs, Button, Card, Typography } from "@mui/material";
 import Constants from "../../../Constants.json";
 
 const RiskVisualization = () => {
+  const navigate = useNavigate();
   const [perExchangeKPI, setPerExhangeKPI] = useState([]);
   const [perSectorKPI, setPerSectorKPI] = useState([]);
   const [perMarketKPI, setPerMarketKPI] = useState([]);
@@ -110,13 +111,13 @@ const RiskVisualization = () => {
       >
         Go Back
       </Button> */}
-      <text
+      {/* <text
         onClick={() => {
           navigation("/dataanalysis/investorscreeners");
         }}
-        style={{ fontSize: 15, cursor: "pointer" }}
+        style={{ ml: 1, fontSize: 15, cursor: "pointer" }}
       >
-        Invester Screener {">"}{" "}
+        {">"}{" "}
         <span
           style={{
             color: "#427879",
@@ -126,7 +127,25 @@ const RiskVisualization = () => {
         >
           {selectedLabel}
         </span>{" "}
-      </text>
+      </text> */}
+
+      <Breadcrumbs separator={">"} aria-label="breadcrumb" sx={{ ml: 2 }}>
+        <div
+          onClick={() => {
+            navigation("/dataanalysis/investorscreeners");
+          }}
+        >
+          <Typography color="inherit">Invester Screener</Typography>
+        </div>
+
+        <Typography
+          sx={{ color: "#427879", fontWeight: "bold" }}
+          color="inherit"
+        >
+          {selectedLabel}
+        </Typography>
+      </Breadcrumbs>
+
       <Box
         sx={{
           display: "grid",
@@ -148,6 +167,16 @@ const RiskVisualization = () => {
             flexDirection: "column",
           }}
         >
+          <Button
+            onClick={() => navigate("/dataanalysis/investorscreeners")}
+            sx={{
+              alignSelf: "flex-start",
+              backgroundColor: "#407879",
+              color: "rgb(204, 191, 144)",
+            }}
+          >
+            Go Back
+          </Button>
           <text
             style={{
               fontWeight: "bold",

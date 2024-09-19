@@ -13,6 +13,7 @@ import {
   Switch,
 } from "@mui/material";
 
+
 import AuthContext from "../../Core/store/auth-context";
 import { styled } from "@mui/material/styles";
 
@@ -52,7 +53,12 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   },
 }));
 
-const BackTestTab = () => {
+const BackTestTab = ({
+  selectedStrategyLabel,
+  setSelectedStrategyLabel,
+  showVisualData,
+  setShowVisualData,
+}) => {
   let pageLoc = window.location.pathname;
 
   const strategyNames = [
@@ -67,14 +73,13 @@ const BackTestTab = () => {
   const [years, setYears] = useState([]);
   const [bestWorstData, setBestWorstData] = useState([]);
   const [selectedStrategy, setSelectedStrategy] = useState(null);
-  const [showVisualData, setShowVisualData] = useState(false);
+  // const [showVisualData, setShowVisualData] = useState(false);
   const [perExchangeKPI, setPerExhangeKPI] = useState([]);
   const [perSectorKPI, setPerSectorKPI] = useState([]);
   const [perMarketKPI, setPerMarketKPI] = useState([]);
   const [dividendTableData, setDividendTableData] = useState([]);
   const [annualPriceSwitch, setAnnualPriceSwitch] = useState(true);
   const [annualDevidendSwitch, setAnnualDevidendSwitch] = useState(true);
-  const [selectedStrategyLabel, setSelectedStrategyLabel] = useState("");
   const [graphTableData, setGraphTableData] = useState([]);
   const [graphTableDataCopy, setGraphTableDataCopy] = useState([]);
   const [mapsData, setMapsData] = useState([]);
@@ -277,9 +282,11 @@ const BackTestTab = () => {
   }, [selectedStrategy]);
 
   const handleDataVisualization = (strategy) => {
+    console.log(strategy);
     setSelectedStrategy(null);
     setShowVisualData(!showVisualData);
     setSelectedStrategy(strategy.strategy_name_here);
+    // setSelectedStrategyLabel(strategy.strategy_label);
     setSelectedStrategyLabel(strategy.strategy_label);
   };
 
@@ -341,7 +348,10 @@ const BackTestTab = () => {
       {showVisualData ? (
         <>
           <Button
-            onClick={() => setShowVisualData(!showVisualData)}
+            onClick={() => {
+              setShowVisualData(!showVisualData);
+              setSelectedStrategyLabel(null);
+            }}
             sx={{
               alignSelf: "flex-start",
               backgroundColor: "#407879",

@@ -18,7 +18,12 @@ import {
   Tooltip,
   Fade,
   Switch,
+  Breadcrumbs,
 } from "@mui/material";
+
+import { FaBuilding } from "react-icons/fa";
+import AssessmentIcon from "@mui/icons-material/Assessment";
+import TrendingUpIcon from "@mui/icons-material/TrendingUp";
 
 import AuthContext from "../../Core/store/auth-context";
 import { styled } from "@mui/material/styles";
@@ -181,7 +186,13 @@ const sortingFields = [
   { key: "negative_annual_returns", label: "Negative Returns" },
 ];
 
-const ReturnsTab = ({ setSelectedCompany }) => {
+const ReturnsTab = ({
+  setSelectedCompany,
+  activeButton,
+  setActiveButton,
+  showVisualData,
+  setShowVisualData,
+}) => {
   let pageLoc = window.location.pathname;
 
   const strategyNames = [
@@ -190,13 +201,33 @@ const ReturnsTab = ({ setSelectedCompany }) => {
     "Defensive Investor",
   ];
 
+  const buttons = [
+    {
+      id: "OVERVIEW",
+      label: "OVERVIEW",
+      icon: <AssessmentIcon />,
+      component: "OverviewContent",
+    },
+    {
+      id: "RETURNS AND RISK",
+      label: "RETURNS AND RISK",
+      icon: <TrendingUpIcon />,
+      component: "ReturnsRiskContent",
+    },
+    {
+      id: "HISTORICAL PRICES",
+      label: "HISTORICAL PRICES",
+      icon: <FaBuilding />,
+      component: "HistoricalPlacesContent",
+    },
+  ];
   const authCtx = useContext(AuthContext);
   const [authToken, setAuthToken] = useState(null);
   const [strategyData, setStrategyData] = useState([]);
   const [years, setYears] = useState([]);
   const [bestWorstData, setBestWorstData] = useState([]);
   const [selectedStrategy, setSelectedStrategy] = useState(null);
-  const [showVisualData, setShowVisualData] = useState(false);
+  // const [showVisualData, setShowVisualData] = useState(false);
   const [selectedLabel, setSelectedLabel] = useState("");
   const [bestWorstDataCopy, setBestWorstDataCopy] = useState([]);
   const [selectedSort, setSelectedSort] = useState(0);
@@ -214,6 +245,7 @@ const ReturnsTab = ({ setSelectedCompany }) => {
   const [strategiesCopy, setStrategiesCopy] = useState([]);
   const [chartSwitch, setChartSwitch] = useState(true);
   const [mapsData, setMapsData] = useState([]);
+  // const [activeButton, setActiveButton] = useState("OVERVIEW");
 
   const handleChartSwitchChange = () => {
     setChartSwitch(!chartSwitch);
@@ -521,7 +553,7 @@ const ReturnsTab = ({ setSelectedCompany }) => {
         overflowY: "auto",
       }}
     >
-      <Box ml={2} mb={4}>
+      {/* <Box ml={2} mb={4}>
         <Typography color={"rgba(0, 0, 0, 0.6)"}>
           <span
             onClick={() => {
@@ -535,6 +567,55 @@ const ReturnsTab = ({ setSelectedCompany }) => {
           </span>{" "}
           / {selectedLabel}
         </Typography>
+      </Box> */}
+
+      <Breadcrumbs separator={">"} aria-label="breadcrumb" sx={{ ml: 2 }}>
+        <Typography
+          onClick={() => {
+            setShowVisualData(false);
+            setIsSwitch2(false);
+          }}
+          style={{ cursor: "pointer" }}
+          color="inherit"
+        >
+          Strategies Overview
+        </Typography>
+
+        <Typography
+          sx={{ color: "#427879", fontWeight: "bold" }}
+          color="inherit"
+        >
+          {activeButton}
+        </Typography>
+        <Typography
+          sx={{ color: "#427879", fontWeight: "bold" }}
+          color="inherit"
+        >
+          {selectedLabel}
+        </Typography>
+      </Breadcrumbs>
+
+      <Box padding={2} display={"flex"} gap={3}>
+        {buttons.map((button) => (
+          <Button
+            key={button.id}
+            sx={{
+              backgroundColor: activeButton === button.id ? "#427879" : "white",
+              color: activeButton === button.id ? "white" : "black",
+              "&:hover": {
+                backgroundColor:
+                  activeButton === button.id ? "#427879" : "#427879",
+                color: activeButton === button.id ? "white" : "white",
+              },
+            }}
+            startIcon={button.icon}
+            onClick={() => {
+              setActiveButton(button.id);
+            }}
+          >
+            {button.label}
+          </Button>
+        ))}
       </Box>
       <Button
         onClick={() => {
@@ -547,6 +628,7 @@ const ReturnsTab = ({ setSelectedCompany }) => {
           color: "rgb(204, 191, 144)",
           ml: 2,
           mb: 2,
+          mt: 3,
         }}
       >
         Back
