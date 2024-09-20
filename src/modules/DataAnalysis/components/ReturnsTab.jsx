@@ -44,7 +44,6 @@ import { CgSpinner } from "react-icons/cg";
 import GeoChartComponent from "./charts/GeoCharts";
 import HorizontalBarChart from "./charts/HorizontalBar";
 import DonutPieChart from "./charts/DonoutChart";
-import { Flex } from "@chakra-ui/react";
 
 const headYears = [
   2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023,
