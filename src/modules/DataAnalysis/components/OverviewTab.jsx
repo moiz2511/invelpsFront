@@ -682,8 +682,11 @@ const OverviewTab = ({
                 }}
                 startIcon={button.icon}
                 onClick={() => {
+                  setIsSwitch2(false);
                   setActiveButton(button.id);
-                  setShowVisualData(false);
+                  setSelectedStrategy(null);
+
+                  // setShowVisualData(false);
                 }}
               >
                 {button.label}

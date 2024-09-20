@@ -464,9 +464,11 @@ const ReturnsTab = ({
   }, [selectedStrategy, currentPage, currentRowsPerPage]);
 
   const handleDataVisualization = (strategy) => {
+    console.log(strategy);
     setShowVisualData(!showVisualData);
     setIsSwitch2(true);
-    setSelectedStrategy(strategy.strategy_name_here);
+    // setSelectedStrategy(strategy.strategy_name_here);
+    setSelectedStrategy(strategy);
     setSelectedLabel(strategy.strategy_label);
   };
 
@@ -611,6 +613,7 @@ const ReturnsTab = ({
             startIcon={button.icon}
             onClick={() => {
               setActiveButton(button.id);
+              setIsSwitch2(true);
             }}
           >
             {button.label}
@@ -1083,7 +1086,10 @@ const ReturnsTab = ({
                     strategyData?.map((strategy, index) => (
                       <StyledTableRow hover key={index} sx={{ ml: 3 }}>
                         <StyledTableCell
-                          onClick={() => handleDataVisualization(strategy)}
+                          onClick={() => {
+                            handleDataVisualization(strategy);
+                            setSelectedSort(2);
+                          }}
                           sx={{
                             cursor: "pointer",
                             ":hover": {
