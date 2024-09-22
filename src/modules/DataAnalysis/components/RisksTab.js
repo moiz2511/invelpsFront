@@ -469,7 +469,7 @@ const RisksTab = ({
                           }}
                         >
                           {" "}
-                          {data.startegy_label}{" "}
+                          {data.startegy_label}
                         </StyledTableCell>
                         <StyledTableCell
                           sx={{

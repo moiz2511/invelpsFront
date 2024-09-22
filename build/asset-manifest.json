@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "/static/css/main.7fe60445.css",
-    "main.js": "/static/js/main.0cf90d7c.js",
+    "main.js": "/static/js/main.0dd12eea.js",
     "static/media/Our solutions.jpg": "/static/media/Our solutions.c5ade12227818ee23218.jpg",
     "static/media/Our mission.jpg": "/static/media/Our mission.06b9c712356d5e956612.jpg",
     "static/media/Invelps screen.jpg": "/static/media/Invelps screen.7835678002f0c9d67daf.jpg",
@@ -12,10 +12,10 @@
     "static/media/filtering.png": "/static/media/filtering.d3a12022969582b0814d.png",
     "index.html": "/index.html",
     "main.7fe60445.css.map": "/static/css/main.7fe60445.css.map",
-    "main.0cf90d7c.js.map": "/static/js/main.0cf90d7c.js.map"
+    "main.0dd12eea.js.map": "/static/js/main.0dd12eea.js.map"
   },
   "entrypoints": [
     "static/css/main.7fe60445.css",
-    "static/js/main.0cf90d7c.js"
+    "static/js/main.0dd12eea.js"
   ]
 }

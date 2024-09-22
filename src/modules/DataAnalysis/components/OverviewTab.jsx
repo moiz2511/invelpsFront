@@ -1240,6 +1240,7 @@ const OverviewTab = ({
                           }}
                         >
                           {" "}
+                          {/* strategy button */}
                           {data.strategy_label}
                         </StyledTableCell>
                         <StyledTableCell

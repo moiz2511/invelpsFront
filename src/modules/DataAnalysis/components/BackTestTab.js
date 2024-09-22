@@ -13,7 +13,6 @@ import {
   Switch,
 } from "@mui/material";
 
-
 import AuthContext from "../../Core/store/auth-context";
 import { styled } from "@mui/material/styles";
 

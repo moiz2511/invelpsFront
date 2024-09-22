@@ -1097,6 +1097,7 @@ const ReturnsTab = ({
                             },
                           }}
                         >
+                          {/* strategy button */}
                           {strategy?.strategy_label}
                         </StyledTableCell>
                         <StyledTableCell>
