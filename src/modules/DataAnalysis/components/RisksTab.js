@@ -25,8 +25,10 @@ import GeoChartComponent from "./charts/GeoCharts";
 import HorizontalBarChart from "./charts/HorizontalBar";
 import DonutPieChart from "./charts/DonoutChart";
 import { useNavigate } from "react-router-dom";
-
-
+import { FaBuilding } from "react-icons/fa";
+import AssessmentIcon from "@mui/icons-material/Assessment";
+import TrendingUpIcon from "@mui/icons-material/TrendingUp";
+import Constants from "../../../Constants.json";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -59,7 +61,33 @@ const headCategories = [
   // { key: "duration", label: "Duration" },
 ];
 
-const RisksTab = () => {
+const buttons = [
+  {
+    id: "OVERVIEW",
+    label: "OVERVIEW",
+    icon: <AssessmentIcon />,
+    component: "OverviewContent",
+  },
+  {
+    id: "RETURNS AND RISK",
+    label: "RETURNS AND RISK",
+    icon: <TrendingUpIcon />,
+    component: "ReturnsRiskContent",
+  },
+  {
+    id: "HISTORICAL PRICES",
+    label: "HISTORICAL PRICES",
+    icon: <FaBuilding />,
+    component: "HistoricalPlacesContent",
+  },
+];
+const RisksTab = ({
+  showVisualData,
+  setShowVisualData,
+  setSelectedCompany,
+  activeButton,
+  setActiveButton,
+}) => {
   let pageLoc = window.location.pathname;
 
   const authCtx = useContext(AuthContext);
@@ -68,14 +96,14 @@ const RisksTab = () => {
   const [riskReturnCopy, setRiskReturnCopy] = useState([]);
 
   const [selectedStrategy, setSelectedStrategy] = useState(null);
-  const [showVisualData, setShowVisualData] = useState(false);
+  // const [showVisualData, setShowVisualData] = useState(false);
   const [perExchangeKPI, setPerExhangeKPI] = useState([]);
   const [perSectorKPI, setPerSectorKPI] = useState([]);
   const [perMarketKPI, setPerMarketKPI] = useState([]);
 
   const [selectedSort, setSelectedSort] = useState(0);
   const [selectedField, setSelectedField] = useState(null);
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   useEffect(() => {
     const CheckUserSession = () => {
@@ -90,8 +118,8 @@ const RisksTab = () => {
     const fetchStrategyRiskAdjustedReturns = async () => {
       try {
         const response = await fetch(
-          `
-              https://api.invelps.com/api/strategies/getStrategiesRiskAdjustedReturns`,
+          Constants.BACKEND_SERVER_BASE_URL +
+            "/strategies/getStrategiesRiskAdjustedReturns",
           {
             method: "POST",
             headers: {
@@ -121,7 +149,6 @@ const RisksTab = () => {
 
   console.log(riskReturnCopy);
 
-
   // useEffect(() => {
   //   if (selectedStrategy !== null) {
   //     fetchGraphData();
@@ -131,14 +158,13 @@ const RisksTab = () => {
   const handleDataVisualization = (strategy) => {
     setShowVisualData(!showVisualData);
     setSelectedStrategy(strategy.name);
-    console.log("visual",strategy);
+    console.log("visual", strategy);
     navigate("/riskVisualization", {
       state: {
         selectedStrategy: strategy.name,
         selectedStrategyLabel: strategy.startegy_label,
       },
     });
-    
   };
 
   const handleSortingFieldChange = (field) => {
@@ -196,15 +222,6 @@ const RisksTab = () => {
 
   return (
     <>
-      {/* {showVisualData ? (
-        <Box ml={2} mb={4}>
-          <Typography color={"rgba(0, 0, 0, 0.6)"}>
-            Strategies Overview / {selectedStrategy.name}
-          </Typography>
-        </Box>
-      ) : (
-        <PageInfoBreadCrumbs data={pageLoc} />
-      )} */}
       {showVisualData ? (
         <>
           {/* <Button
@@ -282,34 +299,42 @@ const RisksTab = () => {
           </Box> */}
         </>
       ) : (
-        <Card sx={{ m: 1, position: "relative", fontFamily: "Montserrat" }}>
-          <Box p={3}>
-            <Box spacing={1} sx={{ mt: 0.5 }}>
-              <text
-                style={{
-                  padding: "5px",
-                  fontSize: "27px",
-                  fontWeight: "bold",
+        <>
+          <Card
+            sx={{
+              m: 1,
+              position: "relative",
+              fontFamily: "Montserrat",
+              width: "50%",
+            }}
+          >
+            <Box p={3}>
+              <Box spacing={1} sx={{ mt: 0.5 }}>
+                <text
+                  style={{
+                    padding: "5px",
+                    fontSize: "27px",
+                    fontWeight: "bold",
+                  }}
+                >
+                  Risk Adjusted Return ({riskReturnCopy[0]?.duration} years)
+                </text>
+              </Box>
+
+              <Box
+                sx={{
+                  display: "flex",
+                  flexDirection: "row",
+                  gap: 3,
+                  marginTop: 6,
                 }}
               >
-                Risk Adjusted Return ({riskReturnCopy[0]?.duration} years)
-              </text>
+                <ScatterChart chartId="scatterChart" data={riskReturn} />
+              </Box>
             </Box>
 
-            <Box
-              sx={{
-                display: "flex",
-                flexDirection: "row",
-                gap: 3,
-                marginTop: 6,
-              }}
-            >
-              <ScatterChart chartId="scatterChart" data={riskReturn} />
-            </Box>
-          </Box>
-
-          <TableContainer>
-            {/* <Box
+            <TableContainer>
+              {/* <Box
               sx={{
                 backgroundColor: "black",
                 padding: 3,
@@ -323,11 +348,11 @@ const RisksTab = () => {
                 Strategy Models{" "}
               </text>
             </Box> */}
-            <Table
-              sx={{ minWidth: "100%", maxWidth: "100%", mt: 1 }}
-              size="medium"
-            >
-              {/* <TableHead>
+              <Table
+                sx={{ minWidth: "100%", maxWidth: "100%", mt: 1 }}
+                size="medium"
+              >
+                {/* <TableHead>
                 <TableRow>
                   <TableCell
                     sx={{
@@ -353,24 +378,24 @@ const RisksTab = () => {
                   </TableCell>
                 </TableRow>
               </TableHead> */}
-              <TableHead>
-                <TableRow
-                  sx={{
-                    backgroundColor: "#e7ecef",
-                    color: "#272727",
-                    fontSize: 14,
-                  }}
-                >
-                  {/* <TableCell sx={{ fontFamily: "Montserrat" }}>
+                <TableHead>
+                  <TableRow
+                    sx={{
+                      backgroundColor: "#e7ecef",
+                      color: "#272727",
+                      fontSize: 14,
+                    }}
+                  >
+                    {/* <TableCell sx={{ fontFamily: "Montserrat" }}>
                   Investor
                 </TableCell> */}
-                  {headCategories.map((category, index) => (
-                    <TableCell key={index} sx={{ fontFamily: "Montserrat" }}>
-                      <Box
-                        sx={{ display: "flex", alignItems: "center", gap: 2 }}
-                      >
-                        <span>{category.label}</span>
-                        {/* {category.key.trim() !== "" &&
+                    {headCategories.map((category, index) => (
+                      <TableCell key={index} sx={{ fontFamily: "Montserrat" }}>
+                        <Box
+                          sx={{ display: "flex", alignItems: "center", gap: 2 }}
+                        >
+                          <span>{category.label}</span>
+                          {/* {category.key.trim() !== "" &&
                           (selectedSort === 1 ? (
                             <button
                               onClick={() => {
@@ -412,10 +437,10 @@ const RisksTab = () => {
                               <IoArrowUp />
                             </button>
                           ))} */}
-                      </Box>
-                    </TableCell>
-                  ))}
-                  {/* <TableCell sx={{ fontFamily: "Montserrat" }}>
+                        </Box>
+                      </TableCell>
+                    ))}
+                    {/* <TableCell sx={{ fontFamily: "Montserrat" }}>
                     Strategy
                   </TableCell>
                   <TableCell sx={{ fontFamily: "Montserrat" }}>
@@ -427,42 +452,42 @@ const RisksTab = () => {
                   <TableCell sx={{ fontFamily: "Montserrat" }}>
                     Duration
                   </TableCell> */}
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {riskReturnCopy.map((data, index) => {
-                  return (
-                    <StyledTableRow hover key={index} sx={{ ml: 3 }}>
-                      <StyledTableCell
-                        onClick={() => handleDataVisualization(data)}
-                        sx={{
-                          cursor: "pointer",
-                          ":hover": {
-                            textDecoration: "underline",
-                            color: "blue",
-                          },
-                        }}
-                      >
-                        {" "}
-                        {data.startegy_label}{" "}
-                      </StyledTableCell>
-                      <StyledTableCell
-                        sx={{
-                          color: data.annualized_return > 0 ? "green" : "red",
-                        }}
-                      >
-                        {" "}
-                        {data.annualized_return}{" "}
-                      </StyledTableCell>
-                      <StyledTableCell
-                        sx={{
-                          color: data.stdev_return > 0 ? "green" : "red",
-                        }}
-                      >
-                        {" "}
-                        {data.stdev_return}{" "}
-                      </StyledTableCell>
-                      {/* <StyledTableCell
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {riskReturnCopy.map((data, index) => {
+                    return (
+                      <StyledTableRow hover key={index} sx={{ ml: 3 }}>
+                        <StyledTableCell
+                          onClick={() => handleDataVisualization(data)}
+                          sx={{
+                            cursor: "pointer",
+                            ":hover": {
+                              textDecoration: "underline",
+                              color: "blue",
+                            },
+                          }}
+                        >
+                          {" "}
+                          {data.startegy_label}
+                        </StyledTableCell>
+                        <StyledTableCell
+                          sx={{
+                            color: data.annualized_return > 0 ? "green" : "red",
+                          }}
+                        >
+                          {" "}
+                          {data.annualized_return}{" "}
+                        </StyledTableCell>
+                        <StyledTableCell
+                          sx={{
+                            color: data.stdev_return > 0 ? "green" : "red",
+                          }}
+                        >
+                          {" "}
+                          {data.stdev_return}{" "}
+                        </StyledTableCell>
+                        {/* <StyledTableCell
                         sx={{
                           color: data.duration > 0 ? "green" : "red",
                         }}
@@ -470,13 +495,14 @@ const RisksTab = () => {
                         {" "}
                         {data.duration}{" "}
                       </StyledTableCell> */}
-                    </StyledTableRow>
-                  );
-                })}
-              </TableBody>
-            </Table>
-          </TableContainer>
-        </Card>
+                      </StyledTableRow>
+                    );
+                  })}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          </Card>
+        </>
       )}
     </>
   );

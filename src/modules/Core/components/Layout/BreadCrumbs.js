@@ -10,8 +10,8 @@ import {
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 
-const BreadcrumbsComponent = ({parent,child }) => {
-const navigate = useNavigate()
+const BreadcrumbsComponent = ({ parent, subParent, child }) => {
+  const navigate = useNavigate();
   return (
     <React.Fragment>
       <Card elevation={0} sx={{ ml: 1, mb: 1 }}>
@@ -26,10 +26,18 @@ const navigate = useNavigate()
           >
             {child}
           </Typography>
+          {subParent && (
+            <Typography
+              sx={{ color: "#427879", fontWeight: "bold" }}
+              color="inherit"
+            >
+              {subParent}
+            </Typography>
+          )}
         </Breadcrumbs>
       </Card>
     </React.Fragment>
   );
 };
 
-export default  BreadcrumbsComponent 
+export default BreadcrumbsComponent;

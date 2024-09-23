@@ -26,6 +26,7 @@ import { IoArrowDown, IoArrowUp } from "react-icons/io5";
 import HorizontalBarChart from "./charts/HorizontalBar";
 import DonutPieChart from "./charts/DonoutChart";
 import GeoChartComponent from "./charts/GeoCharts";
+import Constants from "../../../Constants.json";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -51,7 +52,12 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   },
 }));
 
-const BackTestTab = () => {
+const BackTestTab = ({
+  selectedStrategyLabel,
+  setSelectedStrategyLabel,
+  showVisualData,
+  setShowVisualData,
+}) => {
   let pageLoc = window.location.pathname;
 
   const strategyNames = [
@@ -66,14 +72,13 @@ const BackTestTab = () => {
   const [years, setYears] = useState([]);
   const [bestWorstData, setBestWorstData] = useState([]);
   const [selectedStrategy, setSelectedStrategy] = useState(null);
-  const [showVisualData, setShowVisualData] = useState(false);
+  // const [showVisualData, setShowVisualData] = useState(false);
   const [perExchangeKPI, setPerExhangeKPI] = useState([]);
   const [perSectorKPI, setPerSectorKPI] = useState([]);
   const [perMarketKPI, setPerMarketKPI] = useState([]);
   const [dividendTableData, setDividendTableData] = useState([]);
   const [annualPriceSwitch, setAnnualPriceSwitch] = useState(true);
   const [annualDevidendSwitch, setAnnualDevidendSwitch] = useState(true);
-  const [selectedStrategyLabel, setSelectedStrategyLabel] = useState("");
   const [graphTableData, setGraphTableData] = useState([]);
   const [graphTableDataCopy, setGraphTableDataCopy] = useState([]);
   const [mapsData, setMapsData] = useState([]);
@@ -100,7 +105,8 @@ const BackTestTab = () => {
     const fetchStrategyAnnualPerformance = async () => {
       try {
         const response = await fetch(
-          `https://api.invelps.com/api/strategies/getStrategiesAnnualPerformance`,
+          Constants.BACKEND_SERVER_BASE_URL +
+            "/strategies/getStrategiesAnnualPerformance",
           {
             method: "POST",
             headers: {
@@ -241,8 +247,8 @@ const BackTestTab = () => {
         strategy_name: selectedStrategy,
       };
       const response = await fetch(
-        `
-            https://api.invelps.com/api/strategies/getStrategyCountryData`,
+        Constants.BACKEND_SERVER_BASE_URL +
+          "/strategies/getStrategyCountryData",
         {
           method: "POST",
           headers: {
@@ -270,14 +276,16 @@ const BackTestTab = () => {
     if (selectedStrategy !== null) {
       fetchGraphData();
       fetchDividendTableData();
-      fetchMapsData()
+      fetchMapsData();
     }
   }, [selectedStrategy]);
 
   const handleDataVisualization = (strategy) => {
+    console.log(strategy);
     setSelectedStrategy(null);
     setShowVisualData(!showVisualData);
     setSelectedStrategy(strategy.strategy_name_here);
+    // setSelectedStrategyLabel(strategy.strategy_label);
     setSelectedStrategyLabel(strategy.strategy_label);
   };
 
@@ -339,7 +347,10 @@ const BackTestTab = () => {
       {showVisualData ? (
         <>
           <Button
-            onClick={() => setShowVisualData(!showVisualData)}
+            onClick={() => {
+              setShowVisualData(!showVisualData);
+              setSelectedStrategyLabel(null);
+            }}
             sx={{
               alignSelf: "flex-start",
               backgroundColor: "#407879",

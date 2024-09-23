@@ -51,10 +51,11 @@ import MarketDataChart from "./charts/AreaChart";
 import MarketAnalysis from "../MarketAnalysis";
 import Landescape from "./Landescape";
 import BreadcrumbsComponent from "../../Core/components/Layout/BreadCrumbs";
-import AssessmentIcon from '@mui/icons-material/Assessment'; // Icon for OVERVIEW
-import TrendingUpIcon from '@mui/icons-material/TrendingUp'; // Icon for RETURNS AND RISKS
-import PlaceIcon from '@mui/icons-material/Place'; // Icon for HISTORICAL PLACES
+import AssessmentIcon from "@mui/icons-material/Assessment"; // Icon for OVERVIEW
+import TrendingUpIcon from "@mui/icons-material/TrendingUp"; // Icon for RETURNS AND RISKS
+import PlaceIcon from "@mui/icons-material/Place"; // Icon for HISTORICAL PLACES
 import NavigationWithBreadcrumbs from "./Navigation";
+import Constants from "../../../Constants.json";
 
 const headCells = {
   data: [

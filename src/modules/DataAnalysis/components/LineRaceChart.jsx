@@ -18,7 +18,7 @@ const LineRaceChart = ({ chartId, chartData, years, type, chartSwitch }) => {
         const datasetId = "dataset_" + index;
         const strategyName = strategyData.strategy_label;
         const strategyYears = Object.keys(strategyData).filter(
-          (key) => key !== "strategy_name_here" 
+          (key) => key !== "strategy_name_here"
         );
 
         const filteredData = log
@@ -136,7 +136,7 @@ const LineRaceChart = ({ chartId, chartData, years, type, chartSwitch }) => {
 
   return (
     <>
-      <div id={chartId} style={{ width: "100%", height: "400px"  }} />
+      <div id={chartId} style={{ width: "100%", height: "400px" }} />
       {/* <Box>
         <Button
           variant="outlined"
