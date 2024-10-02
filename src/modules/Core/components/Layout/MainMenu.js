@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Button, Menu, MenuItem, Link as MuiLink } from "@mui/material";
+import { Box, Button, Menu, MenuItem, Link as MuiLink } from "@mui/material";
 
 function NavigationMenu({ mainNavData }) {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -19,34 +19,43 @@ function NavigationMenu({ mainNavData }) {
     <>
       {mainNavData.map((item) => (
         <React.Fragment key={item.id}>
-          <Button
-            color="inherit"
-            onClick={(e) => handleMenuOpen(e, item.id)}
-            sx={{ color: "#fff", textTransform: "none" }}
+          <Box
+            onMouseEnter={(e) => handleMenuOpen(e, item.id)}
+            onMouseLeave={handleMenuClose}
           >
-            {item.label}
-          </Button>
-          <Menu
-            id={`menu-${item.id}`}
-            anchorEl={anchorEl}
-            open={Boolean(anchorEl && currentMenu === item.id)}
-            onClose={handleMenuClose}
-            MenuListProps={{
-              "aria-labelledby": `button-${item.id}`,
-            }}
-          >
-            {item.children?.map((child) => (
-              <MenuItem key={child.id} onClick={handleMenuClose}>
-                <MuiLink
-                  href={child.href || "/#"}
-                  underline="none"
-                  color="inherit"
-                >
-                  {child.label}
-                </MuiLink>
-              </MenuItem>
-            ))}
-          </Menu>
+            <Button
+              color="inherit"
+              sx={{
+                color: "#fff",
+                textTransform: "none",
+              }}
+            >
+              {item.label}
+            </Button>
+            <Menu
+              id={`menu-${item.id}`}
+              anchorEl={anchorEl}
+              open={Boolean(anchorEl && currentMenu === item.id)}
+              onClose={handleMenuClose}
+              MenuListProps={{
+                "aria-labelledby": `button-${item.id}`,
+                onMouseEnter: () => setCurrentMenu(item.id),
+                onMouseLeave: handleMenuClose,
+              }}
+            >
+              {item.children?.map((child) => (
+                <MenuItem key={child.id} onClick={handleMenuClose}>
+                  <MuiLink
+                    href={child.href || "/#"}
+                    underline="none"
+                    color="inherit"
+                  >
+                    {child.label}
+                  </MuiLink>
+                </MenuItem>
+              ))}
+            </Menu>
+          </Box>
         </React.Fragment>
       ))}
     </>

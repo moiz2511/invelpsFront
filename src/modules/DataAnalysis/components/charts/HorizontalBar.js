@@ -26,7 +26,7 @@ const COLORS = [
   "#FFA600",
 ];
 
-const HorizontalBarChart = ({ data }) => {
+const HorizontalBarChart = ({ data, onClickBar }) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
@@ -52,7 +52,11 @@ const HorizontalBarChart = ({ data }) => {
           />
           <Tooltip />
           <Legend />
-          <Bar dataKey="total_count" fill="#8884d8">
+          <Bar
+            dataKey="total_count"
+            fill="#8884d8"
+            onClick={(entry) => onClickBar(entry.sector)}
+          >
             {data.map((entry, index) => (
               <Cell
                 key={`cell-${index}`}

@@ -11,11 +11,17 @@ import BackTestTab from "./BackTestTab";
 import ReturnsTab from "./ReturnsTab";
 import { FaBuilding } from "react-icons/fa";
 import { useBreadcrumbs } from "../../Core/store/BreadcrumbsContext";
+import { useSwitch } from "../../../utils/context/SwitchContext";
 
 const NavigationWithBreadcrumbs = ({ setSelectedCompany }) => {
   const [activeButton, setActiveButton] = useState("OVERVIEW");
   const [selectedStrategyLabel, setSelectedStrategyLabel] = useState(null);
   const [showVisualData, setShowVisualData] = useState(false);
+  const [tab2, setTab2] = useState("");
+  const { isSwitch2, setIsSwitch2 } = useSwitch();
+
+  const [child, setChild] = useState("");
+  const [subParent, setSubParent] = useState("");
 
   const buttons = [
     {
@@ -38,12 +44,21 @@ const NavigationWithBreadcrumbs = ({ setSelectedCompany }) => {
     },
   ];
 
+  console.log(activeButton);
+  console.log(selectedStrategyLabel);
+  console.log(showVisualData);
+  console.log(tab2);
+  console.log(isSwitch2);
+
   return (
     <>
       <BreadcrumbsComponent
         parent={"Investor Screener"}
         subParent={selectedStrategyLabel}
         child={activeButton}
+        setSelectedStrategyLabel={setSelectedStrategyLabel}
+        setTab2={setTab2}
+        setActiveButton={setActiveButton}
       ></BreadcrumbsComponent>
 
       <Box padding={2} display={"flex"} gap={3}>
@@ -62,10 +77,18 @@ const NavigationWithBreadcrumbs = ({ setSelectedCompany }) => {
             startIcon={button.icon}
             onClick={() => {
               setActiveButton(button.id);
+              setIsSwitch2(false);
+              setTab2("");
               if (selectedStrategyLabel) {
                 setSelectedStrategyLabel(null);
-                setShowVisualData(!showVisualData);
+                setShowVisualData(false);
               }
+
+              // if (selectedStrategyLabel) {
+              //   setSelectedStrategyLabel(null);
+              //   setShowVisualData(!showVisualData);
+              //   setIsSwitch2(false);
+              // }
             }}
           >
             {button.label}
@@ -85,23 +108,33 @@ const NavigationWithBreadcrumbs = ({ setSelectedCompany }) => {
         )}
         {activeButton === "RETURNS AND RISK" && (
           <Box>
-            <ReturnsTab
-              selectedStrategyLabel={selectedStrategyLabel}
-              activeButton={activeButton}
-              setActiveButton={setActiveButton}
-              setSelectedCompany={setSelectedCompany}
-              setSelectedStrategyLabel={setSelectedStrategyLabel}
-              setShowVisualData={setShowVisualData}
-            />
-            <RisksTab
-              selectedStrategyLabel={selectedStrategyLabel}
-              activeButton={activeButton}
-              setActiveButton={setActiveButton}
-              setSelectedCompany={setSelectedCompany}
-              setSelectedStrategyLabel={setSelectedStrategyLabel}
-              setShowVisualData={setShowVisualData}
-            />
-            <></>
+            {(tab2 === "" || tab2 === "returns") && (
+              <ReturnsTab
+                selectedStrategyLabel={selectedStrategyLabel}
+                activeButton={activeButton}
+                setActiveButton={setActiveButton}
+                setSelectedCompany={setSelectedCompany}
+                setSelectedStrategyLabel={setSelectedStrategyLabel}
+                setShowVisualData={setShowVisualData}
+                setTab2={setTab2}
+                tab2={tab2}
+                showVisualData={showVisualData}
+              />
+            )}
+
+            {(tab2 === "" || tab2 === "risks") && (
+              <RisksTab
+                selectedStrategyLabel={selectedStrategyLabel}
+                activeButton={activeButton}
+                setActiveButton={setActiveButton}
+                setSelectedCompany={setSelectedCompany}
+                setSelectedStrategyLabel={setSelectedStrategyLabel}
+                setShowVisualData={setShowVisualData}
+                setTab2={setTab2}
+                tab2={tab2}
+                showVisualData={showVisualData}
+              />
+            )}
           </Box>
         )}
         {activeButton === "HISTORICAL PRICES" && (

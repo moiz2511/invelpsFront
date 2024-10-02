@@ -9,7 +9,14 @@ import Logo from "../../../../assets/logos/Original.svg";
 
 const Footer = () => {
   return (
-    <Box sx={{ bgcolor: "#427879", color: "white", p: 3 }}>
+    <Box
+      sx={{
+        height: "full",
+        bgcolor: "#427879",
+        color: "white",
+        p: 3,
+      }}
+    >
       <Container maxWidth="lg">
         <Grid container spacing={5}>
           <Grid item xs={12} sm={4}>

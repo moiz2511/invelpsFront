@@ -22,9 +22,15 @@ const Layout = (props) => {
   // };
 
   return (
-    <div >
+    <div
+      style={{
+        minHeight: "100dvh",
+        display: "flex",
+        flexDirection: "column",
+      }}
+    >
       <MainNavigation />
-      <main >{props.children}</main>
+      <main style={{ flex: 1 }}>{props.children}</main>
       {shouldShowFooter() && <Footer />}
     </div>
   );

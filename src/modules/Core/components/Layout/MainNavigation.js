@@ -1,214 +1,224 @@
-import React, { useEffect, useContext } from 'react';
-import AppBar from '@mui/material/AppBar';
-import Box from '@mui/material/Box';
-import Toolbar from '@mui/material/Toolbar';
-import IconButton from '@mui/material/IconButton';
-import MenuIcon from '@mui/icons-material/Menu';
-import Avatar from '@mui/material/Avatar';
-import Button from '@mui/material/Button';
-import Tooltip from '@mui/material/Tooltip';
-import { Link as RouterLink ,useNavigate} from 'react-router-dom';
-import Drawer from '@mui/material/Drawer';
-import List from '@mui/material/List';
-import ListItemText from '@mui/material/ListItemText';
+import React, { useEffect, useContext } from "react";
+import AppBar from "@mui/material/AppBar";
+import Box from "@mui/material/Box";
+import Toolbar from "@mui/material/Toolbar";
+import IconButton from "@mui/material/IconButton";
+import MenuIcon from "@mui/icons-material/Menu";
+import Avatar from "@mui/material/Avatar";
+import Button from "@mui/material/Button";
+import Tooltip from "@mui/material/Tooltip";
+import { Link as RouterLink, useNavigate } from "react-router-dom";
+import Drawer from "@mui/material/Drawer";
+import List from "@mui/material/List";
+import ListItemText from "@mui/material/ListItemText";
 import ListItemButton, {
   listItemButtonClasses,
-} from '@mui/material/ListItemButton';
-import Collapse from '@mui/material/Collapse';
-import ExpandLess from '@mui/icons-material/ExpandLess';
-import KeyboardArrowRight from '@mui/icons-material/KeyboardArrowRight';
-import { styled } from '@mui/material/styles';
-import { useLocation } from 'react-router';
-import ColorConstants from '../../constants/ColorConstants.json';
-import { ButtonGroup, Container, TextField } from '@mui/material';
-import AuthContext from '../../store/auth-context';
-import Logo from '../../../../assets/logos/Original.svg';
+} from "@mui/material/ListItemButton";
+import Collapse from "@mui/material/Collapse";
+import ExpandLess from "@mui/icons-material/ExpandLess";
+import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
+import { styled } from "@mui/material/styles";
+import { useLocation } from "react-router";
+import ColorConstants from "../../constants/ColorConstants.json";
+import { ButtonGroup, Container, TextField } from "@mui/material";
+import AuthContext from "../../store/auth-context";
+import Logo from "../../../../assets/logos/Original.svg";
 
-import '../../../../assets/styles/Navbar.css';
-import NavigationMenu from './MainMenu';
-import SearchInput from './SearchComponent';
-
+import "../../../../assets/styles/Navbar.css";
+import NavigationMenu from "./MainMenu";
+import SearchInput from "./SearchComponent";
 
 const pages = [
-  { label: 'Home', link: '/#home' },
-  { label: 'Solutions', link: '/#solutions' },
-  { label: 'Applications', link: '/#applications' },
-  { label: 'About us', link: '/#aboutus' },
-  { label: 'Contact', link: '/contact' },
-  { label: 'Profile', link: '/profile/dashboard' },
+  { label: "Home", link: "/#home" },
+  { label: "Solutions", link: "/#solutions" },
+  { label: "Applications", link: "/#applications" },
+  { label: "About us", link: "/#aboutus" },
+  { label: "Contact", link: "/contact" },
+  { label: "Profile", link: "/profile/dashboard" },
 ];
 
 const StyledListItemButton = styled(ListItemButton)(() => ({
   [`&.${listItemButtonClasses.selected}`]: {
-    backgroundColor: '#015d81',
+    backgroundColor: "#015d81",
   },
 }));
 
-const Offset = styled('div')(({ theme }) => theme.mixins.toolbar);
-const mainNavData =[
+const Offset = styled("div")(({ theme }) => theme.mixins.toolbar);
+const mainNavData = [
   {
-    id:1,
-    label:'Financial Plan',
-   
-    children :[
+    id: 1,
+    label: "Financial Plan",
+
+    children: [
       {
-        id:1,
-        label:'Define your goals',
-        href:''
-      },{
-        id:2,
-        label:'Setup your portfolio',
-        href:''
-      },{
-        id:3,
-        label:'Apply Strategy',
-        href:''
-      },{
-        id:4,
-        label:'Monitor your portfolio'
-      }
-    ]
-  },
-  {
-    id:2,
-    label:'Research',
-    children:[
-      {
-        id:5,
-        label:'Investors',
-        href:''
-      },{
-        id:6,
-        label:'Market',
-        href:''
+        id: 1,
+        label: "Define your goals",
+        href: "",
       },
       {
-        id:7,
-        label:'Screener',
-        href:''
-      }
-    ]
-  },{
-    id:3,
-    label:'API Tools',
-    children:[
+        id: 2,
+        label: "Setup your portfolio",
+        href: "",
+      },
       {
-        id:8,
-        label:'Profile',
-        href:''
-      },{
-        id:9,
-        label:'Financials',
-        href:''
-      },{
-        id:10,
-        label:'Key Metrics and Ratios',
-        href:''
-      },{
-        id:11,
-        label:'Historical Data',
-        href:''
+        id: 3,
+        label: "Apply Strategy",
+        href: "",
+      },
+      {
+        id: 4,
+        label: "Monitor your portfolio",
       },
     ],
-  },{
-    id:4,
-    label:'Resources',
-    children:[{
-      id:12,
-      label:'Investing'
-    }]
-  }
-]
+  },
+  {
+    id: 2,
+    label: "Research",
+    children: [
+      {
+        id: 5,
+        label: "Investors",
+        href: "",
+      },
+      {
+        id: 6,
+        label: "Market",
+        href: "",
+      },
+      {
+        id: 7,
+        label: "Screener",
+        href: "",
+      },
+    ],
+  },
+  {
+    id: 3,
+    label: "API Tools",
+    children: [
+      {
+        id: 8,
+        label: "Profile",
+        href: "",
+      },
+      {
+        id: 9,
+        label: "Financials",
+        href: "",
+      },
+      {
+        id: 10,
+        label: "Key Metrics and Ratios",
+        href: "",
+      },
+      {
+        id: 11,
+        label: "Historical Data",
+        href: "",
+      },
+    ],
+  },
+  {
+    id: 4,
+    label: "Resources",
+    children: [
+      {
+        id: 12,
+        label: "Investing",
+      },
+    ],
+  },
+];
 const subNavItemsInitialData = [
   {
     id: 1,
     isAdminNav: false,
-    label: 'Analysis framework',
-    pathKey: 'context',
+    label: "Analysis framework",
+    pathKey: "context",
     showSubItems: false,
     children: [
       {
         id: 11,
-        label: 'Investing Style',
-        path: '/context/investingstyle',
+        label: "Investing Style",
+        path: "/context/investingstyle",
       },
       {
         id: 12,
-        label: 'Screen Model',
-        path: '/context/screenmodel',
+        label: "Screen Model",
+        path: "/context/screenmodel",
       },
       {
         id: 13,
-        label: 'Analysis Model',
-        path: '/context/analysismodel',
+        label: "Analysis Model",
+        path: "/context/analysismodel",
       },
       {
         id: 14,
-        label: 'Chart Analysis',
-        path: '/context/chartanalysis',
+        label: "Chart Analysis",
+        path: "/context/chartanalysis",
       },
     ],
   },
   {
     id: 2,
     isAdminNav: true,
-    label: 'Data Acquisition',
-    pathKey: 'dataAcquisition',
+    label: "Data Acquisition",
+    pathKey: "dataAcquisition",
     showSubItems: false,
     children: [
       {
         id: 21,
-        label: 'API',
-        path: '/dataAcquisition/api',
+        label: "API",
+        path: "/dataAcquisition/api",
       },
       {
         id: 22,
-        label: 'File Import',
-        path: '/dataAcquisition/fileimport',
+        label: "File Import",
+        path: "/dataAcquisition/fileimport",
       },
       {
         id: 23,
-        label: 'Automation',
-        path: '/dataAcquisition/automation',
+        label: "Automation",
+        path: "/dataAcquisition/automation",
       },
       {
         id: 24,
-        label: 'Data Control',
-        path: '/dataAcquisition/datacontrol',
+        label: "Data Control",
+        path: "/dataAcquisition/datacontrol",
       },
     ],
   },
   {
     id: 3,
     isAdminNav: true,
-    label: 'Data Processing',
-    pathKey: 'dataprocessing',
+    label: "Data Processing",
+    pathKey: "dataprocessing",
     showSubItems: false,
     children: [
       {
         id: 31,
-        label: 'Investing Style',
-        path: '/dataprocessing/investingstyle',
+        label: "Investing Style",
+        path: "/dataprocessing/investingstyle",
       },
       {
         id: 32,
-        label: 'Screen Model',
-        path: '/dataprocessing/screenmodel',
+        label: "Screen Model",
+        path: "/dataprocessing/screenmodel",
       },
       {
         id: 33,
-        label: 'Analysis Model',
-        path: '/dataprocessing/analysismodel',
+        label: "Analysis Model",
+        path: "/dataprocessing/analysismodel",
       },
       {
         id: 34,
-        label: 'Fundamental Chart',
-        path: '/dataprocessing/fundamentalchart',
+        label: "Fundamental Chart",
+        path: "/dataprocessing/fundamentalchart",
       },
       {
         id: 35,
-        label: 'Ranges',
-        path: '/dataprocessing/ranges',
+        label: "Ranges",
+        path: "/dataprocessing/ranges",
       },
       // {
       //     id: 36,
@@ -217,8 +227,8 @@ const subNavItemsInitialData = [
       // },
       {
         id: 36,
-        label: 'Create Metrics',
-        path: '/dataprocessing/createmetrics',
+        label: "Create Metrics",
+        path: "/dataprocessing/createmetrics",
       },
       // {
       //     id: 38,
@@ -230,29 +240,29 @@ const subNavItemsInitialData = [
   {
     id: 4,
     isAdminNav: false,
-    label: 'Analysis tools',
-    pathKey: 'dataanalysis',
+    label: "Analysis tools",
+    pathKey: "dataanalysis",
     showSubItems: false,
     children: [
       {
         id: 41,
-        label: 'Screener',
-        path: '/dataanalysis/screener',
+        label: "Screener",
+        path: "/dataanalysis/screener",
       },
       {
         id: 41,
-        label: 'Profile',
-        path: '/dataanalysis/profile',
+        label: "Profile",
+        path: "/dataanalysis/profile",
       },
       {
         id: 42,
-        label: 'Financials',
-        path: '/dataanalysis/financials',
+        label: "Financials",
+        path: "/dataanalysis/financials",
       },
       {
-          id: 43,
-          label: 'Investors Screeners',
-          path: '/dataanalysis/investorscreeners'
+        id: 43,
+        label: "Investors Screeners",
+        path: "/dataanalysis/investorscreeners",
       },
       // {
       //     id: 44,
@@ -261,61 +271,60 @@ const subNavItemsInitialData = [
       // },
       {
         id: 45,
-        label: 'Historical Data',
-        path: '/dataanalysis/historicaldata',
+        label: "Historical Data",
+        path: "/dataanalysis/historicaldata",
       },
       {
         id: 46,
-        label: 'Key Metrics',
-        path: '/dataanalysis/keymetrics',
+        label: "Key Metrics",
+        path: "/dataanalysis/keymetrics",
       },
       {
         id: 47,
-        label: 'Fundamental Chart',
-        path: '/dataanalysis/fundamentalchart',
+        label: "Fundamental Chart",
+        path: "/dataanalysis/fundamentalchart",
       },
       {
         id: 48,
-        label: 'Linear Regression',
-        path: '/dataanalysis/linearregression',
+        label: "Linear Regression",
+        path: "/dataanalysis/linearregression",
       },
       {
         id: 49,
-        label: 'Ranges',
-        path: '/dataanalysis/ranges',
+        label: "Ranges",
+        path: "/dataanalysis/ranges",
       },
-    
     ],
   },
- 
+
   {
     id: 6,
     isAdminNav: true,
-    label: 'Manage Users',
-    path: '/admin/manageUsers',
-    pathKey: 'admin',
+    label: "Manage Users",
+    path: "/admin/manageUsers",
+    pathKey: "admin",
     showSubItems: false,
     children: [],
   },
   {
     id: 7,
     isAdminNav: true,
-    label: 'Manage Contacts',
-    path: '/admin/manageContacts',
-    pathKey: 'admin',
+    label: "Manage Contacts",
+    path: "/admin/manageContacts",
+    pathKey: "admin",
     showSubItems: false,
     children: [],
   },
 ];
 
-const achorStyle = { textDecoration: 'none', color: '#ccbf90' };
+const achorStyle = { textDecoration: "none", color: "#ccbf90" };
 
 const MainNavigation = () => {
   const authCtx = useContext(AuthContext);
   const isUserLoggeIn = authCtx.isLoggedIn;
   const location = useLocation();
   const pagePath = location.pathname;
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const [state, setState] = React.useState(false);
   const [selectedNavItem, setSelectedNavItem] = React.useState(11);
   const [subNavItemsData, setSubNavItemsData] = React.useState(
@@ -325,9 +334,9 @@ const MainNavigation = () => {
     setState(!state);
   };
   useEffect(() => {
-    if (pagePath !== null && pagePath !== '' && pagePath !== '/') {
-      const selItem = pagePath.split('/');
-      if (selItem.length > 2 && selItem[1] !== '') {
+    if (pagePath !== null && pagePath !== "" && pagePath !== "/") {
+      const selItem = pagePath.split("/");
+      if (selItem.length > 2 && selItem[1] !== "") {
         let selObject = subNavItemsData.filter(
           (item) => item.pathKey === selItem[1]
         );
@@ -344,7 +353,7 @@ const MainNavigation = () => {
           );
           setSelectedNavItem(selObject[0].id);
         }
-      } else if (selItem.length === 2 && selItem[1] !== '') {
+      } else if (selItem.length === 2 && selItem[1] !== "") {
         let selObject = subNavItemsData.filter(
           (item) => item.pathKey === selItem[1]
         );
@@ -407,10 +416,12 @@ const MainNavigation = () => {
 
               <img src={Logo} height="50px" alt="invelps" />
               {isUserLoggeIn ? (
-              <Box >
-                <SearchInput></SearchInput>
-              </Box>
-              ):(<></>)}
+                <Box>
+                  <SearchInput></SearchInput>
+                </Box>
+              ) : (
+                <></>
+              )}
             </div>
             <Box sx={{ display: { xs: "none", md: "flex" } }}>
               <ul
@@ -436,14 +447,24 @@ const MainNavigation = () => {
                 ) : (
                   <>
                     <li>
-                      <Button onClick={()=>{
-                        navigate("/login");
-                      }} color="inherit">Login</Button>
+                      <Button
+                        onClick={() => {
+                          navigate("/login");
+                        }}
+                        color="inherit"
+                      >
+                        Login
+                      </Button>
                     </li>
                     <li>
-                      <Button onClick={()=>{
-                        navigate("/signup");
-                      }} color="inherit">SignUp</Button>
+                      <Button
+                        onClick={() => {
+                          navigate("/signup");
+                        }}
+                        color="inherit"
+                      >
+                        SignUp
+                      </Button>
                     </li>
                   </>
                 )}

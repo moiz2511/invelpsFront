@@ -84,18 +84,18 @@ const buttons = [
 const RisksTab = ({
   showVisualData,
   setShowVisualData,
-  setSelectedCompany,
-  activeButton,
-  setActiveButton,
+
+  selectedStrategyLabel,
+  setSelectedStrategyLabel,
 }) => {
   let pageLoc = window.location.pathname;
+  // const [selectedStrategy, setSelectedStrategy] = useState(null);
 
   const authCtx = useContext(AuthContext);
   const [authToken, setAuthToken] = useState(null);
   const [riskReturn, setRiskReturn] = useState([]);
   const [riskReturnCopy, setRiskReturnCopy] = useState([]);
 
-  const [selectedStrategy, setSelectedStrategy] = useState(null);
   // const [showVisualData, setShowVisualData] = useState(false);
   const [perExchangeKPI, setPerExhangeKPI] = useState([]);
   const [perSectorKPI, setPerSectorKPI] = useState([]);
@@ -156,9 +156,12 @@ const RisksTab = ({
   // }, [selectedStrategy]);
 
   const handleDataVisualization = (strategy) => {
+    console.log(strategy);
     setShowVisualData(!showVisualData);
-    setSelectedStrategy(strategy.name);
-    console.log("visual", strategy);
+    // setSelectedStrategy(strategy.name);
+    setSelectedStrategyLabel(strategy.name);
+
+    console.log(strategy);
     navigate("/riskVisualization", {
       state: {
         selectedStrategy: strategy.name,
@@ -220,139 +223,125 @@ const RisksTab = ({
     };
   }, [selectedSort, selectedField]);
 
+  console.log(showVisualData);
+
   return (
     <>
-      {showVisualData ? (
-        <>
-          {/* <Button
-            onClick={() => setShowVisualData(!showVisualData)}
-            sx={{
-              alignSelf: "flex-start",
-              backgroundColor: "#407879",
-              color: "rgb(204, 191, 144)",
-              ml: 3,
-            }}
-          >
-            Go Back
-          </Button>
+      <Card
+        sx={{
+          m: 1,
+          position: "relative",
+          fontFamily: "Montserrat",
+          width: "50%",
+        }}
+      >
+        <Box p={3}>
+          <Box spacing={1} sx={{ mt: 0.5 }}>
+            <text
+              style={{
+                padding: "5px",
+                fontSize: "27px",
+                fontWeight: "bold",
+              }}
+            >
+              Risk Adjusted Return ({riskReturnCopy[0]?.duration} years)
+            </text>
+          </Box>
+
           <Box
             sx={{
-              display: "grid",
-              justifyContent: "space-around",
-              gridTemplateColumns: {
-                xs: "1fr",
-                sm: "1fr",
-                md: "1.5fr 1fr",
-              },
-              gap: 2,
-              my: 2,
+              display: "flex",
+              flexDirection: "row",
+              gap: 3,
+              marginTop: 6,
             }}
           >
-            <Card
-              sx={{
-                padding: 4,
-                gap: 3,
-                display: "flex",
-                flexDirection: "column",
-              }}
-            >
-              <text style={{ fontWeight: "bolder" }}>
-                {" "}
-                Companies Per Exchanges (%){" "}
-              </text>
-              
-              <GeoChartComponent data={perExchangeKPI} />
-            </Card>
-            <Box style={{ display: "flex", gap: 6, flexDirection: "column" }}>
-              <Card
+            <ScatterChart chartId="scatterChart" data={riskReturn} />
+          </Box>
+        </Box>
+
+        <TableContainer>
+          <Table
+            sx={{ minWidth: "100%", maxWidth: "100%", mt: 1 }} // Move sx inside the Table component
+            size="medium"
+          >
+            <TableHead>
+              <TableRow
                 sx={{
-                  padding: 2,
+                  backgroundColor: "#e7ecef",
+                  color: "#272727",
+                  fontSize: 14,
                 }}
               >
-                <text style={{ fontWeight: "bolder" }}>
-                  {" "}
-                  Companies Per Sector (%){" "}
-                </text>
-                <HorizontalBarChart data={perSectorKPI} />
-              </Card>
-              <Card
-                sx={{
-                  padding: 4,
-                  paddingBottom: { xs: 8, md: 4 },
-                  display: "flex",
-                  flexDirection: "column",
-                  height: 250,
-                }}
-              >
-                <text style={{ fontWeight: "bolder" }}>
-                  {" "}
-                  Companies Per Market Cap (%){" "}
-                </text>
-                <DonutPieChart
-                  data={perMarketKPI}
-                  dataKey={"total_count"}
-                  nameKey={"market_cap_class"}
-                ></DonutPieChart>
-                
-              </Card>
-            </Box>
-          </Box> */}
-        </>
+                {headCategories.map((category, index) => (
+                  <TableCell key={index} sx={{ fontFamily: "Montserrat" }}>
+                    <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+                      <span>{category.label}</span>
+                    </Box>
+                  </TableCell>
+                ))}
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {riskReturnCopy.map((data, index) => {
+                return (
+                  <StyledTableRow hover key={index} sx={{ ml: 3 }}>
+                    <StyledTableCell
+                      onClick={() => handleDataVisualization(data)}
+                      sx={{
+                        cursor: "pointer",
+                        ":hover": {
+                          textDecoration: "underline",
+                          color: "blue",
+                        },
+                      }}
+                    >
+                      {data.startegy_label}
+                    </StyledTableCell>
+                    <StyledTableCell
+                      sx={{
+                        color: data.annualized_return > 0 ? "green" : "red",
+                      }}
+                    >
+                      {data.annualized_return}
+                    </StyledTableCell>
+                    <StyledTableCell
+                      sx={{
+                        color: data.stdev_return > 0 ? "green" : "red",
+                      }}
+                    >
+                      {data.stdev_return}
+                    </StyledTableCell>
+                  </StyledTableRow>
+                );
+              })}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      </Card>
+
+      {/* { showVisualData ? (
       ) : (
-        <>
-          <Card
-            sx={{
-              m: 1,
-              position: "relative",
-              fontFamily: "Montserrat",
-              width: "50%",
-            }}
-          >
-            <Box p={3}>
-              <Box spacing={1} sx={{ mt: 0.5 }}>
-                <text
-                  style={{
-                    padding: "5px",
-                    fontSize: "27px",
-                    fontWeight: "bold",
-                  }}
-                >
-                  Risk Adjusted Return ({riskReturnCopy[0]?.duration} years)
-                </text>
-              </Box>
+        <></>
+      )} */}
+    </>
+  );
+};
 
-              <Box
-                sx={{
-                  display: "flex",
-                  flexDirection: "row",
-                  gap: 3,
-                  marginTop: 6,
-                }}
-              >
-                <ScatterChart chartId="scatterChart" data={riskReturn} />
-              </Box>
-            </Box>
+export default RisksTab;
 
-            <TableContainer>
-              {/* <Box
-              sx={{
-                backgroundColor: "black",
-                padding: 3,
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-            >
-              <text style={{ color: "#fff", textAlign: "center" }}>
-                {" "}
-                Strategy Models{" "}
-              </text>
-            </Box> */}
-              <Table
-                sx={{ minWidth: "100%", maxWidth: "100%", mt: 1 }}
-                size="medium"
-              >
-                {/* <TableHead>
+{
+  /* <StyledTableCell
+                        sx={{
+                          color: data.duration > 0 ? "green" : "red",
+                        }}
+                      >
+                        {" "}
+                        {data.duration}{" "}
+                      </StyledTableCell> */
+}
+{
+  /* <TableHead>
                 <TableRow>
                   <TableCell
                     sx={{
@@ -377,25 +366,10 @@ const RisksTab = ({
                     Risk Returns
                   </TableCell>
                 </TableRow>
-              </TableHead> */}
-                <TableHead>
-                  <TableRow
-                    sx={{
-                      backgroundColor: "#e7ecef",
-                      color: "#272727",
-                      fontSize: 14,
-                    }}
-                  >
-                    {/* <TableCell sx={{ fontFamily: "Montserrat" }}>
-                  Investor
-                </TableCell> */}
-                    {headCategories.map((category, index) => (
-                      <TableCell key={index} sx={{ fontFamily: "Montserrat" }}>
-                        <Box
-                          sx={{ display: "flex", alignItems: "center", gap: 2 }}
-                        >
-                          <span>{category.label}</span>
-                          {/* {category.key.trim() !== "" &&
+              </TableHead> */
+}
+{
+  /* {category.key.trim() !== "" &&
                           (selectedSort === 1 ? (
                             <button
                               onClick={() => {
@@ -436,11 +410,10 @@ const RisksTab = ({
                             >
                               <IoArrowUp />
                             </button>
-                          ))} */}
-                        </Box>
-                      </TableCell>
-                    ))}
-                    {/* <TableCell sx={{ fontFamily: "Montserrat" }}>
+                          ))} */
+}
+{
+  /* <TableCell sx={{ fontFamily: "Montserrat" }}>
                     Strategy
                   </TableCell>
                   <TableCell sx={{ fontFamily: "Montserrat" }}>
@@ -451,61 +424,5 @@ const RisksTab = ({
                   </TableCell>
                   <TableCell sx={{ fontFamily: "Montserrat" }}>
                     Duration
-                  </TableCell> */}
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {riskReturnCopy.map((data, index) => {
-                    return (
-                      <StyledTableRow hover key={index} sx={{ ml: 3 }}>
-                        <StyledTableCell
-                          onClick={() => handleDataVisualization(data)}
-                          sx={{
-                            cursor: "pointer",
-                            ":hover": {
-                              textDecoration: "underline",
-                              color: "blue",
-                            },
-                          }}
-                        >
-                          {" "}
-                          {data.startegy_label}
-                        </StyledTableCell>
-                        <StyledTableCell
-                          sx={{
-                            color: data.annualized_return > 0 ? "green" : "red",
-                          }}
-                        >
-                          {" "}
-                          {data.annualized_return}{" "}
-                        </StyledTableCell>
-                        <StyledTableCell
-                          sx={{
-                            color: data.stdev_return > 0 ? "green" : "red",
-                          }}
-                        >
-                          {" "}
-                          {data.stdev_return}{" "}
-                        </StyledTableCell>
-                        {/* <StyledTableCell
-                        sx={{
-                          color: data.duration > 0 ? "green" : "red",
-                        }}
-                      >
-                        {" "}
-                        {data.duration}{" "}
-                      </StyledTableCell> */}
-                      </StyledTableRow>
-                    );
-                  })}
-                </TableBody>
-              </Table>
-            </TableContainer>
-          </Card>
-        </>
-      )}
-    </>
-  );
-};
-
-export default RisksTab;
+                  </TableCell> */
+}

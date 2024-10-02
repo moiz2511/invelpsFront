@@ -57,219 +57,6 @@ import PlaceIcon from "@mui/icons-material/Place"; // Icon for HISTORICAL PLACES
 import NavigationWithBreadcrumbs from "./Navigation";
 import Constants from "../../../Constants.json";
 
-const headCells = {
-  data: [
-    {
-      id: "strategy",
-      label: "Strategy",
-      isValueLink: false,
-      isDropDown: false,
-    },
-    {
-      id: "totalreturn",
-      label: "Total Return",
-      isValueLink: false,
-      isDropDown: false,
-    },
-    {
-      id: "annualizedReturn",
-      label: "Annualized return",
-      isValueLink: false,
-      isDropDown: false,
-    },
-    {
-      id: "rollingReturn",
-      label: "Rolling Return",
-      isValueLink: false,
-      isDropDown: false,
-    },
-    {
-      id: "standardDeviation",
-      label: "Standard Deviation",
-      isValueLink: false,
-      isDropDown: false,
-    },
-    {
-      id: "maxDrawdown",
-      label: "Max Drawdown",
-      isValueLink: false,
-      isDropDown: false,
-    },
-    {
-      id: "sharpeRatio",
-      label: "Sharpe Ratio",
-      isValueLink: false,
-      isDropDown: false,
-    },
-    {
-      id: "sortinoRatio",
-      label: "Sortino Ratio",
-      isValueLink: false,
-      isDropDown: false,
-    },
-    {
-      id: "duration",
-      label: "Duration",
-      isValueLink: false,
-      isDropDown: false,
-    },
-  ],
-};
-
-const dummyData = [
-  {
-    companyName: "ABC Inc.",
-    ticker: "ABC",
-    exchange: "NYSE",
-    sector: "Technology",
-    industry: "Software",
-    totalReturn: "10%",
-    annualizedReturn: "5%",
-    rollingReturn: "6%",
-    standardDeviation: "2%",
-    maxDrawDown: "1%",
-    sharpeRatio: "3",
-    sortinoRatio: "4",
-  },
-  {
-    companyName: "XYZ Corp.",
-    ticker: "XYZ",
-    exchange: "NASDAQ",
-    sector: "Finance",
-    industry: "Banking",
-    totalReturn: "15%",
-    annualizedReturn: "7%",
-    rollingReturn: "8%",
-    standardDeviation: "3%",
-    maxDrawDown: "2%",
-    sharpeRatio: "4",
-    sortinoRatio: "5",
-  },
-  // Add more objects as needed...
-];
-
-const passingHeadCells = {
-  data: [
-    {
-      label: "Strategy Name",
-      isValueLink: false,
-      isDropDown: false,
-    },
-    {
-      label: "Company Name",
-      isValueLink: false,
-      isDropDown: false,
-    },
-    {
-      label: "Ticker",
-      isValueLink: false,
-      isDropDown: false,
-    },
-    {
-      label: "Exchange",
-      isValueLink: false,
-      isDropDown: false,
-    },
-    {
-      label: "Sector",
-      isValueLink: false,
-      isDropDown: false,
-    },
-    {
-      label: "Industry",
-      isValueLink: false,
-      isDropDown: false,
-    },
-    {
-      label: "Total Return",
-      isValueLink: false,
-      isDropDown: false,
-    },
-    {
-      label: "Annualized Return",
-      isValueLink: false,
-      isDropDown: false,
-    },
-    {
-      label: "Rolling Return",
-      isValueLink: false,
-      isDropDown: false,
-    },
-    {
-      label: "Standard Deviation",
-      isValueLink: false,
-      isDropDown: false,
-    },
-    {
-      label: "Max Drawdown",
-      isValueLink: false,
-      isDropDown: false,
-    },
-    {
-      label: "Sharpe Ratio",
-      isValueLink: false,
-      isDropDown: false,
-    },
-    {
-      label: "Sortino Ratio",
-      isValueLink: false,
-      isDropDown: false,
-    },
-  ],
-};
-
-const data = [
-  {
-    investor: "Investor 1",
-    strategy: "Strategy A",
-    factor: "Factor X",
-    totalreturn: "10%",
-    annualizedReturn: "5%",
-    rollingReturn: "6%",
-    standardDeviation: "2%",
-    maxDrawdown: "1%",
-    sharpeRatio: "3",
-    sortinoRatio: "4",
-  },
-  {
-    investor: "Investor 2",
-    strategy: "Strategy B",
-    factor: "Factor Y",
-    totalreturn: "15%",
-    annualizedReturn: "7%",
-    rollingReturn: "8%",
-    standardDeviation: "3%",
-    maxDrawdown: "2%",
-    sharpeRatio: "4",
-    sortinoRatio: "5",
-  },
-  // Add more objects as needed...
-];
-
-const StyledTableCell = styled(TableCell)(({ theme }) => ({
-  [`&.${tableCellClasses.head}`]: {
-    backgroundColor: ColorConstants.APP_TABLE_HEAD_COLOR,
-    color: theme.palette.common.white,
-    padding: 12,
-    fontFamily: "Montserrat",
-  },
-  [`&.${tableCellClasses.body}`]: {
-    fontSize: 12,
-    padding: 12,
-    fontFamily: "Montserrat",
-  },
-}));
-
-const StyledTableRow = styled(TableRow)(({ theme }) => ({
-  "&:nth-of-type()": {
-    backgroundColor: theme.palette.action.hover,
-  },
-  // hide last border
-  "&:last-child td, &:last-child th": {
-    border: 0,
-  },
-}));
-
 function CustomTabPanel(props) {
   const { children, value, index, ...other } = props;
 
@@ -457,7 +244,16 @@ const InvestorsScreener = () => {
         </Grid>
       )}
       <Box sx={{ width: "100%" }}>
-        {/* <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
+        <NavigationWithBreadcrumbs setSelectedCompany={setSelectedCompany} />
+      </Box>
+    </Grid>
+  );
+};
+
+export default InvestorsScreener;
+
+{
+  /* <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
           <Tabs
             value={value}
             onChange={handleChange}
@@ -468,8 +264,10 @@ const InvestorsScreener = () => {
             <Tab label="Risks" {...a11yProps(2)} />
             <Tab label="Historical Prices" {...a11yProps(3)} />
           </Tabs>
-        </Box> */}
-        {/* <BreadcrumbsComponent
+        </Box> */
+}
+{
+  /* <BreadcrumbsComponent
           parent={"Investor Screeners"}
           child={"Overview"}
         />
@@ -501,9 +299,10 @@ const InvestorsScreener = () => {
           >
             HISTORICAL
           </Button>
-        </Box> */}
-        <NavigationWithBreadcrumbs setSelectedCompany={setSelectedCompany} />
-        {/* <CustomTabPanel value={value} index={0}>
+        </Box> */
+}
+{
+  /* <CustomTabPanel value={value} index={0}>
           <OverviewTab
             setSelectedCompany={setSelectedCompany}
             // setCompanyDetails={setCompanyDetails}
@@ -517,10 +316,218 @@ const InvestorsScreener = () => {
         </CustomTabPanel>
         <CustomTabPanel value={value} index={3}>
           <BackTestTab />
-        </CustomTabPanel> */}
-      </Box>
-    </Grid>
-  );
-};
+        </CustomTabPanel> */
+}
 
-export default InvestorsScreener;
+// const headCells = {
+//   data: [
+//     {
+//       id: "strategy",
+//       label: "Strategy",
+//       isValueLink: false,
+//       isDropDown: false,
+//     },
+//     {
+//       id: "totalreturn",
+//       label: "Total Return",
+//       isValueLink: false,
+//       isDropDown: false,
+//     },
+//     {
+//       id: "annualizedReturn",
+//       label: "Annualized return",
+//       isValueLink: false,
+//       isDropDown: false,
+//     },
+//     {
+//       id: "rollingReturn",
+//       label: "Rolling Return",
+//       isValueLink: false,
+//       isDropDown: false,
+//     },
+//     {
+//       id: "standardDeviation",
+//       label: "Standard Deviation",
+//       isValueLink: false,
+//       isDropDown: false,
+//     },
+//     {
+//       id: "maxDrawdown",
+//       label: "Max Drawdown",
+//       isValueLink: false,
+//       isDropDown: false,
+//     },
+//     {
+//       id: "sharpeRatio",
+//       label: "Sharpe Ratio",
+//       isValueLink: false,
+//       isDropDown: false,
+//     },
+//     {
+//       id: "sortinoRatio",
+//       label: "Sortino Ratio",
+//       isValueLink: false,
+//       isDropDown: false,
+//     },
+//     {
+//       id: "duration",
+//       label: "Duration",
+//       isValueLink: false,
+//       isDropDown: false,
+//     },
+//   ],
+// };
+
+// const dummyData = [
+//   {
+//     companyName: "ABC Inc.",
+//     ticker: "ABC",
+//     exchange: "NYSE",
+//     sector: "Technology",
+//     industry: "Software",
+//     totalReturn: "10%",
+//     annualizedReturn: "5%",
+//     rollingReturn: "6%",
+//     standardDeviation: "2%",
+//     maxDrawDown: "1%",
+//     sharpeRatio: "3",
+//     sortinoRatio: "4",
+//   },
+//   {
+//     companyName: "XYZ Corp.",
+//     ticker: "XYZ",
+//     exchange: "NASDAQ",
+//     sector: "Finance",
+//     industry: "Banking",
+//     totalReturn: "15%",
+//     annualizedReturn: "7%",
+//     rollingReturn: "8%",
+//     standardDeviation: "3%",
+//     maxDrawDown: "2%",
+//     sharpeRatio: "4",
+//     sortinoRatio: "5",
+//   },
+//   // Add more objects as needed...
+// ];
+
+// const passingHeadCells = {
+//   data: [
+//     {
+//       label: "Strategy Name",
+//       isValueLink: false,
+//       isDropDown: false,
+//     },
+//     {
+//       label: "Company Name",
+//       isValueLink: false,
+//       isDropDown: false,
+//     },
+//     {
+//       label: "Ticker",
+//       isValueLink: false,
+//       isDropDown: false,
+//     },
+//     {
+//       label: "Exchange",
+//       isValueLink: false,
+//       isDropDown: false,
+//     },
+//     {
+//       label: "Sector",
+//       isValueLink: false,
+//       isDropDown: false,
+//     },
+//     {
+//       label: "Industry",
+//       isValueLink: false,
+//       isDropDown: false,
+//     },
+//     {
+//       label: "Total Return",
+//       isValueLink: false,
+//       isDropDown: false,
+//     },
+//     {
+//       label: "Annualized Return",
+//       isValueLink: false,
+//       isDropDown: false,
+//     },
+//     {
+//       label: "Rolling Return",
+//       isValueLink: false,
+//       isDropDown: false,
+//     },
+//     {
+//       label: "Standard Deviation",
+//       isValueLink: false,
+//       isDropDown: false,
+//     },
+//     {
+//       label: "Max Drawdown",
+//       isValueLink: false,
+//       isDropDown: false,
+//     },
+//     {
+//       label: "Sharpe Ratio",
+//       isValueLink: false,
+//       isDropDown: false,
+//     },
+//     {
+//       label: "Sortino Ratio",
+//       isValueLink: false,
+//       isDropDown: false,
+//     },
+//   ],
+// };
+
+// const data = [
+//   {
+//     investor: "Investor 1",
+//     strategy: "Strategy A",
+//     factor: "Factor X",
+//     totalreturn: "10%",
+//     annualizedReturn: "5%",
+//     rollingReturn: "6%",
+//     standardDeviation: "2%",
+//     maxDrawdown: "1%",
+//     sharpeRatio: "3",
+//     sortinoRatio: "4",
+//   },
+//   {
+//     investor: "Investor 2",
+//     strategy: "Strategy B",
+//     factor: "Factor Y",
+//     totalreturn: "15%",
+//     annualizedReturn: "7%",
+//     rollingReturn: "8%",
+//     standardDeviation: "3%",
+//     maxDrawdown: "2%",
+//     sharpeRatio: "4",
+//     sortinoRatio: "5",
+//   },
+//   // Add more objects as needed...
+// ];
+
+// const StyledTableCell = styled(TableCell)(({ theme }) => ({
+//   [`&.${tableCellClasses.head}`]: {
+//     backgroundColor: ColorConstants.APP_TABLE_HEAD_COLOR,
+//     color: theme.palette.common.white,
+//     padding: 12,
+//     fontFamily: "Montserrat",
+//   },
+//   [`&.${tableCellClasses.body}`]: {
+//     fontSize: 12,
+//     padding: 12,
+//     fontFamily: "Montserrat",
+//   },
+// }));
+
+// const StyledTableRow = styled(TableRow)(({ theme }) => ({
+//   "&:nth-of-type()": {
+//     backgroundColor: theme.palette.action.hover,
+//   },
+//   // hide last border
+//   "&:last-child td, &:last-child th": {
+//     border: 0,
+//   },
+// }));

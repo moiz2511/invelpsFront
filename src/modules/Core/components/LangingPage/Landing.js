@@ -12,7 +12,7 @@ import Finance from "../../../../assets/images/financial-statements.png";
 import Bar from "../../../../assets/images/bar-chart.png";
 import Mission from "../../../../assets/images/Our mission.jpg";
 
-import { Link as RouterLink } from 'react-router-dom';
+import { Link as RouterLink } from "react-router-dom";
 import { Button } from "@mui/material";
 
 function Landing() {
@@ -76,7 +76,7 @@ function Landing() {
             <Button
               className="common-button"
               key="solution-sign-up"
-              style={{backgroundColor: '#407879', marginTop: "2px"}} 
+              style={{ backgroundColor: "#407879", marginTop: "2px" }}
               component={RouterLink}
               to="/signup"
             >
@@ -153,8 +153,7 @@ function Landing() {
               <h2 style={{ margin: "0", padding: "0" }}>Our Mission</h2>
               <p>
                 Invelps makes it possible for anyone to get started with
-                financial analysis, regardless of prior experience or
-                knowledge.
+                financial analysis, regardless of prior experience or knowledge.
               </p>
 
               <p>
@@ -197,7 +196,6 @@ function Landing() {
         </section>
       </div>
       {/* mission section ends */}
-      <Footer />
     </div>
   );
 }

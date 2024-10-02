@@ -186,19 +186,17 @@ const sortingFields = [
 ];
 
 const ReturnsTab = ({
+  selectedStrategyLabel,
+  setSelectedStrategyLabel,
+
   setSelectedCompany,
   activeButton,
   setActiveButton,
   showVisualData,
   setShowVisualData,
+  setTab2,
 }) => {
   let pageLoc = window.location.pathname;
-
-  const strategyNames = [
-    "Buffett: Hangstrom",
-    "Philip Fisher Screen",
-    "Defensive Investor",
-  ];
 
   const buttons = [
     {
@@ -220,12 +218,13 @@ const ReturnsTab = ({
       component: "HistoricalPlacesContent",
     },
   ];
+  const [selectedStrategy, setSelectedStrategy] = useState(null);
+
   const authCtx = useContext(AuthContext);
   const [authToken, setAuthToken] = useState(null);
   const [strategyData, setStrategyData] = useState([]);
   const [years, setYears] = useState([]);
   const [bestWorstData, setBestWorstData] = useState([]);
-  const [selectedStrategy, setSelectedStrategy] = useState(null);
   // const [showVisualData, setShowVisualData] = useState(false);
   const [selectedLabel, setSelectedLabel] = useState("");
   const [bestWorstDataCopy, setBestWorstDataCopy] = useState([]);
@@ -322,8 +321,11 @@ const ReturnsTab = ({
     const fetchMapsData = async () => {
       try {
         console.log(selectedStrategy);
+        console.log(selectedStrategyLabel);
+
         const body = {
-          strategy_name: selectedStrategy,
+          // strategy_name: selectedStrategy,
+          strategy_name: selectedStrategyLabel,
         };
         const response = await fetch(
           Constants.BACKEND_SERVER_BASE_URL +
@@ -357,7 +359,7 @@ const ReturnsTab = ({
       fetchStrategyBestWorstPerformance();
       fetchMapsData();
     }
-  }, [authToken, selectedStrategy]);
+  }, [authToken, selectedStrategy, selectedStrategyLabel]);
 
   useEffect(() => {
     if (strategyData && strategyData?.length > 0) {
@@ -378,7 +380,8 @@ const ReturnsTab = ({
   const fetchGraphData = async () => {
     try {
       const body = {
-        strategy_name: selectedStrategy,
+        // strategy_name: selectedStrategy,
+        strategy_name: selectedStrategyLabel,
       };
       const response = await fetch(
         `
@@ -410,8 +413,13 @@ const ReturnsTab = ({
   const fetchGraphTableData = async () => {
     try {
       console.log(selectedStrategy);
+      console.log(selectedStrategyLabel);
+
+      selectedStrategyLabel;
       const body = {
-        strategy_name: selectedStrategy,
+        // strategy_name: selectedStrategy,
+        strategy_name: selectedStrategyLabel,
+
         page: currentPage,
         data_per_page: currentRowsPerPage,
       };
@@ -455,28 +463,38 @@ const ReturnsTab = ({
     setCurrentPage(1); // Reset page to 1 when changing rowsPerPage
   };
 
+  // useEffect(() => {
+  //   if (selectedStrategy !== null) {
+  //     fetchGraphData();
+  //     fetchGraphTableData();
+  //   }
+  // }, [selectedStrategy, currentPage, currentRowsPerPage]);
+
   useEffect(() => {
-    if (selectedStrategy !== null) {
+    if (selectedStrategyLabel !== null) {
       fetchGraphData();
       fetchGraphTableData();
     }
-  }, [selectedStrategy, currentPage, currentRowsPerPage]);
+  }, [selectedStrategyLabel, currentPage, currentRowsPerPage]);
 
+  const handleScrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  };
   const handleDataVisualization = (strategy) => {
+    console.log("here");
     console.log(strategy);
-    setShowVisualData(!showVisualData);
+    // setShowVisualData(!showVisualData);
     setIsSwitch2(true);
-    // setSelectedStrategy(strategy.strategy_name_here);
-    setSelectedStrategy(strategy);
+    console.log(strategy.strategy_label);
+    setSelectedStrategy(strategy.strategy_label);
+    setSelectedStrategyLabel(strategy.strategy_label);
     setSelectedLabel(strategy.strategy_label);
-  };
-
-  const handleSortChange = (e) => {
-    setSelectedSort(e.target.value);
-  };
-
-  const handleSortingFieldChange = (field) => {
-    setSelectedField(field);
+    setSelectedSort(2);
+    setTab2("returns");
+    handleScrollToTop();
   };
 
   const sorting = (data) => {
@@ -535,15 +553,17 @@ const ReturnsTab = ({
   }, [selectedSort, selectedField, selectedLabel]);
 
   console.log("startegyData", selectedLabel);
+  console.log("startegyData", selectedStrategyLabel);
+
   // console.log('selected', selectedStrategy);
 
-  return showVisualData && isSwitch2 ? (
+  return isSwitch2 ? (
     <div
       style={{
         display: "flex",
         flexDirection: "column",
         maxWidth: "100%",
-        position: "absolute",
+        // position: "absolute",
         top: 0,
         left: 0,
         width: "100%",
@@ -554,23 +574,7 @@ const ReturnsTab = ({
         overflowY: "auto",
       }}
     >
-      {/* <Box ml={2} mb={4}>
-        <Typography color={"rgba(0, 0, 0, 0.6)"}>
-          <span
-            onClick={() => {
-              setShowVisualData(!showVisualData);
-              setIsSwitch2(false);
-            }}
-            style={{ cursor: "pointer" }}
-          >
-            {" "}
-            Strategies Overview{" "}
-          </span>{" "}
-          / {selectedLabel}
-        </Typography>
-      </Box> */}
-
-      <Breadcrumbs separator={">"} aria-label="breadcrumb" sx={{ ml: 2 }}>
+      {/* <Breadcrumbs separator={">"} aria-label="breadcrumb" sx={{ ml: 2 }}>
         <Typography
           onClick={() => {
             setShowVisualData(false);
@@ -618,23 +622,8 @@ const ReturnsTab = ({
             {button.label}
           </Button>
         ))}
-      </Box>
-      <Button
-        onClick={() => {
-          setShowVisualData(!showVisualData);
-          setIsSwitch2(false);
-        }}
-        sx={{
-          alignSelf: "flex-start",
-          backgroundColor: "#407879",
-          color: "rgb(204, 191, 144)",
-          ml: 2,
-          mb: 2,
-          mt: 3,
-        }}
-      >
-        Back
-      </Button>
+      </Box> */}
+
       <Card
         sx={{
           display: "flex",
@@ -642,10 +631,6 @@ const ReturnsTab = ({
           padding: 1,
         }}
       >
-        <text style={{ fontSize: 25, fontWeight: "bold" }}>
-          {" "}
-          {selectedLabel}{" "}
-        </text>
         <Box
           sx={{
             display: "grid",
@@ -977,6 +962,7 @@ const ReturnsTab = ({
                 </Typography>
               </Box>
 
+              {/* switch  */}
               <Box>
                 <label
                   htmlFor="annualDevidendSwitch"
@@ -995,45 +981,7 @@ const ReturnsTab = ({
               </Box>
             </Box>
 
-            {/* <div
-              style={{
-                width: "100%",
-              }}
-            >
-              <Box sx={{padding:2}}>
-                <text
-                  style={{
-                    boxShadow: "2px 2px 5px rgba(0, 0, 0, 0.5)",
-                    padding: 2,
-                  }}
-                >
-                  {bestWorstDataCopy[0]?.duration} years
-                </text>
-              </Box>
-
-              <label htmlFor="annualDevidendSwitch" style={{ marginLeft: 10 }}>
-                {" "}
-                Line Chart
-              </label>
-              <Switch
-                id="annualDevidendSwitch"
-                checked={chartSwitch}
-                onChange={handleChartSwitchChange}
-                inputProps={{ "aria-label": "controlled" }}
-              />
-              <label htmlFor="annualDevidendSwitch"> Bar Chart</label>
-            </div> */}
-            {/* <Box sx={{ padding: 2 }}>
-              <text
-                style={{
-                  boxShadow: "2px 2px 5px rgba(0, 0, 0, 0.5)",
-                  padding: 2,
-                }}
-              >
-                {bestWorstDataCopy[0]?.duration} years
-              </text>
-            </Box> */}
-
+            {/* chart  */}
             <Box
               sx={{
                 display: "flex",
@@ -1050,6 +998,7 @@ const ReturnsTab = ({
                 chartSwitch={chartSwitch}
               />
             </Box>
+
             <TableContainer>
               <Table
                 sx={{ minWidth: "100%", maxWidth: "100%", mt: 1 }}
@@ -1085,10 +1034,7 @@ const ReturnsTab = ({
                     strategyData?.map((strategy, index) => (
                       <StyledTableRow hover key={index} sx={{ ml: 3 }}>
                         <StyledTableCell
-                          onClick={() => {
-                            handleDataVisualization(strategy);
-                            setSelectedSort(2);
-                          }}
+                          onClick={() => handleDataVisualization(strategy)}
                           sx={{
                             cursor: "pointer",
                             ":hover": {
@@ -1098,6 +1044,7 @@ const ReturnsTab = ({
                           }}
                         >
                           {/* strategy button */}
+                          {/* on click should open charts */}
                           {strategy?.strategy_label}
                         </StyledTableCell>
                         <StyledTableCell>
@@ -1171,36 +1118,6 @@ const ReturnsTab = ({
                 }}
                 size="medium"
               >
-                {/* <TableHead>
-                <TableRow>
-                  <TableCell
-                    padding="normal"
-                    colSpan={1}
-                    sx={{
-                      backgroundColor: "#272727",
-                      color: "white",
-                      fontSize: 18,
-                      fontFamily: "Montserrat",
-                    }}
-                  >
-                    Strategy Models ({bestWorstDataCopy[0]?.duration} years)
-                  </TableCell>
-                  <TableCell
-                    padding="normal"
-                    colSpan={12}
-                    align="center"
-                    sx={{
-                      backgroundColor: "#427878",
-                      color: "white",
-                      fontSize: 18,
-                      fontFamily: "Montserrat",
-                    }}
-                  >
-                    Rolling Returns (%)
-                  </TableCell>
-                </TableRow>
-              </TableHead> */}
-
                 <TableHead>
                   <TableRow
                     sx={{
@@ -1219,47 +1136,6 @@ const ReturnsTab = ({
                         }}
                       >
                         <span>Strategy</span>
-                        {/* {selectedSort === 1 ? (
-                          <button
-                            onClick={() => {
-                              handleSortingFieldChange("name");
-                              setSelectedSort(2);
-                            }}
-                            style={{
-                              color: "white",
-                              background: "rgba(0, 0, 0, 0.3)",
-                              border: "none",
-                              borderRadius: "9999px",
-                              width: "24px",
-                              height: "24px",
-                              display: "flex",
-                              alignItems: "center",
-                              justifyContent: "center",
-                            }}
-                          >
-                            <IoArrowDown />
-                          </button>
-                        ) : (
-                          <button
-                            style={{
-                              color: "white",
-                              background: "rgba(0, 0, 0, 0.3)",
-                              border: "none",
-                              borderRadius: "9999px",
-                              width: "24px",
-                              height: "24px",
-                              display: "flex",
-                              alignItems: "center",
-                              justifyContent: "center",
-                            }}
-                            onClick={() => {
-                              handleSortingFieldChange("name");
-                              setSelectedSort(1);
-                            }}
-                          >
-                            <IoArrowUp />
-                          </button>
-                        )} */}
                       </Box>
                     </TableCell>
                     {headCategories.map((category, index) => (
@@ -1268,48 +1144,6 @@ const ReturnsTab = ({
                           sx={{ display: "flex", alignItems: "center", gap: 2 }}
                         >
                           <span>{category.title}</span>
-                          {/* {category.key.trim() !== "" &&
-                            (selectedSort === 1 ? (
-                              <button
-                                onClick={() => {
-                                  handleSortingFieldChange(category.key);
-                                  setSelectedSort(2);
-                                }}
-                                style={{
-                                  color: "white",
-                                  background: "rgba(0, 0, 0, 0.3)",
-                                  border: "none",
-                                  borderRadius: "9999px",
-                                  width: "24px",
-                                  height: "24px",
-                                  display: "flex",
-                                  alignItems: "center",
-                                  justifyContent: "center",
-                                }}
-                              >
-                                <IoArrowDown />
-                              </button>
-                            ) : (
-                              <button
-                                style={{
-                                  color: "white",
-                                  background: "rgba(0, 0, 0, 0.3)",
-                                  border: "none",
-                                  borderRadius: "9999px",
-                                  width: "24px",
-                                  height: "24px",
-                                  display: "flex",
-                                  alignItems: "center",
-                                  justifyContent: "center",
-                                }}
-                                onClick={() => {
-                                  handleSortingFieldChange(category.key);
-                                  setSelectedSort(1);
-                                }}
-                              >
-                                <IoArrowUp />
-                              </button>
-                            ))} */}
                         </Box>
                       </TableCell>
                     ))}
@@ -1319,7 +1153,7 @@ const ReturnsTab = ({
                   {bestWorstDataCopy.map((data, index) => (
                     <StyledTableRow hover key={index} sx={{ ml: 3 }}>
                       <StyledTableCell
-                        onClick={() => handleDataVisualization(data.name)}
+                        onClick={() => handleDataVisualization(data)}
                         sx={{
                           cursor: "pointer",
                           ":hover": {
@@ -1388,3 +1222,172 @@ const ReturnsTab = ({
 };
 
 export default ReturnsTab;
+
+// const handleSortChange = (e) => {
+//   setSelectedSort(e.target.value);
+// };
+
+// const handleSortingFieldChange = (field) => {
+//   setSelectedField(field);
+// };
+{
+  /* <TableHead>
+                <TableRow>
+                  <TableCell
+                    padding="normal"
+                    colSpan={1}
+                    sx={{
+                      backgroundColor: "#272727",
+                      color: "white",
+                      fontSize: 18,
+                      fontFamily: "Montserrat",
+                    }}
+                  >
+                    Strategy Models ({bestWorstDataCopy[0]?.duration} years)
+                  </TableCell>
+                  <TableCell
+                    padding="normal"
+                    colSpan={12}
+                    align="center"
+                    sx={{
+                      backgroundColor: "#427878",
+                      color: "white",
+                      fontSize: 18,
+                      fontFamily: "Montserrat",
+                    }}
+                  >
+                    Rolling Returns (%)
+                  </TableCell>
+                </TableRow>
+              </TableHead> */
+}
+{
+  /* {selectedSort === 1 ? (
+                          <button
+                            onClick={() => {
+                              handleSortingFieldChange("name");
+                              setSelectedSort(2);
+                            }}
+                            style={{
+                              color: "white",
+                              background: "rgba(0, 0, 0, 0.3)",
+                              border: "none",
+                              borderRadius: "9999px",
+                              width: "24px",
+                              height: "24px",
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                            }}
+                          >
+                            <IoArrowDown />
+                          </button>
+                        ) : (
+                          <button
+                            style={{
+                              color: "white",
+                              background: "rgba(0, 0, 0, 0.3)",
+                              border: "none",
+                              borderRadius: "9999px",
+                              width: "24px",
+                              height: "24px",
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                            }}
+                            onClick={() => {
+                              handleSortingFieldChange("name");
+                              setSelectedSort(1);
+                            }}
+                          >
+                            <IoArrowUp />
+                          </button>
+                        )} */
+}
+
+{
+  /* {category.key.trim() !== "" &&
+                            (selectedSort === 1 ? (
+                              <button
+                                onClick={() => {
+                                  handleSortingFieldChange(category.key);
+                                  setSelectedSort(2);
+                                }}
+                                style={{
+                                  color: "white",
+                                  background: "rgba(0, 0, 0, 0.3)",
+                                  border: "none",
+                                  borderRadius: "9999px",
+                                  width: "24px",
+                                  height: "24px",
+                                  display: "flex",
+                                  alignItems: "center",
+                                  justifyContent: "center",
+                                }}
+                              >
+                                <IoArrowDown />
+                              </button>
+                            ) : (
+                              <button
+                                style={{
+                                  color: "white",
+                                  background: "rgba(0, 0, 0, 0.3)",
+                                  border: "none",
+                                  borderRadius: "9999px",
+                                  width: "24px",
+                                  height: "24px",
+                                  display: "flex",
+                                  alignItems: "center",
+                                  justifyContent: "center",
+                                }}
+                                onClick={() => {
+                                  handleSortingFieldChange(category.key);
+                                  setSelectedSort(1);
+                                }}
+                              >
+                                <IoArrowUp />
+                              </button>
+                            ))} */
+}
+{
+  /* <div
+              style={{
+                width: "100%",
+              }}
+            >
+              <Box sx={{padding:2}}>
+                <text
+                  style={{
+                    boxShadow: "2px 2px 5px rgba(0, 0, 0, 0.5)",
+                    padding: 2,
+                  }}
+                >
+                  {bestWorstDataCopy[0]?.duration} years
+                </text>
+              </Box>
+
+              <label htmlFor="annualDevidendSwitch" style={{ marginLeft: 10 }}>
+                {" "}
+                Line Chart
+              </label>
+              <Switch
+                id="annualDevidendSwitch"
+                checked={chartSwitch}
+                onChange={handleChartSwitchChange}
+                inputProps={{ "aria-label": "controlled" }}
+              />
+              <label htmlFor="annualDevidendSwitch"> Bar Chart</label>
+            </div> */
+}
+{
+  /* <Box sx={{ padding: 2 }}>
+              <text
+                style={{
+                  boxShadow: "2px 2px 5px rgba(0, 0, 0, 0.5)",
+                  padding: 2,
+                }}
+              >
+                {bestWorstDataCopy[0]?.duration} years
+              </text>
+            </Box> */
+}

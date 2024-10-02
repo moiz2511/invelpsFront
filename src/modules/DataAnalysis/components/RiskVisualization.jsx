@@ -6,6 +6,11 @@ import AuthContext from "../../Core/store/auth-context";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Box, Breadcrumbs, Button, Card, Typography } from "@mui/material";
 import Constants from "../../../Constants.json";
+import BreadcrumbsComponent from "../../Core/components/Layout/BreadCrumbs";
+import { useSwitch } from "../../../utils/context/SwitchContext";
+import AssessmentIcon from "@mui/icons-material/Assessment";
+import TrendingUpIcon from "@mui/icons-material/TrendingUp";
+import { FaBuilding } from "react-icons/fa";
 
 const RiskVisualization = () => {
   const navigate = useNavigate();
@@ -29,6 +34,7 @@ const RiskVisualization = () => {
     setAuthToken(userToken);
   }, []);
 
+  console.log(selectedStrategy);
   const fetchGraphData = async () => {
     try {
       const body = {
@@ -98,53 +104,87 @@ const RiskVisualization = () => {
       fetchMapsData();
     }
   }, [selectedStrategy, authToken]);
+
+  const [activeButton, setActiveButton] = useState("RETURNS AND RISK");
+  const [selectedStrategyLabel, setSelectedStrategyLabel] = useState(null);
+  const [showVisualData, setShowVisualData] = useState(false);
+  const [tab2, setTab2] = useState("");
+  const { isSwitch2, setIsSwitch2 } = useSwitch();
+  const buttons = [
+    {
+      id: "OVERVIEW",
+      label: "OVERVIEW",
+      icon: <AssessmentIcon />,
+      component: "OverviewContent",
+    },
+    {
+      id: "RETURNS AND RISK",
+      label: "RETURNS AND RISK",
+      icon: <TrendingUpIcon />,
+      component: "ReturnsRiskContent",
+    },
+    {
+      id: "HISTORICAL PRICES",
+      label: "HISTORICAL PRICES",
+      icon: <FaBuilding />,
+      component: "HistoricalPlacesContent",
+    },
+  ];
+
+  console.log(activeButton);
+  console.log(selectedStrategyLabel);
+  console.log(showVisualData);
+  console.log(tab2);
+  console.log(isSwitch2);
+
+  useEffect(() => {
+    const handleScrollToTop = () => {
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth",
+      });
+    };
+    handleScrollToTop();
+  }, []);
+
   return (
     <>
-      {/* <Button
-        onClick={() => setShowVisualData(!showVisualData)}
-        sx={{
-          alignSelf: "flex-start",
-          backgroundColor: "#407879",
-          color: "rgb(204, 191, 144)",
-          ml: 3,
-        }}
-      >
-        Go Back
-      </Button> */}
-      {/* <text
-        onClick={() => {
-          navigation("/dataanalysis/investorscreeners");
-        }}
-        style={{ ml: 1, fontSize: 15, cursor: "pointer" }}
-      >
-        {">"}{" "}
-        <span
-          style={{
-            color: "#427879",
-            fontWeight: "bold",
-            cursor: "pointer",
-          }}
-        >
-          {selectedLabel}
-        </span>{" "}
-      </text> */}
+      <BreadcrumbsComponent
+        parent={"Investor Screener"}
+        subParent={selectedStrategyLabel}
+        child={activeButton}
+        setSelectedStrategyLabel={setSelectedStrategyLabel}
+        setTab2={setTab2}
+        setActiveButton={setActiveButton}
+      ></BreadcrumbsComponent>
 
-      <Breadcrumbs separator={">"} aria-label="breadcrumb" sx={{ ml: 2 }}>
-        <div
-          onClick={() => {
-            navigation("/dataanalysis/investorscreeners");
-          }}
-        >
-          <Typography color="inherit">Invester Screener</Typography>
-        </div>
-
-        <Typography
-          sx={{ color: "#427879", fontWeight: "bold" }}
-          color="inherit"
-        >
-          {selectedLabel}
-        </Typography>
-      </Breadcrumbs>
+      <Box padding={2} display={"flex"} gap={3}>
+        {buttons.map((button) => (
+          <Button
+            key={button.id}
+            sx={{
+              backgroundColor: activeButton === button.id ? "#427879" : "white",
+              color: activeButton === button.id ? "white" : "black",
+              "&:hover": {
+                backgroundColor:
+                  activeButton === button.id ? "#427879" : "#427879",
+                color: activeButton === button.id ? "white" : "white",
+              },
+            }}
+            startIcon={button.icon}
+            onClick={() => {
+              setActiveButton(button.id);
+              setIsSwitch2(false);
+              setTab2("");
+              if (selectedStrategyLabel) {
+                setSelectedStrategyLabel(null);
+              }
+            }}
+          >
+            {button.label}
+          </Button>
+        ))}
+      </Box>
 
       <Box
         sx={{
@@ -167,30 +207,8 @@ const RiskVisualization = () => {
             flexDirection: "column",
           }}
         >
-          <Button
-            onClick={() => navigate("/dataanalysis/investorscreeners")}
-            sx={{
-              alignSelf: "flex-start",
-              backgroundColor: "#407879",
-              color: "rgb(204, 191, 144)",
-            }}
-          >
-            Go Back
-          </Button>
-          <text
-            style={{
-              fontWeight: "bold",
-              fontSize: 25,
-            }}
-          >
-            {" "}
-            {selectedLabel}
-          </text>
           <text style={{ fontWeight: "bolder" }}> Companies Per Country</text>
-          {/* <PieChart
-                    graphData={perExchangeKPI}
-                    nameData={(item) => item.exchange}
-                  /> */}
+
           <GeoChartComponent data={mapsData} />
         </Card>
         <Box style={{ display: "flex", gap: 6, flexDirection: "column" }}>

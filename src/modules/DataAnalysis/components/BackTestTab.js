@@ -179,39 +179,7 @@ const BackTestTab = ({
       console.error("Error:", error);
     }
   };
-  // const fetchGraphTableData = async () => {
-  //   try {
-  //     const body = {
-  //       strategy_name: selectedStrategy.name,
-  //       page: currentPage,
-  //       data_per_page: currentRowsPerPage,
-  //     };
-  //     const response = await fetch(
-  //       `https://api.invelps.com/api/strategies/getStrategyTableData`,
-  //       {
-  //         method: "POST",
-  //         headers: {
-  //           Authorization: `Bearer ${authToken}`,
-  //         },
-  //         body: JSON.stringify(body),
-  //       }
-  //     );
 
-  //     const data = await response.json();
-
-  //     if (response.status === 200) {
-  //       console.log(data.data);
-  //       setGraphTableData(data.data);
-  //       setGraphTableDataCopy(data.data);
-  //       setTotalPages(data.paginator.total_pages);
-  //       setPassingCriteria(data.companies_passing_criteris);
-  //     } else {
-  //       console.log("Unexpected status code:", response.status);
-  //     }
-  //   } catch (error) {
-  //     console.error("Error:", error);
-  //   }
-  // };
   const fetchDividendTableData = async () => {
     try {
       const body = {
@@ -335,18 +303,8 @@ const BackTestTab = ({
   return (
     <>
       {showVisualData ? (
-        <Box ml={2} mb={4}>
-          {/* <Typography color={"rgba(0, 0, 0, 0.6)"}>
-            Strategies Overview / {selectedStrategyLabel}
-          </Typography> */}
-        </Box>
-      ) : (
-        <></>
-        // <PageInfoBreadCrumbs data={pageLoc} />
-      )}
-      {showVisualData ? (
         <>
-          <Button
+          {/* <Button
             onClick={() => {
               setShowVisualData(!showVisualData);
               setSelectedStrategyLabel(null);
@@ -359,7 +317,7 @@ const BackTestTab = ({
             }}
           >
             Back
-          </Button>
+          </Button> */}
 
           <Box
             sx={{
@@ -804,3 +762,37 @@ const BackTestTab = ({
 };
 
 export default BackTestTab;
+
+// const fetchGraphTableData = async () => {
+//   try {
+//     const body = {
+//       strategy_name: selectedStrategy.name,
+//       page: currentPage,
+//       data_per_page: currentRowsPerPage,
+//     };
+//     const response = await fetch(
+//       `https://api.invelps.com/api/strategies/getStrategyTableData`,
+//       {
+//         method: "POST",
+//         headers: {
+//           Authorization: `Bearer ${authToken}`,
+//         },
+//         body: JSON.stringify(body),
+//       }
+//     );
+
+//     const data = await response.json();
+
+//     if (response.status === 200) {
+//       console.log(data.data);
+//       setGraphTableData(data.data);
+//       setGraphTableDataCopy(data.data);
+//       setTotalPages(data.paginator.total_pages);
+//       setPassingCriteria(data.companies_passing_criteris);
+//     } else {
+//       console.log("Unexpected status code:", response.status);
+//     }
+//   } catch (error) {
+//     console.error("Error:", error);
+//   }
+// };
