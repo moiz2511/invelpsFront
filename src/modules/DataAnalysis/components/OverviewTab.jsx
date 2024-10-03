@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext } from "react";
+import React, { useEffect, useRef, useState, useContext } from "react";
 
 import {
   Grid,
@@ -38,6 +38,7 @@ import { FaBuilding } from "react-icons/fa";
 import { VscListFilter } from "react-icons/vsc";
 import SortingPopover from "./SortingPopover";
 import FilterPopover from "./FilterPopover";
+import OverviewSortingPopover from "./OverviewSortingPopover";
 
 const headCells = {
   data: [
@@ -174,13 +175,13 @@ const passingHeadCells = {
     },
     {
       label: "Standard Deviation (%)",
-      key: "standard_deviation",
+      key: "stdev_excess_return",
       isValueLink: false,
       isDropDown: false,
     },
     {
       label: "Max Drawdown (%)",
-      key: "",
+      key: "max_drawdown",
       isValueLink: false,
       isDropDown: false,
     },
@@ -228,16 +229,15 @@ const sortingFields = [
 
 const OverviewTab = ({
   setSelectedCompany,
-
   showVisualData,
   setShowVisualData,
   setSelectedStrategyLabel,
 }) => {
   let pageLoc = window.location.pathname;
   const [sortOption, setSortOption] = useState("");
-  const [sortOrder, setSortOrder] = useState("");
-  const [searchValue, setSearchValue] = useState("");
-  // const [showVisualData, setShowVisualData] = useState(false);
+  const [sortOrder, setSortOrder] = useState("asc");
+  const [sector, setSector] = useState("");
+
   const [selectedStrategy, setSelectedStrategy] = useState(null);
   const [allStrategies, setAllStrategies] = useState([]);
   const authCtx = useContext(AuthContext);
@@ -249,35 +249,19 @@ const OverviewTab = ({
   const [graphTableDataCopy, setGraphTableDataCopy] = useState([]);
   const [totalPages, setTotalPages] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const [currentRowsPerPage, setCurrentRowsPerPage] = useState(3);
   const [passingCriteria, setPassingCriteria] = useState(null);
   const [selectedInvestor, setSelectedInvestor] = useState(null);
   const [showInvestor, setShowInvestor] = useState(false);
   const [mapsData, setMapsData] = useState([]);
   const [strategiesCopy, setStrategiesCopy] = useState([]);
-  const [selectedSort, setSelectedSort] = useState(0);
-  const [selectedField, setSelectedField] = useState(sortingFields[0].key);
   const [selectedItems, setSelectedItems] = useState([]);
   const [uniqueCompanies, setUniqueCompanies] = useState([]);
   const [openFilter, setOpenFilter] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
   const { setIsSwitch1, isSwitch2, setIsSwitch2 } = useSwitch();
-  const [selectedKey, setSelectedKey] = useState("");
+  const [currentRowsPerPage, setCurrentRowsPerPage] = useState(3);
 
-  const rowsPerPageOptions = [3, 5, 10];
-
-  const handlePrevPage = () => {
-    setCurrentPage((prevPage) => Math.max(1, prevPage - 1));
-  };
-
-  const handleNextPage = () => {
-    setCurrentPage((prevPage) => Math.min(totalPages, prevPage + 1));
-  };
-
-  const handleChangeRowsPerPage = (event) => {
-    setCurrentRowsPerPage(parseInt(event.target.value, 10));
-    setCurrentPage(1);
-  };
+  const criteriaRef = useRef(null);
 
   const handleScrollToTop = () => {
     window.scrollTo({
@@ -315,42 +299,67 @@ const OverviewTab = ({
 
   console.log(sortOption);
   console.log(sortOrder);
+  console.log(sector);
 
-  useEffect(() => {
-    const fetchStrategyData = async () => {
-      try {
-        console.log(
-          Constants.BACKEND_SERVER_BASE_URL + "/strategies/getAllStrategies"
-        );
-
-        const response = await fetch(
-          Constants.BACKEND_SERVER_BASE_URL + "/strategies/getAllStrategies",
-          {
-            method: "POST",
-            headers: {
-              Authorization: `Bearer ${authToken}`,
-            },
-          }
-        );
-
-        const data = await response.json();
-
-        if (response.status === 200) {
-          console.log("Data:", data.strategies);
-
-          setAllStrategies(data.strategies);
-          setStrategiesCopy(data.strategies);
-        } else {
-          console.log("Unexpected status code:", response.status);
-        }
-      } catch (error) {
-        console.error("Error:", error);
+  const fetchStrategyData = async () => {
+    try {
+      const body = {};
+      if (sortOption) {
+        body.sort_by = sortOption;
       }
-    };
-    if (authToken) {
-      fetchStrategyData();
+      if (sortOrder) {
+        body.order_by = sortOrder;
+      }
+
+      const response = await fetch(
+        Constants.BACKEND_SERVER_BASE_URL + "/strategies/getAllStrategies",
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(body),
+        }
+      );
+
+      console.log(body);
+      const data = await response.json();
+
+      if (response.status === 200) {
+        console.log("Data:", data.strategies);
+
+        setAllStrategies(data.strategies);
+        setStrategiesCopy(data.strategies);
+
+        console.log(sortOption);
+        console.log(sector);
+
+        const uniqueValues = data.strategies
+          ?.map((item) => item[sortOption])
+          .filter(Boolean);
+        const uniqueCompanies = [...new Set(uniqueValues)];
+
+        console.log(uniqueValues);
+        console.log(uniqueCompanies);
+        setUniqueCompanies(uniqueCompanies);
+
+        let filteredData = data.strategies;
+        if (selectedItems.length > 0) {
+          filteredData = filteredData.filter((item) =>
+            selectedItems.includes(item[sortOption])
+          );
+          console.log("Filtered Data:", filteredData);
+        }
+        setStrategiesCopy(filteredData); // Update the state with filtered and sorted data
+        console.log("Sorted and Filtered Data:", filteredData);
+      } else {
+        console.log("Unexpected status code:", response.status);
+      }
+    } catch (error) {
+      console.error("Error:", error);
     }
-  }, [authToken]);
+  };
 
   const fetchGraphData = async () => {
     try {
@@ -387,21 +396,28 @@ const OverviewTab = ({
       console.error("Error:", error);
     }
   };
+
   const fetchGraphTableData = async () => {
     try {
+      console.log("1");
+      console.log(selectedStrategy);
       const body = {
         strategy_name: selectedStrategy.name,
         page: currentPage,
         data_per_page: currentRowsPerPage,
       };
 
+      if (sector) {
+        body.sector = sector;
+      }
+      if (sortOrder) {
+        body.order_by = sortOrder;
+      }
       if (sortOption) {
         body.sort_by = sortOption;
       }
 
-      if (sortOrder) {
-        body.order_by = sortOrder;
-      }
+      console.log(body);
 
       const response = await fetch(
         Constants.BACKEND_SERVER_BASE_URL + "/strategies/getStrategyTableData",
@@ -424,44 +440,56 @@ const OverviewTab = ({
         setTotalPages(data.paginator.total_pages);
         setPassingCriteria(data.companies_passing_criteris);
 
-        const uniqueValues = data.data
-          .map((item) => item[selectedKey])
-          .filter(Boolean);
-        const uniqueCompanies = [...new Set(uniqueValues)];
+        const filterOption = sortOption ? sortOption : sector;
+        console.log(filterOption);
+        console.log(sortOption);
+        console.log(sector);
 
-        // const companies = data.data.map((data) => data.company_name);
-        // const uniqueCompanies = [...new Set(companies)];
+        //returns unique names of company name(sortOption) like saksoft, tata
 
-        console.log(uniqueCompanies);
-        setUniqueCompanies(uniqueCompanies);
+        if (!sector) {
+          const uniqueValues = data.data
+            ?.map((item) => item[filterOption])
+            .filter(Boolean);
+          const uniqueCompanies = [...new Set(uniqueValues)];
+
+          console.log(uniqueValues);
+          console.log(uniqueCompanies);
+          setUniqueCompanies(uniqueCompanies);
+        }
 
         if (selectedItems.length > 0) {
-          const filteredData = data.data.filter((item) =>
-            selectedItems.includes(item[selectedKey])
+          console.log("here");
+          console.log(filterOption);
+          console.log(data);
+          const filteredData = data.data.filter(
+            (item) => selectedItems.includes(item[filterOption])
+            // item.sector == filterOption
           );
-          setGraphTableDataCopy(filteredData); // Update graph data with the filtered result
-          console.log(filteredData);
-          console.log(selectedKey);
+          setGraphTableDataCopy(filteredData); // handles drop down, return the rows which contain particular sector, names eg saksoft, tata from company names
+          console.log(filteredData); //technlogy was selected from unique values so its has 2 length data
+          console.log(filterOption);
           console.log(filteredData.length);
         } else {
           console.log("here");
           setGraphTableDataCopy(data.data);
         }
       } else {
+        console.log("here");
         console.log("Unexpected status code:", response.status);
       }
     } catch (error) {
       console.error("Error:", error);
+      console.log("here");
     }
   };
-
-  console.log(uniqueCompanies);
 
   const handleHeaderClick = (key) => {
     console.log(key);
     setAnchorEl(key.currentTarget);
     setOpenFilter(true);
-    setSelectedKey(key);
+    setSortOption(key);
+    setSector("");
   };
   const fetchMapsData = async () => {
     try {
@@ -500,8 +528,8 @@ const OverviewTab = ({
   };
   useEffect(() => {
     fetchGraphData();
-    fetchGraphTableData();
     fetchMapsData();
+    fetchGraphTableData();
     applyFilters(graphTableDataCopy);
   }, [
     selectedStrategy,
@@ -509,18 +537,18 @@ const OverviewTab = ({
     currentRowsPerPage,
     sortOption,
     sortOrder,
-    selectedKey,
     selectedItems,
     selectedItems.length,
+    sector,
   ]);
 
   const applyFilters = (data) => {
     let filteredData = data;
     console.log(filteredData);
-    console.log(selectedKey);
+    console.log(sortOption);
 
-    if (selectedKey) {
-      filteredData = filteredData.filter((item) => item.sector === selectedKey);
+    if (sortOption) {
+      filteredData = filteredData.filter((item) => item.sector === sortOption);
       console.log(filteredData);
       console.log(filteredData.length);
       console.log("here 1");
@@ -536,88 +564,25 @@ const OverviewTab = ({
     setGraphTableData(filteredData);
   };
 
-  // useEffect(() => {
-  //   applyFilters(graphTableDataCopy);
-  // }, [selectedKey, selectedItems]);
+  const handleBarClick = (sortOptionParam) => {
+    console.log(sortOptionParam);
+    setSortOption("");
 
-  const handleBarClick = (sector) => {
-    setSelectedKey(sector);
-  };
+    setSector(sortOptionParam);
 
-  const sorting = (data) => {
-    console.log(selectedField);
-    switch (selectedSort) {
-      case 1:
-        return data.slice().sort((a, b) => {
-          const valueA = a[selectedField] || 0;
-          const valueB = b[selectedField] || 0;
-          console.log(valueA, valueB);
+    console.log(sortOptionParam);
+    setSelectedItems([sortOptionParam]);
 
-          const alphabetRegex = /[a-zA-Z]/;
-          if (alphabetRegex.test(valueA)) {
-            return valueA.localeCompare(valueB, undefined, { numeric: true });
-          } else {
-            return parseFloat(valueA) - parseFloat(valueB);
-          }
-        });
-      case 2:
-        return data.slice().sort((a, b) => {
-          const valueA = a[selectedField] || 0;
-          const valueB = b[selectedField] || 0;
-          console.log(valueA, valueB);
-          const alphabetRegex = /[a-zA-Z]/;
-
-          if (alphabetRegex.test(valueA)) {
-            return valueB.localeCompare(valueA, undefined, { numeric: true });
-          } else {
-            return parseFloat(valueB) - parseFloat(valueA);
-          }
-        });
-      default:
-        return data;
+    if (criteriaRef.current) {
+      criteriaRef.current.scrollIntoView({ behavior: "smooth" });
     }
   };
 
   useEffect(() => {
-    handleSearchChange();
-  }, [searchValue]);
-
-  useEffect(() => {
-    let isMounted = true;
-    if (selectedSort !== 0 && isMounted) {
-      const sorted = sorting(strategiesCopy);
-      setStrategiesCopy(sorted);
-
-      if (isSwitch2) {
-        const sorted = sorting(graphTableDataCopy);
-        setGraphTableDataCopy(sorted);
-      }
+    if (authToken) {
+      fetchStrategyData();
     }
-
-    return () => {
-      isMounted = false;
-      // setIsSwitch2(false);
-    };
-  }, [selectedSort, selectedField]);
-
-  const handleSearchChange = () => {
-    // const searchTerm = event.target.value;
-    // setSearchTerm(searchTerm);
-
-    // If search term is empty, set filtered products to original array
-    if (!searchValue.trim()) {
-      setStrategiesCopy(allStrategies);
-    } else {
-      // Filter products based on the search term
-      const filtered = strategiesCopy.filter((user) =>
-        user.name.toLowerCase().includes(searchValue.toLowerCase())
-      );
-      setStrategiesCopy(filtered);
-    }
-  };
-
-  console.log("kpi", perExchangeKPI);
-
+  }, [authToken]);
   return (
     <Grid
       container
@@ -645,57 +610,6 @@ const OverviewTab = ({
               overflowY: "auto",
             }}
           >
-            {/* removed breadcrumbs */}
-            {/* <Breadcrumbs separator={">"} aria-label="breadcrumb" sx={{ ml: 2 }}>
-            <Typography
-              onClick={handleGoBack}
-              style={{ cursor: "pointer" }}
-              color="inherit"
-            >
-              Strategies Overview
-            </Typography>
-
-            <Typography
-              sx={{ color: "#427879", fontWeight: "bold" }}
-              color="inherit"
-            >
-              {activeButton}
-            </Typography>
-            <Typography
-              sx={{ color: "#427879", fontWeight: "bold" }}
-              color="inherit"
-            >
-              {selectedStrategy?.strategy_label}
-            </Typography>
-          </Breadcrumbs>
-
-          <Box padding={2} display={"flex"} gap={3}>
-            {buttons.map((button) => (
-              <Button
-                key={button.id}
-                sx={{
-                  backgroundColor:
-                    activeButton === button.id ? "#427879" : "white",
-                  color: activeButton === button.id ? "white" : "black",
-                  "&:hover": {
-                    backgroundColor:
-                      activeButton === button.id ? "#427879" : "#427879",
-                    color: activeButton === button.id ? "white" : "white",
-                  },
-                }}
-                startIcon={button.icon}
-                onClick={() => {
-                  setIsSwitch2(false);
-                  setActiveButton(button.id);
-                  setSelectedStrategy(null);
-
-                  // setShowVisualData(false);
-                }}
-              >
-                {button.label}
-              </Button>
-            ))}
-          </Box> */}
             <Card
               sx={{
                 display: "flex",
@@ -777,236 +691,38 @@ const OverviewTab = ({
                 </Box>
               </Box>
               {/* </Card> */}
-              <Card
-                sx={{
-                  width: "100%",
-                  height: "100%",
-                  margin: 0,
-                  gap: 5,
-                  padding: 1,
+              <CompaniesPassingCriteria
+                graphTableDataCopy={graphTableDataCopy}
+                passingHeadCells={passingHeadCells}
+                onClickFilter={(event, key) => {
+                  handleHeaderClick(key);
+                  setAnchorEl(event.currentTarget);
                 }}
-              >
-                <Box justifyContent={"space-between"} display={"flex"}>
-                  <text style={{ fontSize: 20, fontWeight: "bold" }}>
-                    Companies Passing Criterias:{" "}
-                    <span style={{ color: "gray" }}>
-                      {selectedItems.length < 1
-                        ? passingCriteria
-                        : graphTableDataCopy.length}
-                    </span>
-                  </text>
-
-                  <Box>
-                    <SortingPopover
-                      sortOption={sortOption}
-                      setSortOption={setSortOption}
-                      sortOrder={sortOrder}
-                      setSortOrder={setSortOrder}
-                    />
-                  </Box>
-                </Box>
-                <TableContainer>
-                  <Table
-                    sx={{ width: "100%", maxWidth: "100%", mt: 1 }}
-                    size="medium"
-                  >
-                    <TableHead>
-                      <TableRow>
-                        {passingHeadCells.data.map((headCell, index) => (
-                          <StyledTableCell key={index} padding="normal">
-                            <Box
-                              sx={{
-                                display: "flex",
-                                alignItems: "center",
-                                gap: 2,
-                                position: "relative",
-                              }}
-                            >
-                              <Typography>{headCell.label}</Typography>
-                              <IconButton
-                                onClick={(event) => {
-                                  handleHeaderClick(headCell.key);
-                                  setAnchorEl(event.currentTarget); // Set the anchor element to the button
-                                }}
-                                sx={{
-                                  color: "black",
-                                  backgroundColor: "rgba(255, 255, 255, 0.3)",
-                                  borderRadius: "50%",
-                                  width: 24,
-                                  height: 24,
-                                  display: "flex",
-                                  alignItems: "center",
-                                  justifyContent: "center",
-                                  cursor: "pointer",
-                                }}
-                              >
-                                <IoFilterSharp />
-                              </IconButton>
-
-                              {/* Box wrapping the popover */}
-                              <Box
-                                sx={{
-                                  position: "absolute",
-                                  top: 0,
-                                }}
-                              >
-                                <FilterPopover
-                                  openFilter={openFilter}
-                                  setOpenFilter={setOpenFilter}
-                                  anchorEl={anchorEl}
-                                  title="Sort By"
-                                  items={uniqueCompanies}
-                                  selectedItems={selectedItems}
-                                  setSelectedItems={setSelectedItems}
-                                />
-                              </Box>
-                            </Box>
-                          </StyledTableCell>
-                        ))}
-                      </TableRow>
-                    </TableHead>
-
-                    {/* Conditionally render Table Body */}
-                    {graphTableDataCopy ? (
-                      <TableBody>
-                        {graphTableDataCopy.map((data, index) => (
-                          <Tooltip
-                            key={index}
-                            TransitionComponent={Fade}
-                            TransitionProps={{ timeout: 600 }}
-                            title="Click to analyze the company"
-                          >
-                            <StyledTableRow
-                              hover
-                              onClick={() => {
-                                setSelectedCompany(data);
-                                setIsSwitch1(true);
-                                setIsSwitch2(false);
-                                setShowVisualData(!showVisualData);
-                              }}
-                              style={{ cursor: "pointer" }}
-                            >
-                              <StyledTableCell>
-                                <div
-                                  style={{
-                                    display: "grid",
-                                    justifyContent: "center",
-                                    alignItems: "center",
-                                    gridTemplateColumns: "1fr 3fr",
-                                  }}
-                                >
-                                  <img
-                                    src={data.image}
-                                    style={{ height: "30px", width: "35px" }}
-                                  />
-                                  {data.company_name}
-                                </div>
-                              </StyledTableCell>
-
-                              <StyledTableCell>{data.symbol}</StyledTableCell>
-                              <StyledTableCell>{data.exchange}</StyledTableCell>
-                              <StyledTableCell>{data.sector}</StyledTableCell>
-                              <StyledTableCell>{data.industry}</StyledTableCell>
-                              <StyledTableCell
-                                sx={{
-                                  color:
-                                    data.total_return >= 0 ? "green" : "red",
-                                  fontWeight: "bolder",
-                                }}
-                              >
-                                {data.total_return}
-                              </StyledTableCell>
-                              <StyledTableCell
-                                sx={{
-                                  color:
-                                    data.annualized_return >= 0
-                                      ? "green"
-                                      : "red",
-                                  fontWeight: "bolder",
-                                }}
-                              >
-                                {data.annualized_return}
-                              </StyledTableCell>
-                              <StyledTableCell
-                                sx={{
-                                  color:
-                                    data.rolling_return >= 0 ? "green" : "red",
-                                  fontWeight: "bolder",
-                                }}
-                              >
-                                {data.rolling_return}
-                              </StyledTableCell>
-                              <StyledTableCell
-                                sx={{
-                                  color:
-                                    data.stdev_excess_return >= 0
-                                      ? "green"
-                                      : "red",
-                                  fontWeight: "bolder",
-                                }}
-                              >
-                                {data.stdev_excess_return}
-                              </StyledTableCell>
-                              <StyledTableCell
-                                sx={{
-                                  color:
-                                    data.max_drawdown >= 0 ? "green" : "red",
-                                  fontWeight: "bolder",
-                                }}
-                              >
-                                {data.max_drawdown}
-                              </StyledTableCell>
-                            </StyledTableRow>
-                          </Tooltip>
-                        ))}
-                      </TableBody>
-                    ) : (
-                      <CgSpinner size={24} />
-                    )}
-                  </Table>
-                </TableContainer>
-                <Box
-                  display={"flex"}
-                  justifyContent={"flex-end"}
-                  width={"100%"}
-                  gap={1}
-                  mt={2}
-                >
-                  <Box display={"flex"} alignItems={"center"} gap={1}>
-                    <label>Rows Per Page:</label>
-                    <select
-                      style={{ border: "none", outline: "none" }}
-                      value={currentRowsPerPage}
-                      onChange={handleChangeRowsPerPage}
-                    >
-                      {rowsPerPageOptions.map((option) => (
-                        <option key={option} value={option}>
-                          {option}
-                        </option>
-                      ))}
-                    </select>
-                  </Box>
-
-                  <Box display={"flex"} alignItems={"center"} px={2} gap={1}>
-                    <span style={{ fontFamily: "Montserrat" }}>
-                      {currentPage}-{currentRowsPerPage} of {totalPages}
-                    </span>
-                    <IconButton
-                      onClick={handlePrevPage}
-                      disabled={currentPage === 1}
-                    >
-                      <FaChevronLeft />
-                    </IconButton>
-
-                    <IconButton
-                      onClick={handleNextPage}
-                      disabled={currentPage === totalPages}
-                    >
-                      <FaChevronRight />
-                    </IconButton>
-                  </Box>
-                </Box>
-              </Card>
+                onClickTableBody={() => {
+                  setSelectedCompany(data);
+                  setIsSwitch1(true);
+                  setIsSwitch2(false);
+                  setShowVisualData(!showVisualData);
+                }}
+                // normal props
+                criteriaRef={criteriaRef}
+                selectedItems={selectedItems}
+                setSelectedItems={setSelectedItems}
+                passingCriteria={passingCriteria}
+                sortOption={sortOption}
+                sortOrder={sortOrder}
+                setSortOption={setSortOption}
+                setSortOrder={setSortOrder}
+                currentRowsPerPage={currentRowsPerPage}
+                setCurrentRowsPerPage={setCurrentRowsPerPage}
+                setOpenFilter={setOpenFilter}
+                openFilter={openFilter}
+                anchorEl={anchorEl}
+                items={uniqueCompanies}
+                currentPage={currentPage}
+                setCurrentPage={setCurrentPage}
+                totalPages={totalPages}
+              />
             </Card>
           </div>
         </>
@@ -1042,7 +758,7 @@ const OverviewTab = ({
                 >
                   Strategies Performances and Risks{" "}
                   <span style={{ color: "gray" }}>
-                    ({strategiesCopy[0]?.duration} years)
+                    ({strategiesCopy?.[0]?.duration}years)
                   </span>
                 </text>
               </Box>
@@ -1055,7 +771,7 @@ const OverviewTab = ({
                   overflowX: "hidden",
                 }}
               >
-                {allStrategies.length > 0 ? (
+                {allStrategies?.length > 0 ? (
                   <>
                     <VerticalBarChart
                       chartId={"bar-chart-1"}
@@ -1079,184 +795,25 @@ const OverviewTab = ({
             </Box>
           </Card>
           {/* overview 3y chart */}
-          <Card
-            sx={{
-              display: "flex",
-              width: "calc(100vw - 30px)",
-              my: 1,
-              position: "relative",
-              overflowX: "auto",
-            }}
-          >
-            <Box
-              display={"flex"}
-              flexDirection={"column"}
-              width={"100%"}
-              bgcolor={"white"}
-            >
-              <Box
-                sx={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  paddingX: 3,
-                  paddingY: 1,
-                }}
-              >
-                <Box spacing={1} sx={{ mt: 0.5 }}>
-                  <text
-                    style={{
-                      padding: "5px",
-                      fontSize: "27px",
-                      fontWeight: "bold",
-                    }}
-                  >
-                    {" "}
-                    Overview{" "}
-                    <span style={{ color: "gray" }}>
-                      ({strategiesCopy[0]?.duration} years)
-                    </span>
-                  </text>
-                </Box>
-                <Box display="flex" gap={2} sx={{ mt: 0.5 }}>
-                  <Button startIcon={<RiArrowUpDownLine />} variant="outlined">
-                    Sorting
-                  </Button>
-                </Box>
-              </Box>
-              <TableContainer>
-                <Table sx={{ width: "100%", mt: 1 }} size="medium">
-                  <TableHead>
-                    <TableRow>
-                      {headCells.data.map((headCell, index) => (
-                        <StyledTableCell key={headCell.id} padding="normal">
-                          <Box
-                            sx={{
-                              display: "flex",
-                              alignItems: "center",
-                              gap: 2,
-                            }}
-                          >
-                            <Box sx={{ display: "flex", alignItems: "center" }}>
-                              {headCell.label}
-                              <Box sx={{ width: "20px", height: "20px" }}>
-                                <VscListFilter
-                                  style={{ width: "100%", height: "100%" }}
-                                />
-                              </Box>
-                            </Box>
-                          </Box>
-                        </StyledTableCell>
-                      ))}
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {strategiesCopy.map((data, index) => {
-                      return (
-                        <StyledTableRow hover key={index} sx={{ ml: 3 }}>
-                          <StyledTableCell
-                            onClick={() => handleDataVisualization(data)}
-                            sx={{
-                              cursor: "pointer",
-                              ":hover": {
-                                textDecoration: "underline",
-                                color: "blue",
-                              },
-                            }}
-                          >
-                            {" "}
-                            {/* strategy button */}
-                            {data.strategy_label}
-                          </StyledTableCell>
-                          <StyledTableCell
-                            onClick={() =>
-                              handleInvestorVisualization(data.investors)
-                            }
-                            sx={{
-                              cursor: "pointer",
-                              ":hover": {
-                                textDecoration: "underline",
-                                color: "blue",
-                              },
-                            }}
-                          >
-                            {data.investors}
-                          </StyledTableCell>
-                          <StyledTableCell>
-                            {data.investing_style}
-                          </StyledTableCell>
-                          <StyledTableCell
-                            sx={{
-                              color: data.total_return >= 0 ? "green" : "red",
-                              fontWeight: "bolder",
-                            }}
-                          >
-                            {" "}
-                            {data.total_return}{" "}
-                          </StyledTableCell>
-                          <StyledTableCell
-                            sx={{
-                              color:
-                                data.annualized_return >= 0 ? "green" : "red",
-                              fontWeight: "bolder",
-                            }}
-                          >
-                            {" "}
-                            {data.annualized_return}{" "}
-                          </StyledTableCell>
-                          <StyledTableCell
-                            sx={{
-                              color: data.rolling_return >= 0 ? "green" : "red",
-                              fontWeight: "bolder",
-                            }}
-                          >
-                            {" "}
-                            {data.rolling_return}{" "}
-                          </StyledTableCell>
-                          <StyledTableCell
-                            sx={{
-                              color: data.stdev_return >= 0 ? "green" : "red",
-                              fontWeight: "bolder",
-                            }}
-                          >
-                            {" "}
-                            {data.stdev_return}{" "}
-                          </StyledTableCell>
-                          <StyledTableCell
-                            sx={{
-                              color: data.max_drawdown >= 0 ? "green" : "red",
-                              fontWeight: "bolder",
-                            }}
-                          >
-                            {" "}
-                            {data.max_drawdown}{" "}
-                          </StyledTableCell>
-                          <StyledTableCell
-                            sx={{
-                              color: data.sharpe_ratio >= 0 ? "green" : "red",
-                              fontWeight: "bolder",
-                            }}
-                          >
-                            {" "}
-                            {data.sharpe_ratio}{" "}
-                          </StyledTableCell>
-                          <StyledTableCell
-                            sx={{
-                              color: data.sortino_ratio >= 0 ? "green" : "red",
-                              fontWeight: "bolder",
-                            }}
-                          >
-                            {" "}
-                            {data.sortino_ratio ? data.sortino_ratio : "-"}{" "}
-                          </StyledTableCell>
-                          {/* <StyledTableCell> {data.duration} </StyledTableCell> */}
-                        </StyledTableRow>
-                      );
-                    })}
-                  </TableBody>
-                </Table>
-              </TableContainer>
-            </Box>
-          </Card>
+          <OverviewTableData
+            strategiesCopy={strategiesCopy}
+            allStrategies={allStrategies}
+            sortOption={sortOption}
+            setSortOption={setSortOption}
+            sortOrder={sortOrder}
+            setSortOrder={setSortOrder}
+            headCells={headCells}
+            setOpenFilter={setOpenFilter}
+            openFilter={openFilter}
+            anchorEl={anchorEl}
+            items={uniqueCompanies}
+            selectedItems={selectedItems}
+            setSelectedItems={setSelectedItems}
+            onClickVisualization={() => handleDataVisualization(data)}
+            onClickInvestorVisualization={() =>
+              handleInvestorVisualization(data.investors)
+            }
+          />
         </div>
       )}
 
@@ -1272,6 +829,494 @@ const OverviewTab = ({
 };
 
 export default OverviewTab;
+
+const CompaniesPassingCriteria = ({
+  criteriaRef,
+  selectedItems,
+  setSelectedItems,
+  passingCriteria,
+  graphTableDataCopy,
+  passingHeadCells,
+  onClickFilter,
+  onClickTableBody,
+  currentRowsPerPage,
+  setCurrentRowsPerPage,
+  sortOption,
+  sortOrder,
+  setSortOption,
+  setSortOrder,
+  openFilter,
+  setOpenFilter,
+  anchorEl,
+  items,
+  currentPage,
+  totalPages,
+  setCurrentPage,
+}) => {
+  const rowsPerPageOptions = [3, 5, 10];
+
+  const handlePrevPage = () => {
+    setCurrentPage((prevPage) => Math.max(1, prevPage - 1));
+  };
+
+  const handleNextPage = () => {
+    setCurrentPage((prevPage) => Math.min(totalPages, prevPage + 1));
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setCurrentRowsPerPage(parseInt(event.target.value, 10));
+    setCurrentPage(1);
+  };
+  return (
+    <Card
+      sx={{
+        width: "100%",
+        height: "100%",
+        margin: 0,
+        gap: 5,
+        padding: 1,
+      }}
+      ref={criteriaRef}
+    >
+      <Box justifyContent={"space-between"} display={"flex"}>
+        <text style={{ fontSize: 20, fontWeight: "bold" }}>
+          Companies Passing Criterias:{" "}
+          <span style={{ color: "gray" }}>
+            {selectedItems.length < 1
+              ? passingCriteria
+              : graphTableDataCopy.length}
+          </span>
+        </text>
+
+        <Box>
+          <SortingPopover
+            sortOption={sortOption}
+            setSortOption={setSortOption}
+            sortOrder={sortOrder}
+            setSortOrder={setSortOrder}
+          />
+        </Box>
+      </Box>
+      <TableContainer>
+        <Table sx={{ width: "100%", maxWidth: "100%", mt: 1 }} size="medium">
+          {/* table head */}
+          <TableHead>
+            <TableRow>
+              {passingHeadCells.data?.map((headCell, index) => (
+                <StyledTableCell key={index} padding="normal">
+                  <Box
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 2,
+                      position: "relative",
+                    }}
+                  >
+                    <Typography>{headCell.label}</Typography>
+                    <IconButton
+                      onClick={(event) => onClickFilter(event, headCell.key)}
+                      sx={{
+                        color: "black",
+                        backgroundColor: "rgba(255, 255, 255, 0.3)",
+                        borderRadius: "50%",
+                        width: 24,
+                        height: 24,
+                        display: index >= 1 && index <= 3 ? "flex" : "none",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        cursor: "pointer",
+                      }}
+                    >
+                      <IoFilterSharp />
+                    </IconButton>
+                    <Box
+                      sx={{
+                        position: "absolute",
+                        top: 0,
+                      }}
+                    >
+                      <FilterPopover
+                        openFilter={openFilter}
+                        setOpenFilter={setOpenFilter}
+                        anchorEl={anchorEl}
+                        title="Order By"
+                        items={items}
+                        selectedItems={selectedItems}
+                        setSelectedItems={setSelectedItems}
+                      />
+                    </Box>
+                  </Box>
+                </StyledTableCell>
+              ))}
+            </TableRow>
+          </TableHead>
+          {/* Conditionally render Table Body */}
+          {graphTableDataCopy ? (
+            <TableBody>
+              {graphTableDataCopy?.map((data, index) => (
+                <Tooltip
+                  key={index}
+                  TransitionComponent={Fade}
+                  TransitionProps={{ timeout: 600 }}
+                  title="Click to analyze the company"
+                >
+                  <StyledTableRow
+                    hover
+                    onClick={onClickTableBody}
+                    style={{ cursor: "pointer" }}
+                  >
+                    <StyledTableCell>
+                      <div
+                        style={{
+                          display: "grid",
+                          justifyContent: "center",
+                          alignItems: "center",
+                          gridTemplateColumns: "1fr 3fr",
+                        }}
+                      >
+                        <img
+                          src={data.image}
+                          style={{ height: "30px", width: "35px" }}
+                        />
+                        {data.company_name}
+                      </div>
+                    </StyledTableCell>
+
+                    <StyledTableCell>{data.symbol}</StyledTableCell>
+                    <StyledTableCell>{data.exchange}</StyledTableCell>
+                    <StyledTableCell>{data.sector}</StyledTableCell>
+                    <StyledTableCell>{data.industry}</StyledTableCell>
+                    <StyledTableCell
+                      sx={{
+                        color: data.total_return >= 0 ? "green" : "red",
+                        fontWeight: "bolder",
+                      }}
+                    >
+                      {data.total_return}
+                    </StyledTableCell>
+                    <StyledTableCell
+                      sx={{
+                        color: data.annualized_return >= 0 ? "green" : "red",
+                        fontWeight: "bolder",
+                      }}
+                    >
+                      {data.annualized_return}
+                    </StyledTableCell>
+                    <StyledTableCell
+                      sx={{
+                        color: data.rolling_return >= 0 ? "green" : "red",
+                        fontWeight: "bolder",
+                      }}
+                    >
+                      {data.rolling_return}
+                    </StyledTableCell>
+                    <StyledTableCell
+                      sx={{
+                        color: data.stdev_excess_return >= 0 ? "green" : "red",
+                        fontWeight: "bolder",
+                      }}
+                    >
+                      {data.stdev_excess_return}
+                    </StyledTableCell>
+                    <StyledTableCell
+                      sx={{
+                        color: data.max_drawdown >= 0 ? "green" : "red",
+                        fontWeight: "bolder",
+                      }}
+                    >
+                      {data.max_drawdown}
+                    </StyledTableCell>
+                  </StyledTableRow>
+                </Tooltip>
+              ))}
+            </TableBody>
+          ) : (
+            <CgSpinner size={24} />
+          )}
+        </Table>
+      </TableContainer>
+      {/* pagination */}
+      <Box
+        display={"flex"}
+        justifyContent={"flex-end"}
+        width={"100%"}
+        gap={1}
+        mt={2}
+      >
+        <Box display={"flex"} alignItems={"center"} gap={1}>
+          <label>Rows Per Page:</label>
+          <select
+            style={{ border: "none", outline: "none" }}
+            value={currentRowsPerPage}
+            onChange={handleChangeRowsPerPage}
+          >
+            {rowsPerPageOptions?.map((option) => (
+              <option key={option} value={option}>
+                {option}
+              </option>
+            ))}
+          </select>
+        </Box>
+
+        <Box display={"flex"} alignItems={"center"} px={2} gap={1}>
+          <span style={{ fontFamily: "Montserrat" }}>
+            {currentPage}-{currentRowsPerPage} of {totalPages}
+          </span>
+          <IconButton onClick={handlePrevPage} disabled={currentPage === 1}>
+            <FaChevronLeft />
+          </IconButton>
+
+          <IconButton
+            onClick={handleNextPage}
+            disabled={currentPage === totalPages}
+          >
+            <FaChevronRight />
+          </IconButton>
+        </Box>
+      </Box>
+    </Card>
+  );
+};
+
+const OverviewTableData = ({
+  strategiesCopy,
+  allStrategies,
+  sortOption,
+  setSortOption,
+  sortOrder,
+  setSortOrder,
+  headCells,
+  openFilter,
+  setOpenFilter,
+  anchorEl,
+  items,
+  selectedItems,
+  setSelectedItems,
+  onClickVisualization,
+  onClickInvestorVisualization,
+}) => {
+  return (
+    <Card
+      sx={{
+        display: "flex",
+        width: "calc(100vw - 30px)",
+        my: 1,
+        position: "relative",
+        overflowX: "auto",
+      }}
+    >
+      <Box
+        display={"flex"}
+        flexDirection={"column"}
+        width={"100%"}
+        bgcolor={"white"}
+      >
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            paddingX: 3,
+            paddingY: 1,
+          }}
+        >
+          <Box spacing={1} sx={{ mt: 0.5 }}>
+            <text
+              style={{
+                padding: "5px",
+                fontSize: "27px",
+                fontWeight: "bold",
+              }}
+            >
+              {" "}
+              Overview{" "}
+              <span style={{ color: "gray" }}>
+                ({strategiesCopy?.[0]?.duration} years)
+              </span>
+            </text>
+          </Box>
+          <Box display="flex" gap={2} sx={{ mt: 0.5 }}>
+            <OverviewSortingPopover
+              sortOption={sortOption}
+              setSortOption={setSortOption}
+              sortOrder={sortOrder}
+              setSortOrder={setSortOrder}
+            />
+          </Box>
+        </Box>
+        <TableContainer>
+          <Table sx={{ width: "100%", mt: 1 }} size="medium">
+            <TableHead>
+              <TableRow>
+                {headCells.data?.map((headCell, index) => (
+                  <StyledTableCell key={headCell.id} padding="normal">
+                    <Box
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 2,
+                        position: "relative",
+                      }}
+                    >
+                      <Box sx={{ display: "flex", alignItems: "center" }}>
+                        {headCell.label}
+
+                        {/* <IconButton
+                                onClick={(event) => {
+                                  handleHeaderClick(headCell.key);
+                                  setAnchorEl(event.currentTarget); // Set the anchor element to the button
+                                }}
+                                sx={{
+                                  color: "black",
+                                  backgroundColor: "rgba(255, 255, 255, 0.3)",
+                                  borderRadius: "50%",
+                                  width: 32,
+                                  height: 32,
+                                  display:
+                                    index === 1 || index === 2
+                                      ? "none"
+                                      : "flex",
+                                  alignItems: "center",
+                                  justifyContent: "center",
+                                  cursor: "pointer",
+                                }}
+                              >
+                                <IoFilterSharp />
+                              </IconButton> */}
+                      </Box>
+
+                      <Box
+                        sx={{
+                          position: "absolute",
+                          top: 0,
+                        }}
+                      >
+                        <FilterPopover
+                          openFilter={openFilter}
+                          setOpenFilter={setOpenFilter}
+                          anchorEl={anchorEl}
+                          title="Sort By"
+                          items={items}
+                          selectedItems={selectedItems}
+                          setSelectedItems={setSelectedItems}
+                        />
+                      </Box>
+                    </Box>
+                  </StyledTableCell>
+                ))}
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {strategiesCopy?.map((data, index) => {
+                return (
+                  <StyledTableRow hover key={index} sx={{ ml: 3 }}>
+                    <StyledTableCell
+                      onClick={() => onClickVisualization(data)}
+                      // onClick={() => handleDataVisualization(data)}
+                      sx={{
+                        cursor: "pointer",
+                        ":hover": {
+                          textDecoration: "underline",
+                          color: "blue",
+                        },
+                      }}
+                    >
+                      {" "}
+                      {/* strategy button */}
+                      {data.strategy_label}
+                    </StyledTableCell>
+                    <StyledTableCell
+                      // onClick={() =>
+                      //   handleInvestorVisualization(data.investors)
+                      // }
+
+                      onClick={() =>
+                        onClickInvestorVisualization(data.investors)
+                      }
+                      sx={{
+                        cursor: "pointer",
+                        ":hover": {
+                          textDecoration: "underline",
+                          color: "blue",
+                        },
+                      }}
+                    >
+                      {data.investors}
+                    </StyledTableCell>
+                    <StyledTableCell>{data.investing_style}</StyledTableCell>
+                    <StyledTableCell
+                      sx={{
+                        color: data.total_return >= 0 ? "green" : "red",
+                        fontWeight: "bolder",
+                      }}
+                    >
+                      {" "}
+                      {data.total_return}{" "}
+                    </StyledTableCell>
+                    <StyledTableCell
+                      sx={{
+                        color: data.annualized_return >= 0 ? "green" : "red",
+                        fontWeight: "bolder",
+                      }}
+                    >
+                      {" "}
+                      {data.annualized_return}{" "}
+                    </StyledTableCell>
+                    <StyledTableCell
+                      sx={{
+                        color: data.rolling_return >= 0 ? "green" : "red",
+                        fontWeight: "bolder",
+                      }}
+                    >
+                      {" "}
+                      {data.rolling_return}{" "}
+                    </StyledTableCell>
+                    <StyledTableCell
+                      sx={{
+                        color: data.stdev_return >= 0 ? "green" : "red",
+                        fontWeight: "bolder",
+                      }}
+                    >
+                      {" "}
+                      {data.stdev_return}{" "}
+                    </StyledTableCell>
+                    <StyledTableCell
+                      sx={{
+                        color: data.max_drawdown >= 0 ? "green" : "red",
+                        fontWeight: "bolder",
+                      }}
+                    >
+                      {" "}
+                      {data.max_drawdown}{" "}
+                    </StyledTableCell>
+                    <StyledTableCell
+                      sx={{
+                        color: data.sharpe_ratio >= 0 ? "green" : "red",
+                        fontWeight: "bolder",
+                      }}
+                    >
+                      {" "}
+                      {data.sharpe_ratio}{" "}
+                    </StyledTableCell>
+                    <StyledTableCell
+                      sx={{
+                        color: data.sortino_ratio >= 0 ? "green" : "red",
+                        fontWeight: "bolder",
+                      }}
+                    >
+                      {" "}
+                      {data.sortino_ratio ? data.sortino_ratio : "-"}{" "}
+                    </StyledTableCell>
+                    {/* <StyledTableCell> {data.duration} </StyledTableCell> */}
+                  </StyledTableRow>
+                );
+              })}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      </Box>
+    </Card>
+  );
+};
 
 {
   /* <FormControl>

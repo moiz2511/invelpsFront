@@ -11,18 +11,16 @@ import {
 } from "@mui/material";
 import { RiArrowUpDownLine } from "react-icons/ri";
 
-const SortingPopover = ({
+const OverviewSortingPopover = ({
   setSortOption,
   setSortOrder,
   sortOption,
   sortOrder,
 }) => {
-  const [anchorEl, setAnchorEl] = useState(null);
-  // const [sortOption, setSortOption] = useState("exchange");
-  // const [sortOrder, setSortOrder] = useState("asc");
-
   console.log(sortOption);
   console.log(sortOrder);
+
+  const [anchorEl, setAnchorEl] = useState(null);
 
   const toggleSortingPopover = (event) => {
     if (anchorEl) {
@@ -84,55 +82,45 @@ const SortingPopover = ({
             onChange={handleSortChange}
             style={{ marginBottom: "16px" }}
           >
-            <FormControlLabel
-              value="company_name"
+            {/* <FormControlLabel
+              value="name"
               control={<Radio />}
-              label="Company Name"
-            />
-            <FormControlLabel
-              value="symbol"
-              control={<Radio />}
-              label="Symbol"
-            />
-            <FormControlLabel
-              value="exchange"
-              control={<Radio />}
-              label="Exchange"
-            />
-            <FormControlLabel
-              value="sector"
-              control={<Radio />}
-              label="Sector"
-            />
-            <FormControlLabel
-              value="industry"
-              control={<Radio />}
-              label="Industry"
-            />
+              label="Strategy"
+            /> */}
             <FormControlLabel
               value="total_return"
               control={<Radio />}
-              label="Total Return"
+              label="Total Return (%)"
             />
             <FormControlLabel
               value="annualized_return"
               control={<Radio />}
-              label="Annualized Return"
+              label="Annualized Return (%)"
             />
             <FormControlLabel
               value="rolling_return"
               control={<Radio />}
-              label="Rolling Return"
+              label="Rolling Return (%)"
             />
             <FormControlLabel
               value="standard_deviation"
               control={<Radio />}
-              label="Standard Deviation"
+              label="Standard Deviation (%)"
             />
             <FormControlLabel
               value="max_drawdown"
               control={<Radio />}
-              label="Max Drawdown"
+              label="Max Drawdown (%)"
+            />
+            <FormControlLabel
+              value="sharpe_ratio"
+              control={<Radio />}
+              label="Sharpe Ratio"
+            />
+            <FormControlLabel
+              value="sortino_ratio"
+              control={<Radio />}
+              label="Sortino Ratio"
             />
           </RadioGroup>
 
@@ -155,4 +143,4 @@ const SortingPopover = ({
   );
 };
 
-export default SortingPopover;
+export default OverviewSortingPopover;

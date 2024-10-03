@@ -38,27 +38,17 @@ const BreadcrumbsComponent = ({
       setTab2("");
     }
 
-    if (
-      child == "RETURNS AND RISK" &&
-      location.pathname != "/riskVisualization"
-    ) {
-      setSelectedStrategyLabel(null);
-      // navigate("/dataanalysis/investorscreeners");
+    if (location.pathname !== "/riskVisualization") {
       console.log("here 1");
-    }
-
-    if (
-      child == "RETURNS AND RISK" &&
-      location.pathname == "/riskVisualization"
-    ) {
       setSelectedStrategyLabel(null);
-      navigate("/dataanalysis/investorscreeners");
+    } else if (location.pathname === "/riskVisualization") {
       console.log("here 2");
+      navigate("/dataanalysis/investorscreeners");
+      setSelectedStrategyLabel(null);
     }
   };
 
   const handleReload = () => {
-    // window.location.reload();
     setIsSwitch2(false);
     setTab2("");
     setSelectedStrategyLabel(null);
