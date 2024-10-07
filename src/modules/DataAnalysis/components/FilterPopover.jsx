@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Box,
   Popover,
@@ -6,6 +6,7 @@ import {
   Button,
   Checkbox,
   FormControlLabel,
+  CircularProgress,
 } from "@mui/material";
 
 const FilterPopover = ({
@@ -16,6 +17,9 @@ const FilterPopover = ({
   items,
   selectedItems,
   setSelectedItems,
+  graphTableDataCopy,
+  companySortBy,
+  isLoading,
 }) => {
   const handleToggle = (item) => {
     const currentIndex = selectedItems.indexOf(item);
@@ -30,6 +34,13 @@ const FilterPopover = ({
     setSelectedItems(newSelectedItems);
   };
 
+  console.log(items);
+  console.log(selectedItems);
+  console.log(companySortBy);
+
+  // console.log(graphTableDataCopy);
+  // console.log(copyGraphData);
+  // console.log(uniqueValues);
   return (
     <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
       <Popover
@@ -49,19 +60,35 @@ const FilterPopover = ({
           <Typography variant="h6" fontWeight="bold">
             {title}
           </Typography>
-          {items.map((item, index) => (
-            <FormControlLabel
-              key={index}
-              control={
-                <Checkbox
-                  checked={selectedItems.indexOf(item) !== -1}
-                  onChange={() => handleToggle(item)}
-                  color="success" // Green checkbox
+          {isLoading ? (
+            <>
+              <Box
+                display="flex"
+                justifyContent="center"
+                alignItems="center"
+                height="100%"
+              >
+                <CircularProgress />
+              </Box>
+            </>
+          ) : (
+            <>
+              {items?.map((item, index) => (
+                <FormControlLabel
+                  key={index}
+                  control={
+                    <Checkbox
+                      checked={selectedItems.indexOf(item) !== -1}
+                      onChange={() => handleToggle(item)}
+                      color="success" // Green checkbox
+                    />
+                  }
+                  label={item}
                 />
-              }
-              label={item}
-            />
-          ))}
+              ))}
+            </>
+          )}
+
           <Box
             sx={{
               display: "flex",
@@ -75,15 +102,6 @@ const FilterPopover = ({
             >
               Close
             </Button>
-            {/* <Button
-              variant="contained"
-              color="success" // Green filter button
-              onClick={() => {
-                console.log(selectedItems);
-              }}
-            >
-              Filter
-            </Button> */}
           </Box>
         </Box>
       </Popover>
@@ -92,3 +110,56 @@ const FilterPopover = ({
 };
 
 export default FilterPopover;
+
+// const getUniqueExchanges = (data, items) => {
+//   return [
+//     ...new Set(
+//       data
+//         ?.map((item) => item[companySortBy])
+//         .filter((value) => items?.includes(value))
+//     ),
+//   ];
+// };
+
+// useEffect(() => {
+//   if (graphTableDataCopy?.length > 0) {
+//     setCopyGraphData([...graphTableDataCopy]);
+//   }
+// }, [graphTableDataCopy]);
+
+// useEffect(() => {
+//   if (copyGraphData?.length > 0) {
+//     const uniqueExchanges = getUniqueExchanges(copyGraphData, items);
+//     setUniqueValues(uniqueExchanges);
+//   }
+// }, [copyGraphData, items, companySortBy]);
+
+// const getUniqueExchanges = (graphTableDataCopy, items) => {
+//   setCopyGraphData(graphTableDataCopy);
+//   const data = [
+//     ...new Set(
+//       copyGraphData
+//         ?.map((item) => item[companySortBy])
+//         .filter((value) => items.includes(value))
+//     ),
+//   ];
+//   return data;
+// };
+
+// useEffect(() => {
+//   const uniqueExchanges = getUniqueExchanges(copyGraphData, items);
+//   setUniqueValues(uniqueExchanges);
+// }, [copyGraphData, items, companySortBy]);
+
+// const handleToggle = (item) => {
+//   const currentIndex = selectedItems.indexOf(item);
+//   const newSelectedItems = [...selectedItems];
+
+//   if (currentIndex === -1) {
+//     newSelectedItems.push(item);
+//   } else {
+//     newSelectedItems.splice(currentIndex, 1);
+//   }
+
+//   setSelectedItems(newSelectedItems);
+// };

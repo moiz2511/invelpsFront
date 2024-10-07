@@ -12,13 +12,14 @@ import {
 import { RiArrowUpDownLine } from "react-icons/ri";
 
 const OverviewSortingPopover = ({
-  setSortOption,
-  setSortOrder,
-  sortOption,
-  sortOrder,
+  setSSortBy,
+  setSOrderBy,
+  sSortBy,
+  sOrderBy,
+  setIsSort,
 }) => {
-  console.log(sortOption);
-  console.log(sortOrder);
+  console.log(sSortBy);
+  console.log(sOrderBy);
 
   const [anchorEl, setAnchorEl] = useState(null);
 
@@ -35,11 +36,12 @@ const OverviewSortingPopover = ({
   };
 
   const handleSortChange = (event) => {
-    setSortOption(event.target.value);
+    setSSortBy(event.target.value);
+    setIsSort(false);
   };
 
   const handleOrderChange = (event) => {
-    setSortOrder(event.target.value);
+    setSOrderBy(event.target.value);
   };
 
   const open = Boolean(anchorEl); // Open popover if anchorEl is not null
@@ -78,15 +80,10 @@ const OverviewSortingPopover = ({
         <FormControl component="fieldset" style={{ padding: "16px" }}>
           <FormLabel component="legend">Sort Options</FormLabel>
           <RadioGroup
-            value={sortOption}
+            value={sSortBy}
             onChange={handleSortChange}
             style={{ marginBottom: "16px" }}
           >
-            {/* <FormControlLabel
-              value="name"
-              control={<Radio />}
-              label="Strategy"
-            /> */}
             <FormControlLabel
               value="total_return"
               control={<Radio />}
@@ -125,7 +122,7 @@ const OverviewSortingPopover = ({
           </RadioGroup>
 
           <FormLabel component="legend">Order</FormLabel>
-          <RadioGroup value={sortOrder} onChange={handleOrderChange}>
+          <RadioGroup value={sOrderBy} onChange={handleOrderChange}>
             <FormControlLabel
               value="asc"
               control={<Radio />}

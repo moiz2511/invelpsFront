@@ -12,17 +12,18 @@ import {
 import { RiArrowUpDownLine } from "react-icons/ri";
 
 const SortingPopover = ({
-  setSortOption,
-  setSortOrder,
-  sortOption,
-  sortOrder,
+  setCompanySortBy,
+  setCompanyOrderBy,
+  companySortBy,
+  companyOrderBy,
+  setIsSort,
 }) => {
   const [anchorEl, setAnchorEl] = useState(null);
-  // const [sortOption, setSortOption] = useState("exchange");
-  // const [sortOrder, setSortOrder] = useState("asc");
+  // const [companySortBy, setCompanySortBy] = useState("exchange");
+  // const [companyOrderBy, setCompanyOrderBy] = useState("asc");
 
-  console.log(sortOption);
-  console.log(sortOrder);
+  console.log(companySortBy);
+  console.log(companyOrderBy);
 
   const toggleSortingPopover = (event) => {
     if (anchorEl) {
@@ -37,11 +38,12 @@ const SortingPopover = ({
   };
 
   const handleSortChange = (event) => {
-    setSortOption(event.target.value);
+    setCompanySortBy(event.target.value);
+    setIsSort(true);
   };
 
   const handleOrderChange = (event) => {
-    setSortOrder(event.target.value);
+    setCompanyOrderBy(event.target.value);
   };
 
   const open = Boolean(anchorEl); // Open popover if anchorEl is not null
@@ -80,7 +82,7 @@ const SortingPopover = ({
         <FormControl component="fieldset" style={{ padding: "16px" }}>
           <FormLabel component="legend">Sort Options</FormLabel>
           <RadioGroup
-            value={sortOption}
+            value={companySortBy}
             onChange={handleSortChange}
             style={{ marginBottom: "16px" }}
           >
@@ -137,7 +139,7 @@ const SortingPopover = ({
           </RadioGroup>
 
           <FormLabel component="legend">Order</FormLabel>
-          <RadioGroup value={sortOrder} onChange={handleOrderChange}>
+          <RadioGroup value={companyOrderBy} onChange={handleOrderChange}>
             <FormControlLabel
               value="asc"
               control={<Radio />}

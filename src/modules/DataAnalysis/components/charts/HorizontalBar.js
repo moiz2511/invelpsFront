@@ -31,7 +31,7 @@ const HorizontalBarChart = ({ data, onClickBar }) => {
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   // Calculate the total count for percentage calculation
-  const totalCount = data.reduce((sum, entry) => sum + entry.total_count, 0);
+  const totalCount = data?.reduce((sum, entry) => sum + entry.total_count, 0);
 
   return (
     <Container maxWidth="lg" sx={{ height: "100%", py: 4 }}>
@@ -46,7 +46,7 @@ const HorizontalBarChart = ({ data, onClickBar }) => {
             dataKey="sector"
             type="category"
             tickFormatter={(value) =>
-              value.length > 15 ? `${value.slice(0, 15)}...` : value
+              value?.length > 15 ? `${value.slice(0, 15)}...` : value
             }
             width={150}
           />
@@ -57,7 +57,7 @@ const HorizontalBarChart = ({ data, onClickBar }) => {
             fill="#8884d8"
             onClick={(entry) => onClickBar(entry.sector)}
           >
-            {data.map((entry, index) => (
+            {data?.map((entry, index) => (
               <Cell
                 key={`cell-${index}`}
                 fill={COLORS[index % COLORS.length]}

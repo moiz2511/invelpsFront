@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import WorldMap from "react-svg-worldmap";
 import { Box, Typography, Paper, Stack } from "@mui/material";
 
-const GeoChartComponent = ({ data }) => {
+const GeoChartComponent = ({ data, selectedCountry, setSelectedCountry }) => {
   const colors = [
     "#FFD700",
     "#FFA07A",
@@ -23,16 +23,22 @@ const GeoChartComponent = ({ data }) => {
     "orange",
   ];
 
+  console.log(data);
+
   const [countryColors, setCountryColors] = useState({});
-  const [mapData, setMapData] = useState(null);
+  const [mapData, setMapData] = useState([]);
+
+  console.log("Data received:", data);
+  console.log("Map data:", mapData);
+
+  console.log("selected country:", selectedCountry);
 
   const prepareDataForMap = (data) => {
     let newCountryColors = {};
-
     const mappedData = data
       .map((item, index) => {
         if (item.country_code === "Unknown") {
-          return null; // Skip unknown country codes
+          return null;
         } else {
           newCountryColors[item.country_code] =
             newCountryColors[item.country_code] ||
@@ -44,53 +50,58 @@ const GeoChartComponent = ({ data }) => {
           };
         }
       })
-      .filter((item) => item !== null); // Filter out null entries
+      .filter((item) => item !== null);
 
-    // Set the state once after the loop
     setCountryColors(newCountryColors);
     return mappedData;
   };
 
   useEffect(() => {
     if (data) {
+      console.log("Data is an array:", data);
       const mapD = prepareDataForMap(data);
       setMapData(mapD);
+      console.log(mapData);
+      console.log(mapD);
+      console.log(data);
+    } else {
+      console.log("Data is not valid for map:", data);
+      setMapData([]);
     }
-  }, [data]); // Only recalculate when the `data` changes
+  }, [data]);
 
-  const getStyle = ({
-    countryValue,
-    countryCode,
-    minValue,
-    maxValue,
-    color,
-  }) => ({
+  const getStyle = ({ countryValue = 0, countryCode, color }) => ({
     fill: countryColors[countryCode] || color,
-    fillOpacity: countryValue
-      ? 0.1 + (1.5 * (countryValue - minValue)) / (maxValue - minValue)
-      : 0,
+    fillOpacity: countryValue ? 0.1 + (1.5 * countryValue) / 100 : 0,
     stroke: "green",
     strokeWidth: 1,
     strokeOpacity: 0.2,
     cursor: "pointer",
   });
 
+  const handleCountryClick = (countryCode) => {
+    setSelectedCountry(countryCode);
+  };
   return (
     <Box
       sx={{ width: "100%", maxWidth: 1200, margin: "auto", overflow: "hidden" }}
     >
-      {mapData && (
+      {mapData?.length > 0 ? (
         <WorldMap
-          color="red" // Default color, overridden by mapData
-          valueSuffix="%" // Value suffix for display
-          size="responsive" // Responsive sizing
-          data={mapData} // The map data with countries and colors
+          color="red"
+          valueSuffix="%"
+          size="responsive"
+          data={mapData}
           style={{ width: "100%", height: "auto", maxHeight: "500px" }}
           styleFunction={getStyle}
+          onClickFunction={(event) => handleCountryClick(event.countryCode)}
         />
+      ) : (
+        <Typography variant="h6" align="center">
+          No data available for the map
+        </Typography>
       )}
 
-      {/* Legend for country colors */}
       <Paper elevation={1} sx={{ mt: 2, p: 2 }}>
         <Stack direction="row" flexWrap="wrap">
           {mapData?.map((item, index) => (

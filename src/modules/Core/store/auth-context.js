@@ -20,6 +20,7 @@ const calculateRemainingTime = (expirationTime) => {
 
 const retrieveStoredToken = () => {
   const storedToken = localStorage.getItem("token");
+  console.log(storedToken);
   const storedrefreshToken = localStorage.getItem("refreshToken");
   const storedExpirationDate = localStorage.getItem("expirationTime");
   const storedRole = localStorage.getItem("role");
@@ -57,6 +58,7 @@ export const AuthContextProvider = (props) => {
   }
 
   const [token, setToken] = useState(initialToken);
+  console.log(token);
   const [refreshToken, setRefreshToken] = useState(initialRefreshToken);
   const [role, setUserRole] = useState(initialRole);
   // const [expTime, setExpTime] = useState(initialExpTime);

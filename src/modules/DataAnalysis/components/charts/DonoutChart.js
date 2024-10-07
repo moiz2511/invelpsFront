@@ -34,7 +34,7 @@ const DonutPieChart = ({ data, dataKey, nameKey }) => {
   }, []);
 
   // Calculate the total sum for the percentage calculation
-  const total = data.reduce((sum, entry) => sum + entry[dataKey], 0);
+  const total = data?.reduce((sum, entry) => sum + entry[dataKey], 0);
 
   return (
     <ResponsiveContainer width="100%" height={370}>
@@ -50,14 +50,14 @@ const DonutPieChart = ({ data, dataKey, nameKey }) => {
           dataKey={dataKey}
           nameKey={nameKey}
         >
-          {data.map((entry, index) => (
+          {data?.map((entry, index) => (
             <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
           ))}
         </Pie>
         <Tooltip />
         <Legend
           formatter={(value, entry, index) => {
-            const percentage = ((data[index][dataKey] / total) * 100).toFixed(
+            const percentage = ((data[index][dataKey] / total) * 100)?.toFixed(
               1
             );
             return `${value} (${percentage}%)`;

@@ -13,7 +13,7 @@ function CheckUserSession() {
   return authCtx.isLoggedIn ? authCtx.token : "";
 }
 
-export default class DAFinancialsService {
+export default class InvestorScreenerService {
   constructor() {
     this.token = CheckUserSession();
     this.client = null;
@@ -34,8 +34,19 @@ export default class DAFinancialsService {
     });
     return this.client;
   };
-
-  getFinalcialsAnalysisReport = (body) => {
-    return this.init().post("/dataAnalysis/financials", body);
+  getStrategyGraphData = (body) => {
+    return this.init().post("/strategies/getStrategyGraphData", body);
+  };
+  getStrategyCountryData = (body) => {
+    return this.init().post("/strategies/getStrategyCountryData", body);
+  };
+  getStrategyTableData = (body) => {
+    return this.init().post("/strategies/getStrategyTableData", body);
+  };
+  getStrategyHeaderValues = (body) => {
+    return this.init().post("/strategies/getStrategyHeaderValues", body);
+  };
+  getAllStrategies = (body) => {
+    return this.init().post("/strategies/getAllStrategies", body);
   };
 }
