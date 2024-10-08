@@ -1,3 +1,4 @@
+import { Box, Skeleton, Stack } from "@mui/material";
 import React, { useState, useEffect } from "react";
 import {
   PieChart,
@@ -38,38 +39,65 @@ const DonutPieChart = ({ data, dataKey, nameKey }) => {
 
   return (
     <ResponsiveContainer width="100%" height={370}>
-      <PieChart>
-        <Pie
-          data={data}
-          cx={isMobile ? "50%" : "30%"}
-          cy="35%"
-          innerRadius="40%"
-          outerRadius="60%"
-          fill="#8884d8"
-          paddingAngle={5}
-          dataKey={dataKey}
-          nameKey={nameKey}
+      {data.length > 0 ? (
+        <PieChart>
+          <Pie
+            data={data}
+            cx={isMobile ? "50%" : "30%"}
+            cy="35%"
+            innerRadius="40%"
+            outerRadius="60%"
+            fill="#8884d8"
+            paddingAngle={5}
+            dataKey={dataKey}
+            nameKey={nameKey}
+          >
+            {data?.map((entry, index) => (
+              <Cell
+                key={`cell-${index}`}
+                fill={COLORS[index % COLORS.length]}
+              />
+            ))}
+          </Pie>
+          <Tooltip />
+          <Legend
+            formatter={(value, entry, index) => {
+              const percentage = (
+                (data[index][dataKey] / total) *
+                100
+              )?.toFixed(1);
+              return `${value} (${percentage}%)`;
+            }}
+            layout={isMobile ? "horizontal" : "vertical"}
+            align={isMobile ? "center" : "right"}
+            verticalAlign={isMobile ? "top" : "top"}
+            wrapperStyle={{
+              paddingLeft: "20px",
+            }}
+          />
+        </PieChart>
+      ) : (
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            height: 250,
+          }}
         >
-          {data?.map((entry, index) => (
-            <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-          ))}
-        </Pie>
-        <Tooltip />
-        <Legend
-          formatter={(value, entry, index) => {
-            const percentage = ((data[index][dataKey] / total) * 100)?.toFixed(
-              1
-            );
-            return `${value} (${percentage}%)`;
-          }}
-          layout={isMobile ? "horizontal" : "vertical"}
-          align={isMobile ? "center" : "right"}
-          verticalAlign={isMobile ? "top" : "top"}
-          wrapperStyle={{
-            paddingLeft: "20px",
-          }}
-        />
-      </PieChart>
+          <Skeleton
+            variant="circular"
+            width={200}
+            height={200}
+            animation="wave"
+          />
+          <Stack direction="column" spacing={2} alignItems="center">
+            <Skeleton variant="text" width={180} height={20} animation="wave" />
+            <Skeleton variant="text" width={150} height={20} animation="wave" />
+            <Skeleton variant="text" width={170} height={20} animation="wave" />
+          </Stack>
+        </Box>
+      )}
     </ResponsiveContainer>
   );
 };

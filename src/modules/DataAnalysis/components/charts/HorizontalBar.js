@@ -10,7 +10,13 @@ import {
   Cell,
   LabelList,
 } from "recharts";
-import { Container, useTheme, useMediaQuery } from "@mui/material";
+import {
+  Container,
+  useTheme,
+  useMediaQuery,
+  Skeleton,
+  Box,
+} from "@mui/material";
 
 const COLORS = [
   "#2F4B7C",
@@ -36,45 +42,53 @@ const HorizontalBarChart = ({ data, onClickBar }) => {
   return (
     <Container maxWidth="lg" sx={{ height: "100%", py: 4 }}>
       <ResponsiveContainer width="100%" height={isMobile ? 300 : 400}>
-        <BarChart
-          data={data}
-          layout="vertical"
-          margin={{ top: 20, right: 50, left: 20, bottom: 5 }}
-        >
-          <XAxis type="number" />
-          <YAxis
-            dataKey="sector"
-            type="category"
-            tickFormatter={(value) =>
-              value?.length > 15 ? `${value.slice(0, 15)}...` : value
-            }
-            width={150}
-          />
-          <Tooltip formatter={(value) => (value ? value : "N/A")} />
-          <Legend />
-          <Bar
-            dataKey="total_count"
-            fill="#8884d8"
-            onClick={(entry) => onClickBar(entry.sector)}
+        {data.length > 0 ? (
+          <BarChart
+            data={data}
+            layout="vertical"
+            margin={{ top: 20, right: 50, left: 20, bottom: 5 }}
           >
-            {data?.map((entry, index) => (
-              <Cell
-                key={`cell-${index}`}
-                fill={COLORS[index % COLORS.length]}
-              />
-            ))}
-
-            {/* Add labels to display the percentage */}
-            <LabelList
-              dataKey="total_count"
-              position="right"
-              formatter={(value) =>
-                value ? `${((value / totalCount) * 100).toFixed(1)}%` : "N/A"
+            <XAxis type="number" />
+            <YAxis
+              dataKey="sector"
+              type="category"
+              tickFormatter={(value) =>
+                value?.length > 15 ? `${value.slice(0, 15)}...` : value
               }
-              fill="#000"
+              width={150}
             />
-          </Bar>
-        </BarChart>
+            <Tooltip formatter={(value) => (value ? value : "N/A")} />
+            <Legend />
+            <Bar
+              dataKey="total_count"
+              fill="#8884d8"
+              onClick={(entry) => onClickBar(entry.sector)}
+            >
+              {data?.map((entry, index) => (
+                <Cell
+                  key={`cell-${index}`}
+                  fill={COLORS[index % COLORS.length]}
+                />
+              ))}
+
+              {/* Add labels to display the percentage */}
+              <LabelList
+                dataKey="total_count"
+                position="right"
+                formatter={(value) =>
+                  value ? `${((value / totalCount) * 100).toFixed(1)}%` : "N/A"
+                }
+                fill="#000"
+              />
+            </Bar>
+          </BarChart>
+        ) : (
+          <Box
+            sx={{ width: { xs: "100%", sm: "33%", lg: "500px" }, padding: 2 }}
+          >
+            <Skeleton animation="wave" variant="rectangular" height={300} />
+          </Box>
+        )}
       </ResponsiveContainer>
     </Container>
   );

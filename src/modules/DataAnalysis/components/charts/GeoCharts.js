@@ -1,8 +1,16 @@
 import React, { useEffect, useState } from "react";
 import WorldMap from "react-svg-worldmap";
-import { Box, Typography, Paper, Stack } from "@mui/material";
+import { Box, Typography, Paper, Stack, Skeleton } from "@mui/material";
 
-const GeoChartComponent = ({ data, selectedCountry, setSelectedCountry }) => {
+const GeoChartComponent = ({
+  data,
+  selectedCountry,
+  setSelectedCountry,
+  setSSortBy,
+  sSortBy,
+  setCompanySortBy,
+  companySortBy,
+}) => {
   const colors = [
     "#FFD700",
     "#FFA07A",
@@ -80,7 +88,16 @@ const GeoChartComponent = ({ data, selectedCountry, setSelectedCountry }) => {
   });
 
   const handleCountryClick = (countryCode) => {
+    console.log(sSortBy);
+    console.log(companySortBy);
+    console.log(countryCode);
+
     setSelectedCountry(countryCode);
+    setSSortBy(null);
+    setCompanySortBy("");
+    console.log(sSortBy);
+    console.log(companySortBy);
+    console.log(countryCode);
   };
   return (
     <Box
@@ -97,22 +114,28 @@ const GeoChartComponent = ({ data, selectedCountry, setSelectedCountry }) => {
           onClickFunction={(event) => handleCountryClick(event.countryCode)}
         />
       ) : (
-        <Typography variant="h6" align="center">
-          No data available for the map
-        </Typography>
+        <Box sx={{ width: { xs: "100%", sm: "33%", lg: "700px" }, padding: 2 }}>
+          <Skeleton animation="wave" variant="rectangular" height={300} />
+        </Box>
       )}
 
       <Paper elevation={1} sx={{ mt: 2, p: 2 }}>
         <Stack direction="row" flexWrap="wrap">
-          {mapData?.map((item, index) => (
-            <Box
-              key={index}
-              sx={{ display: "flex", alignItems: "center", mr: 2, mb: 1 }}
-            >
-              <Box sx={{ width: 20, height: 8, bgcolor: item.color, mr: 1 }} />
-              <Typography variant="body2">{item.country}</Typography>
-            </Box>
-          ))}
+          {mapData?.length > 0 ? (
+            mapData.map((item, index) => (
+              <Box
+                key={index}
+                sx={{ display: "flex", alignItems: "center", mr: 2, mb: 1 }}
+              >
+                <Box
+                  sx={{ width: 20, height: 8, bgcolor: item.color, mr: 1 }}
+                />
+                <Typography variant="body2">{item.country || "N/A"}</Typography>
+              </Box>
+            ))
+          ) : (
+            <></>
+          )}
         </Stack>
       </Paper>
     </Box>

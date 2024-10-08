@@ -13,6 +13,7 @@ import {
   Typography,
   Tooltip,
   CircularProgress,
+  Skeleton,
 } from "@mui/material";
 
 import TableCell, { tableCellClasses } from "@mui/material/TableCell";
@@ -41,6 +42,7 @@ import SortingPopover from "./SortingPopover";
 import FilterPopover from "./FilterPopover";
 import OverviewSortingPopover from "./OverviewSortingPopover";
 import InvestorScreenerService from "../services/InvestorService";
+import ResetFilters from "./ResetFilters";
 
 const OverviewTab = ({
   setSelectedCompany,
@@ -79,30 +81,18 @@ const OverviewTab = ({
   const [anchorEl, setAnchorEl] = useState(null);
   const { setIsSwitch1, isSwitch2, setIsSwitch2 } = useSwitch();
   const [currentRowsPerPage, setCurrentRowsPerPage] = useState(3);
-
   const [sOrderBy, setSOrderBy] = useState("");
   const [sSortBy, setSSortBy] = useState("");
-
   const [isLoading, setIsLoading] = useState(false);
-
   const [uniqueExchanges, setUniqueExchanges] = useState([]);
   const [uniqueIndustries, setUniqueIndustries] = useState([]);
   const [uniqueSectors, setUniqueSectors] = useState([]);
-  const [isSort, setIsSort] = useState(false);
   const [isBarClick, setIsBarClick] = useState(false);
 
   const criteriaRef = useRef(null);
   const [selectedCountry, setSelectedCountry] = useState(null);
 
-  // not related
-  const handleScrollToTop = () => {
-    window.scrollTo({
-      top: 0,
-      behavior: "smooth",
-    });
-  };
   const handleDataVisualization = (strategy) => {
-    console.log(strategy);
     setIsSwitch2(true);
     setSelectedStrategy(strategy);
     handleScrollToTop();
@@ -116,62 +106,22 @@ const OverviewTab = ({
     setShowInvestor(!showInvestor);
   };
   console.log(selectedStrategy);
-  // useEffect(() => {
-  //   const token = localStorage.getItem("token");
-
-  //   const CheckUserSession = () => {
-  //     return authCtx.isLoggedIn ? authCtx.token : token;
-  //   };
-
-  //   const userToken = CheckUserSession();
-  //   setAuthToken(userToken);
-  // }, []);
-
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    console.log(token);
-    setStoredToken(token);
-  }, []);
-
-  useEffect(() => {
-    console.log(storedToken);
-    if (authCtx.isLoggedIn || authCtx.token) {
-      setAuthToken(authCtx.token);
-    } else if (storedToken) {
-      setAuthToken(storedToken);
-    } else {
-      setAuthToken("");
-    }
-    setRefresh(!refresh);
-  }, [authCtx.isLoggedIn, authCtx.token, storedToken]);
-
-  console.log(authToken);
-  console.log(authCtx.token);
-  console.log(authCtx.isLoggedIn);
-  console.log(storedToken);
-
-  useEffect(() => {
-    if (authToken) {
-      console.log(authToken);
-      fetchStrategyData();
-    }
-  }, [authToken, sOrderBy, sSortBy]);
 
   const fetchMapsData = async () => {
     try {
       const body = {
         strategy_name: selectedStrategy?.name,
       };
+
       console.log(body);
 
       const response = await restService.getStrategyCountryData(body);
 
       if (response.status === 200) {
         const data = response.data; // Ensure correct reference to response data
-        console.log("Company", data);
+        console.log("Company", data.data);
 
         setMapsData(data.data); // Set the map data state
-        console.log("Countries Data", data);
       } else {
         console.log("Unexpected status code:", response.status);
       }
@@ -269,6 +219,8 @@ const OverviewTab = ({
         setStrategiesCopy(data.strategies);
 
         console.log(sSortBy);
+        console.log(sOrderBy);
+
         console.log(sector);
         console.log("overview table data:", strategiesCopy);
       } else {
@@ -290,18 +242,32 @@ const OverviewTab = ({
       const body = {
         strategy_name: selectedStrategy?.name,
         page: currentPage,
-        data_per_page: isBarClick || selectedCountry ? 300 : currentRowsPerPage,
+        data_per_page: currentRowsPerPage,
       };
 
-      console.log(isSort);
-      if (isSort) {
-        if (companyOrderBy) {
-          body.order_by = companyOrderBy;
-          console.log("here");
-        }
-        if (companySortBy) {
-          body.sort_by = companySortBy;
-        }
+      if (selectedItems.length > 0) {
+        setSelectedCompany("");
+        body.sector = selectedItems;
+      }
+
+      if (selectedCountry) {
+        setSelectedItems([]);
+        console.log(selectedItems);
+        body.country = selectedCountry;
+      }
+      if (companyOrderBy) {
+        body.order_by = companyOrderBy;
+        console.log("here");
+      }
+      if (companySortBy) {
+        body.sort_by = companySortBy;
+      }
+
+      console.log(selectedItems.length);
+      console.log(body);
+
+      if (criteriaRef.current) {
+        criteriaRef.current.scrollIntoView({ behavior: "smooth" });
       }
       const response = await restService.getStrategyTableData(body);
       if (response.status === 200) {
@@ -310,41 +276,9 @@ const OverviewTab = ({
         console.log(isBarClick);
 
         console.log(selectedCountry);
-        let filteredData = data.data;
 
-        if (selectedCountry) {
-          filteredData = filteredData.filter(
-            (item) => item.country == selectedCountry
-          );
-          console.log(graphTableDataCopy);
-          console.log(graphTableData);
-          console.log(filteredData);
-
-          if (criteriaRef.current) {
-            criteriaRef.current.scrollIntoView({ behavior: "smooth" });
-          }
-        }
-        if (isBarClick) {
-          filteredData = filteredData.filter((item) =>
-            selectedItems.some(
-              (selectedItem) =>
-                selectedItem.toLowerCase() === item.sector.toLowerCase()
-            )
-          );
-
-          setGraphTableData(filteredData);
-          setGraphTableDataCopy(filteredData);
-
-          console.log(graphTableDataCopy);
-          console.log(graphTableData);
-          console.log(filteredData);
-        } else {
-          setGraphTableData(filteredData);
-          setGraphTableDataCopy(filteredData);
-          console.log(graphTableDataCopy);
-          console.log(graphTableData);
-        }
-
+        setGraphTableData(data.data);
+        setGraphTableDataCopy(data.data);
         setTotalPages(data.paginator.total_pages);
         setPassingCriteria(data.companies_passing_criteris);
 
@@ -378,7 +312,6 @@ const OverviewTab = ({
     setOpenFilter(true);
     setCompanySortBy(key);
     setSector("");
-    setIsSort(false);
     setIsBarClick(false);
     setSelectedCountry(null);
   };
@@ -386,25 +319,29 @@ const OverviewTab = ({
   useEffect(() => {
     fetchGraphData();
     fetchMapsData();
-  }, [selectedStrategy]);
+  }, [selectedStrategy, selectedCountry]);
 
   const handleBarClick = (companySortByParam) => {
-    console.log(companySortByParam);
     setCompanySortBy("");
-    console.log(companySortByParam);
     setSelectedItems([]);
     setSelectedCountry(null);
+    setCurrentPage(1);
     setCompanySortBy("Sector");
     setSelectedItems([companySortByParam]);
     setIsBarClick(true);
 
     console.log(selectedItems);
     console.log(companySortBy);
+    console.log(companySortByParam);
+    console.log(companySortByParam);
+    console.log(selectedCountry);
 
     setSector(companySortByParam);
     if (criteriaRef.current) {
       criteriaRef.current.scrollIntoView({ behavior: "smooth" });
     }
+
+    console.log("here");
   };
 
   console.log(selectedItems);
@@ -419,32 +356,65 @@ const OverviewTab = ({
     companyOrderBy,
     sector,
     selectedCountry,
+    selectedItems,
   ]);
-
-  useEffect(() => {
-    console.log(selectedItems);
-    if (selectedItems?.length > 0) {
-      const filteredData = graphTableDataCopy.filter((item) =>
-        selectedItems.some(
-          (selected) =>
-            item.exchange === selected ||
-            item.sector === selected ||
-            item.industry === selected
-        )
-      );
-      console.log(filteredData);
-      setGraphTableDataCopy(filteredData);
-    } else {
-      fetchGraphTableData();
-      console.log("here");
-    }
-
-    //checks if selected item matches to anythng in the array
-  }, [selectedItems]);
 
   useEffect(() => {
     fetchCriteriaHeaders();
   }, [selectedStrategy]);
+
+  // not related
+  const handleScrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  };
+
+  const handleReset = () => {
+    setCompanySortBy(""); // Reset to initial value
+    setCompanyOrderBy("asc"); // Reset to initial value
+    setSector(""); // Reset to initial value
+    setSelectedItems([]); // Reset to initial value
+    setSOrderBy(""); // Reset to initial value
+    setSSortBy(""); // Reset to initial value
+    setIsBarClick(false); // Reset to initial value
+    setSelectedCountry(); // Reset to initial value
+    setCurrentPage(1);
+    setCurrentRowsPerPage(3);
+    console.log("here");
+  };
+
+  //auth related work
+  //auth related work
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    console.log(token);
+    setStoredToken(token);
+  }, []);
+
+  useEffect(() => {
+    console.log(storedToken);
+    if (authCtx.isLoggedIn || authCtx.token) {
+      setAuthToken(authCtx.token);
+    } else if (storedToken) {
+      setAuthToken(storedToken);
+    } else {
+      setAuthToken("");
+    }
+    setRefresh(!refresh);
+  }, [authCtx.isLoggedIn, authCtx.token, storedToken]);
+
+  useEffect(() => {
+    if (authToken) {
+      console.log(authToken);
+      fetchStrategyData();
+    }
+  }, [authToken, sOrderBy, sSortBy]);
+  //auth related work
+  //auth related work
+
   return (
     <Grid
       container
@@ -508,6 +478,10 @@ const OverviewTab = ({
                     data={mapsData}
                     selectedCountry={selectedCountry}
                     setSelectedCountry={setSelectedCountry}
+                    setSSortBy={setSSortBy}
+                    sSortBy={sSortBy}
+                    setCompanySortBy={setCompanySortBy}
+                    companySortBy={companySortBy}
                   />
                 </Card>
 
@@ -591,7 +565,7 @@ const OverviewTab = ({
                 setCurrentPage={setCurrentPage}
                 totalPages={totalPages}
                 isLoading={isLoading}
-                setIsSort={setIsSort}
+                handleReset={handleReset}
               />
             </Card>
           </div>
@@ -659,7 +633,17 @@ const OverviewTab = ({
                     />
                   </>
                 ) : (
-                  <h1>Fetching...</h1>
+                  <>
+                    <Box sx={{ width: { xs: "100%", sm: "33%" }, padding: 2 }}>
+                      <Skeleton variant="rectangular" height={300} />
+                    </Box>
+                    <Box sx={{ width: { xs: "100%", sm: "33%" }, padding: 2 }}>
+                      <Skeleton variant="rectangular" height={300} />
+                    </Box>
+                    <Box sx={{ width: { xs: "100%", sm: "33%" }, padding: 2 }}>
+                      <Skeleton variant="rectangular" height={300} />
+                    </Box>
+                  </>
                 )}
               </Box>
             </Box>
@@ -717,26 +701,23 @@ const CompaniesPassingCriteria = ({
   totalPages,
   setCurrentPage,
   isLoading,
-  setIsSort,
+  handleReset,
 }) => {
   const rowsPerPageOptions = [3, 5, 10];
 
   const handlePrevPage = () => {
     setCurrentPage((prevPage) => Math.max(1, prevPage - 1));
-    setSelectedItems([]); //so on new page no filters are there
     console.log("here");
   };
 
   const handleNextPage = () => {
     setCurrentPage((prevPage) => Math.min(totalPages, prevPage + 1));
-    setSelectedItems([]); //so on new page no filters are there
     console.log("here");
   };
 
   const handleChangeRowsPerPage = (event) => {
     setCurrentRowsPerPage(parseInt(event.target.value, 10));
     setCurrentPage(1);
-    setSelectedItems([]); //so on new page no filters are there
     console.log("here");
   };
 
@@ -756,11 +737,7 @@ const CompaniesPassingCriteria = ({
       <Box justifyContent={"space-between"} display={"flex"}>
         <Typography style={{ fontSize: 20, fontWeight: "bold" }}>
           Companies Passing Criterias:{" "}
-          <span style={{ color: "gray" }}>
-            {selectedItems?.length < 1
-              ? passingCriteria
-              : graphTableDataCopy?.length}
-          </span>
+          <span style={{ color: "gray" }}>{passingCriteria}</span>
         </Typography>
 
         <Box>
@@ -769,8 +746,9 @@ const CompaniesPassingCriteria = ({
             setCompanySortBy={setCompanySortBy}
             companyOrderBy={companyOrderBy}
             setCompanyOrderBy={setCompanyOrderBy}
-            setIsSort={setIsSort}
           />
+
+          <ResetFilters handleReset={handleReset} />
         </Box>
       </Box>
 
@@ -847,7 +825,6 @@ const CompaniesPassingCriteria = ({
                               setSelectedItems={setSelectedItems}
                               graphTableDataCopy={graphTableDataCopy}
                               companySortBy={companySortBy}
-                              setIsSort={setIsSort}
                               isLoading={isLoading}
                             />
                           </Box>
@@ -988,7 +965,7 @@ const CompaniesPassingCriteria = ({
 
           <Box display={"flex"} alignItems={"center"} px={2} gap={1}>
             <span style={{ fontFamily: "Montserrat" }}>
-              {currentPage}-{currentRowsPerPage} of {totalPages}
+              {currentPage} of {totalPages}
             </span>
             <IconButton onClick={handlePrevPage} disabled={currentPage === 1}>
               <FaChevronLeft />
@@ -1016,7 +993,6 @@ const OverviewTableData = ({
   onClickVisualization,
   onClickInvestorVisualization,
   isLoading,
-  setIsSort,
 }) => {
   return (
     <Card
@@ -1063,7 +1039,6 @@ const OverviewTableData = ({
               setSOrderBy={setSOrderBy}
               sSortBy={sSortBy}
               setSSortBy={setSSortBy}
-              setIsSort={setIsSort}
             />
           </Box>
         </Box>
@@ -1110,19 +1085,7 @@ const OverviewTableData = ({
                               position: "absolute",
                               top: 0,
                             }}
-                          >
-                            {/* <FilterPopover
-                              openFilter={openFilter}
-                              setOpenFilter={setOpenFilter}
-                              anchorEl={anchorEl}
-                              title="Sort By"
-                              items={items}
-                              selectedItems={selectedItems}
-                              setSelectedItems={setSelectedItems}
-                              companySortBy={companySortBy}
-                              setIsSort={setIsSort}
-                            /> */}
-                          </Box>
+                          ></Box>
                         </Box>
                       </StyledTableCell>
                     ))}
