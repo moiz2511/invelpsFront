@@ -154,8 +154,7 @@ const BackTestTab = ({
         strategy_name: selectedStrategy,
       };
       const response = await fetch(
-        `
-            https://api.invelps.com/api/strategies/getStrategyGraphData`,
+        Constants.BACKEND_SERVER_BASE_URL + "/strategies/getStrategyGraphData",
         {
           method: "POST",
           headers: {
@@ -186,8 +185,8 @@ const BackTestTab = ({
         strategy_name: selectedStrategy,
       };
       const response = await fetch(
-        `
-            https://api.invelps.com/api/strategies/getStrategyAnnualizedDividend`,
+        Constants.BACKEND_SERVER_BASE_URL +
+          "/api/strategies/getStrategyAnnualizedDividend",
         {
           method: "POST",
           headers: {
@@ -248,6 +247,13 @@ const BackTestTab = ({
     }
   }, [selectedStrategy]);
 
+  const handleScrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  };
+
   const handleDataVisualization = (strategy) => {
     console.log(strategy);
     setSelectedStrategy(null);
@@ -255,6 +261,7 @@ const BackTestTab = ({
     setSelectedStrategy(strategy.strategy_name_here);
     // setSelectedStrategyLabel(strategy.strategy_label);
     setSelectedStrategyLabel(strategy.strategy_label);
+    handleScrollToTop();
   };
 
   const generateRandomInvestmentData = () => {
@@ -340,23 +347,10 @@ const BackTestTab = ({
                 flexDirection: "column",
               }}
             >
-              <text
-                style={{
-                  fontFamily: "Montserrat",
-                  fontSize: 25,
-                  fontWeight: "bold",
-                }}
-              >
-                {selectedStrategyLabel}
-              </text>
               <text style={{ fontWeight: "bolder" }}>
                 {" "}
                 Companies Per Country (%){" "}
               </text>
-              {/* <PieChart
-                    graphData={perExchangeKPI}
-                    nameData={(item) => item.exchange}
-                  /> */}
 
               <GeoChartComponent data={mapsData} />
             </Card>

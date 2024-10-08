@@ -20,9 +20,6 @@ const NavigationWithBreadcrumbs = ({ setSelectedCompany }) => {
   const [tab2, setTab2] = useState("");
   const { isSwitch2, setIsSwitch2 } = useSwitch();
 
-  const [child, setChild] = useState("");
-  const [subParent, setSubParent] = useState("");
-
   const buttons = [
     {
       id: "OVERVIEW",
@@ -59,6 +56,7 @@ const NavigationWithBreadcrumbs = ({ setSelectedCompany }) => {
         setSelectedStrategyLabel={setSelectedStrategyLabel}
         setTab2={setTab2}
         setActiveButton={setActiveButton}
+        setShowVisualData={setShowVisualData}
       ></BreadcrumbsComponent>
 
       <Box padding={2} display={"flex"} gap={3}>
@@ -83,12 +81,6 @@ const NavigationWithBreadcrumbs = ({ setSelectedCompany }) => {
                 setSelectedStrategyLabel(null);
                 setShowVisualData(false);
               }
-
-              // if (selectedStrategyLabel) {
-              //   setSelectedStrategyLabel(null);
-              //   setShowVisualData(!showVisualData);
-              //   setIsSwitch2(false);
-              // }
             }}
           >
             {button.label}

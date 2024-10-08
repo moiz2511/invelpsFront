@@ -18,6 +18,7 @@ const BreadcrumbsComponent = ({
   setSelectedStrategyLabel,
   setTab2,
   setActiveButton,
+  setShowVisualData,
 }) => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -28,23 +29,28 @@ const BreadcrumbsComponent = ({
   console.log(location.pathname);
 
   const handleGoBack = () => {
+    setSelectedStrategyLabel(null);
+    setShowVisualData(false);
+    console.log("here");
+
     if (child == "OVERVIEW") {
       setIsSwitch2(false);
-      setSelectedStrategyLabel(null);
+      console.log("BD 1");
     }
     if (child == "RETURNS AND RISK") {
-      setSelectedStrategyLabel(null);
       setIsSwitch2(false);
       setTab2("");
+      console.log("BD 2");
     }
 
     if (location.pathname !== "/riskVisualization") {
       console.log("here 1");
-      setSelectedStrategyLabel(null);
-    } else if (location.pathname === "/riskVisualization") {
-      console.log("here 2");
+      console.log("BD 3");
+    }
+    if (location.pathname === "/riskVisualization") {
       navigate("/dataanalysis/investorscreeners");
-      setSelectedStrategyLabel(null);
+      setShowVisualData(false);
+      console.log("BD 4");
     }
   };
 
@@ -53,6 +59,7 @@ const BreadcrumbsComponent = ({
     setTab2("");
     setSelectedStrategyLabel(null);
     setActiveButton("OVERVIEW");
+    setShowVisualData(false);
   };
   return (
     <React.Fragment>

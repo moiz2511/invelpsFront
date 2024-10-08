@@ -50,7 +50,7 @@ const HorizontalBarChart = ({ data, onClickBar }) => {
             }
             width={150}
           />
-          <Tooltip />
+          <Tooltip formatter={(value) => (value ? value : "N/A")} />
           <Legend />
           <Bar
             dataKey="total_count"
@@ -69,7 +69,7 @@ const HorizontalBarChart = ({ data, onClickBar }) => {
               dataKey="total_count"
               position="right"
               formatter={(value) =>
-                `${((value / totalCount) * 100).toFixed(1)}%`
+                value ? `${((value / totalCount) * 100).toFixed(1)}%` : "N/A"
               }
               fill="#000"
             />

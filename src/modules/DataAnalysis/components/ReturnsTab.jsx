@@ -188,7 +188,6 @@ const sortingFields = [
 const ReturnsTab = ({
   selectedStrategyLabel,
   setSelectedStrategyLabel,
-
   setSelectedCompany,
   activeButton,
   setActiveButton,
@@ -196,28 +195,12 @@ const ReturnsTab = ({
   setShowVisualData,
   setTab2,
 }) => {
+  console.log(selectedStrategyLabel);
+  console.log(activeButton);
+  console.log(showVisualData);
+
   let pageLoc = window.location.pathname;
 
-  const buttons = [
-    {
-      id: "OVERVIEW",
-      label: "OVERVIEW",
-      icon: <AssessmentIcon />,
-      component: "OverviewContent",
-    },
-    {
-      id: "RETURNS AND RISK",
-      label: "RETURNS AND RISK",
-      icon: <TrendingUpIcon />,
-      component: "ReturnsRiskContent",
-    },
-    {
-      id: "HISTORICAL PRICES",
-      label: "HISTORICAL PRICES",
-      icon: <FaBuilding />,
-      component: "HistoricalPlacesContent",
-    },
-  ];
   const [selectedStrategy, setSelectedStrategy] = useState(null);
 
   const authCtx = useContext(AuthContext);
@@ -226,7 +209,6 @@ const ReturnsTab = ({
   const [years, setYears] = useState([]);
   const [bestWorstData, setBestWorstData] = useState([]);
   // const [showVisualData, setShowVisualData] = useState(false);
-  const [selectedLabel, setSelectedLabel] = useState("");
   const [bestWorstDataCopy, setBestWorstDataCopy] = useState([]);
   const [selectedSort, setSelectedSort] = useState(0);
   const [selectedField, setSelectedField] = useState();
@@ -243,6 +225,8 @@ const ReturnsTab = ({
   const [strategiesCopy, setStrategiesCopy] = useState([]);
   const [chartSwitch, setChartSwitch] = useState(true);
   const [mapsData, setMapsData] = useState([]);
+  const [annual, setAnnual] = useState(false);
+
   // const [activeButton, setActiveButton] = useState("OVERVIEW");
 
   const handleChartSwitchChange = () => {
@@ -307,7 +291,7 @@ const ReturnsTab = ({
         const data = await response.json();
 
         if (response.status === 200) {
-          console.log("Data:", data);
+          console.log("data inside returns tab is:", data.data);
           setBestWorstData(data.data);
           setBestWorstDataCopy(data.data);
         } else {
@@ -324,7 +308,6 @@ const ReturnsTab = ({
         console.log(selectedStrategyLabel);
 
         const body = {
-          // strategy_name: selectedStrategy,
           strategy_name: selectedStrategyLabel,
         };
         const response = await fetch(
@@ -384,8 +367,7 @@ const ReturnsTab = ({
         strategy_name: selectedStrategyLabel,
       };
       const response = await fetch(
-        `
-            https://api.invelps.com/api/strategies/getStrategyGraphData`,
+        Constants.BACKEND_SERVER_BASE_URL + "/strategies/getStrategyGraphData",
         {
           method: "POST",
           headers: {
@@ -424,7 +406,7 @@ const ReturnsTab = ({
         data_per_page: currentRowsPerPage,
       };
       const response = await fetch(
-        `https://api.invelps.com/api/strategies/getStrategyTableData`,
+        Constants.BACKEND_SERVER_BASE_URL + "/strategies/getStrategyTableData",
         {
           method: "POST",
           headers: {
@@ -483,18 +465,32 @@ const ReturnsTab = ({
       behavior: "smooth",
     });
   };
-  const handleDataVisualization = (strategy) => {
+  const handleDataVisualizationAnnual = (strategy) => {
     console.log("here");
     console.log(strategy);
-    // setShowVisualData(!showVisualData);
+    setShowVisualData(!showVisualData);
     setIsSwitch2(true);
-    console.log(strategy.strategy_label);
-    setSelectedStrategy(strategy.strategy_label);
-    setSelectedStrategyLabel(strategy.strategy_label);
-    setSelectedLabel(strategy.strategy_label);
+    console.log(strategy.strategy_name_here);
+    setSelectedStrategy(strategy);
+    setSelectedStrategyLabel(strategy.strategy_name_here);
     setSelectedSort(2);
     setTab2("returns");
     handleScrollToTop();
+    setAnnual(true);
+  };
+
+  const handleDataVisualizationRolling = (strategy) => {
+    console.log("here");
+    console.log(strategy);
+    setShowVisualData(!showVisualData);
+    setIsSwitch2(true);
+    console.log(strategy.name);
+    setSelectedStrategy(strategy);
+    setSelectedStrategyLabel(strategy.name);
+    setSelectedSort(2);
+    setTab2("returns");
+    handleScrollToTop();
+    setAnnual(false);
   };
 
   const sorting = (data) => {
@@ -550,9 +546,8 @@ const ReturnsTab = ({
     return () => {
       isMounted = false;
     };
-  }, [selectedSort, selectedField, selectedLabel]);
+  }, [selectedSort, selectedField]);
 
-  console.log("startegyData", selectedLabel);
   console.log("startegyData", selectedStrategyLabel);
 
   // console.log('selected', selectedStrategy);
@@ -596,7 +591,6 @@ const ReturnsTab = ({
           sx={{ color: "#427879", fontWeight: "bold" }}
           color="inherit"
         >
-          {selectedLabel}
         </Typography>
       </Breadcrumbs>
 
@@ -1034,7 +1028,9 @@ const ReturnsTab = ({
                     strategyData?.map((strategy, index) => (
                       <StyledTableRow hover key={index} sx={{ ml: 3 }}>
                         <StyledTableCell
-                          onClick={() => handleDataVisualization(strategy)}
+                          onClick={() =>
+                            handleDataVisualizationAnnual(strategy)
+                          }
                           sx={{
                             cursor: "pointer",
                             ":hover": {
@@ -1153,7 +1149,7 @@ const ReturnsTab = ({
                   {bestWorstDataCopy.map((data, index) => (
                     <StyledTableRow hover key={index} sx={{ ml: 3 }}>
                       <StyledTableCell
-                        onClick={() => handleDataVisualization(data)}
+                        onClick={() => handleDataVisualizationRolling(data)}
                         sx={{
                           cursor: "pointer",
                           ":hover": {

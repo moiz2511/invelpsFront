@@ -402,7 +402,6 @@ const OverviewTab = ({
     console.log(companySortBy);
 
     setSector(companySortByParam);
-
     if (criteriaRef.current) {
       criteriaRef.current.scrollIntoView({ behavior: "smooth" });
     }

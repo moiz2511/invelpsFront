@@ -35,14 +35,15 @@ const RiskVisualization = () => {
   }, []);
 
   console.log(selectedStrategy);
+  console.log(selectedLabel);
+
   const fetchGraphData = async () => {
     try {
       const body = {
         strategy_name: selectedStrategy,
       };
       const response = await fetch(
-        `
-            https://api.invelps.com/api/strategies/getStrategyGraphData`,
+        Constants.BACKEND_SERVER_BASE_URL + "/strategies/getStrategyGraphData",
         {
           method: "POST",
           headers: {
@@ -106,7 +107,8 @@ const RiskVisualization = () => {
   }, [selectedStrategy, authToken]);
 
   const [activeButton, setActiveButton] = useState("RETURNS AND RISK");
-  const [selectedStrategyLabel, setSelectedStrategyLabel] = useState(null);
+  const [selectedStrategyLabel, setSelectedStrategyLabel] =
+    useState(selectedLabel);
   const [showVisualData, setShowVisualData] = useState(false);
   const [tab2, setTab2] = useState("");
   const { isSwitch2, setIsSwitch2 } = useSwitch();
@@ -156,6 +158,7 @@ const RiskVisualization = () => {
         setSelectedStrategyLabel={setSelectedStrategyLabel}
         setTab2={setTab2}
         setActiveButton={setActiveButton}
+        setShowVisualData={setShowVisualData}
       ></BreadcrumbsComponent>
 
       <Box padding={2} display={"flex"} gap={3}>
@@ -178,6 +181,8 @@ const RiskVisualization = () => {
               setTab2("");
               if (selectedStrategyLabel) {
                 setSelectedStrategyLabel(null);
+                setShowVisualData(false);
+                navigate("/dataanalysis/investorscreeners");
               }
             }}
           >

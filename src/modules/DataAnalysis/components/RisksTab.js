@@ -61,33 +61,15 @@ const headCategories = [
   // { key: "duration", label: "Duration" },
 ];
 
-const buttons = [
-  {
-    id: "OVERVIEW",
-    label: "OVERVIEW",
-    icon: <AssessmentIcon />,
-    component: "OverviewContent",
-  },
-  {
-    id: "RETURNS AND RISK",
-    label: "RETURNS AND RISK",
-    icon: <TrendingUpIcon />,
-    component: "ReturnsRiskContent",
-  },
-  {
-    id: "HISTORICAL PRICES",
-    label: "HISTORICAL PRICES",
-    icon: <FaBuilding />,
-    component: "HistoricalPlacesContent",
-  },
-];
 const RisksTab = ({
   showVisualData,
   setShowVisualData,
-
   selectedStrategyLabel,
   setSelectedStrategyLabel,
 }) => {
+  console.log(showVisualData);
+  console.log(selectedStrategyLabel);
+
   let pageLoc = window.location.pathname;
   // const [selectedStrategy, setSelectedStrategy] = useState(null);
 
