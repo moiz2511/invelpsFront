@@ -480,10 +480,10 @@ const RiskVisualization = () => {
     console.log(strategy.strategy_name_here);
     setSelectedStrategy(strategy);
     setSelectedStrategyLabel(strategy.strategy_name_here);
-    setSelectedSort(2);
+    // setSelectedSort(2);
     setTab2("returns");
     handleScrollToTop();
-    setAnnual(true);
+    // setAnnual(true);
   };
 
   const handleDataVisualizationRolling = (strategy) => {
@@ -494,10 +494,10 @@ const RiskVisualization = () => {
     console.log(strategy.name);
     setSelectedStrategy(strategy);
     setSelectedStrategyLabel(strategy.name);
-    setSelectedSort(2);
+    // setSelectedSort(2);
     setTab2("returns");
     handleScrollToTop();
-    setAnnual(false);
+    // setAnnual(false);
   };
 
   console.log(uniqueExchanges);
