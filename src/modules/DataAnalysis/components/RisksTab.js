@@ -113,15 +113,30 @@ const RisksTab = ({
     // setSelectedStrategy(strategy.name);
     setSelectedStrategyLabel(strategy.name);
 
+    console.log(strategy.name)
+    console.log(strategy.startegy_label)
+
     console.log(strategy);
-    navigate("/riskVisualization", {
-      state: {
-        selectedStrategy: strategy.name,
-        selectedStrategyLabel: strategy.startegy_label,
-        setSelectedCompany: setSelectedCompany,
-      },
+    const params = new URLSearchParams({
+      selectedStrategy: strategy.name,
+      selectedStrategyLabel: strategy.startegy_label,
+      setSelectedCompany: setSelectedCompany,
     });
+    navigate(`/riskVisualization?${params.toString()}`);
+
+    // navigate("/riskVisualization", {
+    //   // state: {
+    //     selectedStrategy: strategy.name,
+    //     selectedStrategyLabel: strategy.startegy_label,
+    //     setSelectedCompany: setSelectedCompany,
+    //   // },
+    // });
   };
+
+
+  console.log(selectedStrategyLabel)
+  console.log(setSelectedCompany)
+
 
   const handleSortingFieldChange = (field) => {
     setSelectedField(field);

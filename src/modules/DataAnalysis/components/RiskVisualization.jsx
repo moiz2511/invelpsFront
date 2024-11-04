@@ -48,12 +48,17 @@ const RiskVisualization = () => {
   const [perMarketKPI, setPerMarketKPI] = useState([]);
   const [mapsData, setMapsData] = useState([]);
   const location = useLocation();
-  const selectedStrategylocation = location.state.selectedStrategy;
-  const selectedLabellocation = location.state.selectedStrategyLabel;
-  const setSelectedCompany = location.state.setSelectedCompany;
+  const params = new URLSearchParams(location.search);
+  const selectedStrategylocation = params.get("selectedStrategy");
+  const selectedLabellocation = params.get("selectedStrategyLabel");
+  const setSelectedCompany = params.get("setSelectedCompany");
+  // const selectedStrategylocation = location.state.selectedStrategy;
+  // const selectedLabellocation = location.state.selectedStrategyLabel;
+  // const setSelectedCompany = location.state.setSelectedCompany;
 
   console.log(selectedStrategylocation);
   console.log(selectedLabellocation);
+
 
   const [passingCriteria, setPassingCriteria] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
@@ -62,19 +67,16 @@ const RiskVisualization = () => {
   const [graphTableDataCopy, setGraphTableDataCopy] = useState([]);
   const [totalPages, setTotalPages] = useState(null);
   const [strategiesCopy, setStrategiesCopy] = useState([]);
-
-  const [chartSwitch, setChartSwitch] = useState(true);
-
-  const navigation = useNavigate();
-
   const [companySortBy, setCompanySortBy] = useState("");
-  const [companyOrderBy, setCompanyOrderBy] = useState("asc");
+  const [companyOrderBy, setCompanyOrderBy] = useState("");
   const [sector, setSector] = useState("");
   const [refresh, setRefresh] = useState(false);
 
   const [selectedStrategyLabel, setSelectedStrategyLabel] = useState(
     selectedStrategylocation
   );
+
+  console.log(selectedStrategyLabel)
 
   const [selectedStrategy, setSelectedStrategy] = useState(
     selectedLabellocation
@@ -175,6 +177,7 @@ const RiskVisualization = () => {
       setIsLoading(true);
       const body = {
         strategy_name: selectedStrategyLabel,
+        country: selectedCountry
       };
       console.log(body);
 
@@ -260,7 +263,7 @@ const RiskVisualization = () => {
       }
 
       if (selectedCountry) {
-        setSelectedItems([]);
+        // setSelectedItems([]);
         console.log(selectedItems);
         body.country = selectedCountry;
       }
@@ -316,14 +319,9 @@ const RiskVisualization = () => {
   };
 
   const handleHeaderClick = (key) => {
-    console.log(key);
     setAnchorEl(key.currentTarget);
     setOpenFilter(true);
     setCompanySortBy(key);
-    setSector("");
-    setIsSort(false);
-    setIsBarClick(false);
-    setSelectedCountry(null);
   };
 
   useEffect(() => {
@@ -466,7 +464,7 @@ const RiskVisualization = () => {
 
   useEffect(() => {
     fetchCriteriaHeaders();
-  }, [selectedStrategy]);
+  }, [selectedStrategy, selectedCountry]);
 
   const handleScrollToTop = () => {
     window.scrollTo({

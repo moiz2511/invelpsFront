@@ -107,7 +107,6 @@ console.log(companyOrderBy)
       };
 
       if (selectedCountry) {
-        setSelectedItems([]);
         console.log(selectedItems);
         body.country = selectedCountry;
         console.log(selectedCountry);
@@ -118,16 +117,16 @@ console.log(companyOrderBy)
         console.log(selectedCountry);
         console.log(selectedItems)
         if(companySortBy == "exchange") {
-          console.log(companySortBy)
+          console.log(companySortBy);
 
         body.exchange = selectedItems;          
         }
-        if(companySortBy == "industry") {
-          console.log(companySortBy)
+       else if(companySortBy == "industry") {
+          console.log(companySortBy);
         body.industry = selectedItems;          
         }
-        if(companySortBy == "sector") {
-          console.log(companySortBy)
+        else if(companySortBy == "sector") {
+          console.log(companySortBy);
         body.sector = selectedItems;          
         }
       }
@@ -237,6 +236,7 @@ console.log(companyOrderBy)
       setIsLoading(true);
       const body = {
         strategy_name: selectedStrategy?.name,
+        country: selectedCountry
       };
       console.log(body);
 
@@ -267,10 +267,6 @@ console.log(companyOrderBy)
       setIsLoading(false);
     }
   };
-
-  useEffect(() => {
-    fetchCriteriaHeaders();
-  }, [selectedStrategy]);
 
   const fetchStrategyData = async () => {
     try {
@@ -312,6 +308,8 @@ console.log(companyOrderBy)
   useEffect(() => {
     fetchGraphData();
     fetchMapsData();
+    fetchCriteriaHeaders();
+
   }, [selectedStrategy, selectedCountry]);
 
   useEffect(() => {
@@ -324,14 +322,6 @@ console.log(companyOrderBy)
     companySortBy,
     companyOrderBy,
     selectedItems
-
-    // currentPage,
-    // currentRowsPerPage,
-    // companySortBy,
-    // companyOrderBy,
-    // ,
-    // selectedStrategy,
-    // selectedItems
   ]);
 
   console.log(currentPage);
@@ -368,13 +358,18 @@ console.log(companyOrderBy)
     console.log(key);
     console.log(key.currentTarget);
     console.log(companySortBy);
+    console.log(companyOrderBy);
+
+    console.log(selectedCountry)
 
     setAnchorEl(key.currentTarget);
     setOpenFilter(true);
     setCompanySortBy(key);
-    // setSector("");
-    setSelectedCountry(null);
-    setCompanyOrderBy("");
+
+  
+
+    console.log(companySortBy);
+    console.log(companyOrderBy);
   };
 
   const handleBarClick = (companySortByParam) => {
@@ -509,7 +504,7 @@ console.log(companyOrderBy)
                 >
                   <Typography style={{ fontWeight: "bolder" }}>
                     {" "}
-                    Companies Per Countrysss (%){" "}
+                    Companies Per Country (%){" "}
                   </Typography>
                   <GeoChartComponent
                     data={mapsData}
@@ -693,7 +688,7 @@ console.log(companyOrderBy)
             setSSortBy={setSSortBy}
             headCells={headCells}
             onClickVisualization={(data) => handleDataVisualization(data)}
-            onClickInvestorVisualization={() =>
+            onClickInvestorVisualization={(data) =>
               handleInvestorVisualization(data.investors)
             }
             isLoading={isLoading}
