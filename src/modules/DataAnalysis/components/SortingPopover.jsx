@@ -16,11 +16,8 @@ const SortingPopover = ({
   setCompanyOrderBy,
   companySortBy,
   companyOrderBy,
-  setIsSort,
 }) => {
   const [anchorEl, setAnchorEl] = useState(null);
-  // const [companySortBy, setCompanySortBy] = useState("exchange");
-  // const [companyOrderBy, setCompanyOrderBy] = useState("asc");
 
   console.log(companySortBy);
   console.log(companyOrderBy);
@@ -39,7 +36,6 @@ const SortingPopover = ({
 
   const handleSortChange = (event) => {
     setCompanySortBy(event.target.value);
-    setIsSort(true);
   };
 
   const handleOrderChange = (event) => {

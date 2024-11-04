@@ -93,8 +93,9 @@ const GeoChartComponent = ({
     console.log(countryCode);
 
     setSelectedCountry(countryCode);
-    setSSortBy(null);
+    setSSortBy("");
     setCompanySortBy("");
+
     console.log(sSortBy);
     console.log(companySortBy);
     console.log(countryCode);

@@ -30,42 +30,12 @@ import AssessmentIcon from "@mui/icons-material/Assessment";
 import TrendingUpIcon from "@mui/icons-material/TrendingUp";
 import Constants from "../../../Constants.json";
 
-const StyledTableCell = styled(TableCell)(({ theme }) => ({
-  [`&.${tableCellClasses.head}`]: {
-    backgroundColor: ColorConstants.APP_TABLE_HEAD_COLOR,
-    color: theme.palette.common.white,
-    padding: 12,
-    fontFamily: "Montserrat",
-  },
-  [`&.${tableCellClasses.body}`]: {
-    fontSize: 12,
-    padding: 12,
-    fontFamily: "Montserrat",
-  },
-}));
-
-const StyledTableRow = styled(TableRow)(({ theme }) => ({
-  "&:nth-of-type()": {
-    backgroundColor: theme.palette.action.hover,
-  },
-  // hide last border
-  "&:last-child td, &:last-child th": {
-    border: 0,
-  },
-}));
-
-const headCategories = [
-  { key: "name", label: "Strategy" },
-  { key: "annualized_return", label: "Annualized Return %" },
-  { key: "stdev_return", label: "Standard Deviation %" },
-  // { key: "duration", label: "Duration" },
-];
-
 const RisksTab = ({
   showVisualData,
   setShowVisualData,
   selectedStrategyLabel,
   setSelectedStrategyLabel,
+  setSelectedCompany,
 }) => {
   console.log(showVisualData);
   console.log(selectedStrategyLabel);
@@ -148,6 +118,7 @@ const RisksTab = ({
       state: {
         selectedStrategy: strategy.name,
         selectedStrategyLabel: strategy.startegy_label,
+        setSelectedCompany: setSelectedCompany,
       },
     });
   };
@@ -312,99 +283,33 @@ const RisksTab = ({
 
 export default RisksTab;
 
-{
-  /* <StyledTableCell
-                        sx={{
-                          color: data.duration > 0 ? "green" : "red",
-                        }}
-                      >
-                        {" "}
-                        {data.duration}{" "}
-                      </StyledTableCell> */
-}
-{
-  /* <TableHead>
-                <TableRow>
-                  <TableCell
-                    sx={{
-                      fontFamily: "Montserrat",
-                      fontSize: 18,
-                      color: "white",
-                      bgcolor: "#272727",
-                    }}
-                  >
-                    Strategy Models ({riskReturnCopy[0]?.duration} years)
-                  </TableCell>
-                  <TableCell
-                    colSpan={3}
-                    sx={{
-                      fontFamily: "Montserrat",
-                      textAlign: "center",
-                      fontSize: 18,
-                      color: "white",
-                      bgcolor: "#407879",
-                    }}
-                  >
-                    Risk Returns
-                  </TableCell>
-                </TableRow>
-              </TableHead> */
-}
-{
-  /* {category.key.trim() !== "" &&
-                          (selectedSort === 1 ? (
-                            <button
-                              onClick={() => {
-                                handleSortingFieldChange(category.key);
-                                setSelectedSort(2);
-                              }}
-                              style={{
-                                color: "white",
-                                background: "rgba(0, 0, 0, 0.3)",
-                                border: "none",
-                                borderRadius: "9999px",
-                                width: "24px",
-                                height: "24px",
-                                display: "flex",
-                                alignItems: "center",
-                                justifyContent: "center",
-                              }}
-                            >
-                              <IoArrowDown />
-                            </button>
-                          ) : (
-                            <button
-                              style={{
-                                color: "white",
-                                background: "rgba(0, 0, 0, 0.3)",
-                                border: "none",
-                                borderRadius: "9999px",
-                                width: "24px",
-                                height: "24px",
-                                display: "flex",
-                                alignItems: "center",
-                                justifyContent: "center",
-                              }}
-                              onClick={() => {
-                                handleSortingFieldChange(category.key);
-                                setSelectedSort(1);
-                              }}
-                            >
-                              <IoArrowUp />
-                            </button>
-                          ))} */
-}
-{
-  /* <TableCell sx={{ fontFamily: "Montserrat" }}>
-                    Strategy
-                  </TableCell>
-                  <TableCell sx={{ fontFamily: "Montserrat" }}>
-                    Annualized Return %
-                  </TableCell>
-                  <TableCell sx={{ fontFamily: "Montserrat" }}>
-                    Standard Deviation %
-                  </TableCell>
-                  <TableCell sx={{ fontFamily: "Montserrat" }}>
-                    Duration
-                  </TableCell> */
-}
+const StyledTableCell = styled(TableCell)(({ theme }) => ({
+  [`&.${tableCellClasses.head}`]: {
+    backgroundColor: ColorConstants.APP_TABLE_HEAD_COLOR,
+    color: theme.palette.common.white,
+    padding: 12,
+    fontFamily: "Montserrat",
+  },
+  [`&.${tableCellClasses.body}`]: {
+    fontSize: 12,
+    padding: 12,
+    fontFamily: "Montserrat",
+  },
+}));
+
+const StyledTableRow = styled(TableRow)(({ theme }) => ({
+  "&:nth-of-type()": {
+    backgroundColor: theme.palette.action.hover,
+  },
+  // hide last border
+  "&:last-child td, &:last-child th": {
+    border: 0,
+  },
+}));
+
+const headCategories = [
+  { key: "name", label: "Strategy" },
+  { key: "annualized_return", label: "Annualized Return %" },
+  { key: "stdev_return", label: "Standard Deviation %" },
+  // { key: "duration", label: "Duration" },
+];

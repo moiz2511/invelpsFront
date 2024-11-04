@@ -400,61 +400,48 @@ const ReturnsTab = ({
       const body = {
         strategy_name: selectedStrategyLabel,
         page: currentPage,
-        data_per_page: isBarClick || selectedCountry ? 300 : currentRowsPerPage,
+        data_per_page: currentRowsPerPage,
       };
 
-      console.log(isSort);
-      if (isSort) {
-        if (companyOrderBy) {
-          body.order_by = companyOrderBy;
-          console.log("here");
-        }
-        if (companySortBy) {
-          body.sort_by = companySortBy;
-        }
+      if (selectedCountry) {
+        setSelectedItems([]);
+        console.log(selectedItems);
+        body.country = selectedCountry;
+        console.log(selectedCountry);
+      }
+
+      if (selectedItems.length > 0) {
+        setSelectedCompany("");
+        console.log(selectedCountry);
+        body.sector = selectedItems;
+        console.log(selectedItems);
+      }
+
+      if (companyOrderBy) {
+        body.order_by = companyOrderBy;
+        console.log("here");
+        console.log(companyOrderBy);
+      }
+      if (companySortBy) {
+        body.sort_by = companySortBy;
+        console.log(companySortBy);
+      }
+
+      console.log(selectedItems.length);
+      console.log(body);
+
+      if (criteriaRef.current) {
+        criteriaRef.current.scrollIntoView({ behavior: "smooth" });
       }
       const response = await restService.getStrategyTableData(body);
       if (response.status === 200) {
         const data = response.data;
         console.log(data.data);
-        console.log(isBarClick);
 
         console.log(selectedCountry);
-        let filteredData = data.data;
 
-        if (selectedCountry) {
-          filteredData = filteredData.filter(
-            (item) => item.country == selectedCountry
-          );
-          console.log(graphTableDataCopy);
-          console.log(graphTableData);
-          console.log(filteredData);
-
-          if (criteriaRef.current) {
-            criteriaRef.current.scrollIntoView({ behavior: "smooth" });
-          }
-        }
-        if (isBarClick) {
-          filteredData = filteredData.filter((item) =>
-            selectedItems.some(
-              (selectedItem) =>
-                selectedItem.toLowerCase() === item.sector.toLowerCase()
-            )
-          );
-
-          setGraphTableData(filteredData);
-          setGraphTableDataCopy(filteredData);
-
-          console.log(graphTableDataCopy);
-          console.log(graphTableData);
-          console.log(filteredData);
-        } else {
-          setGraphTableData(filteredData);
-          setGraphTableDataCopy(filteredData);
-          console.log(graphTableDataCopy);
-          console.log(graphTableData);
-        }
-
+        setGraphTableData(data.data);
+        setGraphTableDataCopy(data.data);
         setTotalPages(data.paginator.total_pages);
         setPassingCriteria(data.companies_passing_criteris);
 
@@ -484,37 +471,42 @@ const ReturnsTab = ({
 
   const handleHeaderClick = (key) => {
     console.log(key);
+    console.log(key.currentTarget);
+    console.log(companySortBy);
+
     setAnchorEl(key.currentTarget);
     setOpenFilter(true);
     setCompanySortBy(key);
-    setSector("");
-    setIsSort(false);
-    setIsBarClick(false);
+    // setSector("");
     setSelectedCountry(null);
+    setCompanyOrderBy("");
   };
 
   useEffect(() => {
     fetchGraphData();
     fetchMapsData();
-  }, [selectedStrategy]);
+  }, [selectedStrategy, selectedCountry]);
 
   const handleBarClick = (companySortByParam) => {
-    console.log(companySortByParam);
     setCompanySortBy("");
-    console.log(companySortByParam);
     setSelectedItems([]);
     setSelectedCountry(null);
-    setCompanySortBy("Sector");
+    setCurrentPage(1);
+    setCompanySortBy("sector");
     setSelectedItems([companySortByParam]);
-    setIsBarClick(true);
 
     console.log(selectedItems);
     console.log(companySortBy);
+    console.log(companySortByParam);
+    console.log(companySortByParam);
+    console.log(selectedCountry);
 
     setSector(companySortByParam);
     if (criteriaRef.current) {
       criteriaRef.current.scrollIntoView({ behavior: "smooth" });
     }
+
+    console.log("here");
   };
 
   const fetchStrategyAnnualPerformance = async () => {
@@ -601,39 +593,32 @@ const ReturnsTab = ({
   useEffect(() => {
     fetchGraphTableData();
   }, [
-    selectedStrategy,
     currentPage,
     currentRowsPerPage,
     companySortBy,
     companyOrderBy,
-    sector,
     selectedCountry,
   ]);
 
   useEffect(() => {
-    console.log(selectedItems);
-    if (selectedItems?.length > 0) {
-      const filteredData = graphTableDataCopy.filter((item) =>
-        selectedItems.some(
-          (selected) =>
-            item.exchange === selected ||
-            item.sector === selected ||
-            item.industry === selected
-        )
-      );
-      console.log(filteredData);
-      setGraphTableDataCopy(filteredData);
-    } else {
+    if (selectedStrategy) {
       fetchGraphTableData();
-      console.log("here");
     }
-
-    //checks if selected item matches to anythng in the array
-  }, [selectedItems]);
+  }, [selectedStrategy]);
 
   useEffect(() => {
-    fetchCriteriaHeaders();
-  }, [selectedStrategy]);
+    if (selectedItems) {
+      fetchGraphTableData();
+    }
+  }, [selectedItems]);
+
+  console.log(selectedStrategy);
+  console.log(currentPage);
+  console.log(currentRowsPerPage);
+  console.log(companySortBy);
+  console.log(companyOrderBy);
+  console.log(selectedCountry);
+  console.log(selectedItems);
 
   const handleScrollToTop = () => {
     window.scrollTo({
@@ -671,13 +656,10 @@ const ReturnsTab = ({
 
   const handleReset = () => {
     setCompanySortBy(""); // Reset to initial value
-    setCompanyOrderBy("asc"); // Reset to initial value
-    setSector(""); // Reset to initial value
+    setCompanyOrderBy(""); // Reset to initial value
     setSelectedItems([]); // Reset to initial value
     setSOrderBy(""); // Reset to initial value
     setSSortBy(""); // Reset to initial value
-    setIsSort(false); // Reset to initial value
-    setIsBarClick(false); // Reset to initial value
     setSelectedCountry(); // Reset to initial value
     setCurrentPage(1);
     setCurrentRowsPerPage(3);
@@ -1190,11 +1172,7 @@ const CompaniesPassingCriteria = ({
       <Box justifyContent={"space-between"} display={"flex"}>
         <Typography style={{ fontSize: 20, fontWeight: "bold" }}>
           Companies Passing Criterias:{" "}
-          <span style={{ color: "gray" }}>
-            {selectedItems?.length < 1
-              ? passingCriteria
-              : graphTableDataCopy?.length}
-          </span>
+          <span style={{ color: "gray" }}>{passingCriteria}</span>
         </Typography>
 
         <Box>

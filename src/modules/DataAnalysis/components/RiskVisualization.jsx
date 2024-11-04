@@ -41,107 +41,6 @@ import SortingPopover from "./SortingPopover";
 import FilterPopover from "./FilterPopover";
 import ResetFilters from "./ResetFilters";
 
-const passingHeadCells = {
-  data: [
-    {
-      label: "Company Name",
-      key: "company_name",
-      isValueLink: false,
-      isDropDown: false,
-    },
-
-    {
-      label: "Ticker",
-      key: "symbol",
-      isValueLink: false,
-      isDropDown: false,
-    },
-    {
-      label: "Exchange",
-      key: "exchange",
-      isValueLink: false,
-      isDropDown: false,
-    },
-    {
-      label: "Sector",
-      key: "sector",
-      isValueLink: false,
-      isDropDown: false,
-    },
-    {
-      label: "Industry",
-      key: "industry",
-      isValueLink: false,
-      isDropDown: false,
-    },
-    {
-      label: "Total Return (%)",
-      key: "total_return",
-      isValueLink: false,
-      isDropDown: false,
-    },
-    {
-      label: "Annualized Return (%)",
-      key: "annualized_return",
-      isValueLink: false,
-      isDropDown: false,
-    },
-    {
-      label: "Rolling Return (%)",
-      key: "rolling_return",
-      isValueLink: false,
-      isDropDown: false,
-    },
-    {
-      label: "Standard Deviation (%)",
-      key: "stdev_return",
-      isValueLink: false,
-      isDropDown: false,
-    },
-    {
-      label: "Max Drawdown (%)",
-      key: "max_drawdown",
-      isValueLink: false,
-      isDropDown: false,
-    },
-    {
-      label: "Sharpe Ratio",
-      key: "sharpe_ratio",
-      isValueLink: false,
-      isDropDown: false,
-    },
-    {
-      label: "Sortino Ratio",
-      key: "sortino_ratio",
-      isValueLink: false,
-      isDropDown: false,
-    },
-  ],
-};
-
-const StyledTableCell = styled(TableCell)(({ theme }) => ({
-  [`&.${tableCellClasses.head}`]: {
-    backgroundColor: ColorConstants.APP_TABLE_HEAD_COLOR,
-    color: theme.palette.common.black,
-    padding: 12,
-    fontFamily: "Montserrat",
-  },
-  [`&.${tableCellClasses.body}`]: {
-    fontSize: 12,
-    padding: 12,
-    fontFamily: "Montserrat",
-  },
-}));
-
-const StyledTableRow = styled(TableRow)(({ theme }) => ({
-  "&:nth-of-type()": {
-    backgroundColor: theme.palette.action.hover,
-  },
-  // hide last border
-  "&:last-child td, &:last-child th": {
-    border: 0,
-  },
-}));
 const RiskVisualization = () => {
   const navigate = useNavigate();
   const [perExchangeKPI, setPerExhangeKPI] = useState([]);
@@ -151,6 +50,7 @@ const RiskVisualization = () => {
   const location = useLocation();
   const selectedStrategylocation = location.state.selectedStrategy;
   const selectedLabellocation = location.state.selectedStrategyLabel;
+  const setSelectedCompany = location.state.setSelectedCompany;
 
   console.log(selectedStrategylocation);
   console.log(selectedLabellocation);
@@ -350,18 +250,33 @@ const RiskVisualization = () => {
       const body = {
         strategy_name: selectedStrategyLabel,
         page: currentPage,
-        data_per_page: isBarClick || selectedCountry ? 300 : currentRowsPerPage,
+        data_per_page: currentRowsPerPage,
       };
 
-      console.log(isSort);
-      if (isSort) {
-        if (companyOrderBy) {
-          body.order_by = companyOrderBy;
-          console.log("here");
-        }
-        if (companySortBy) {
-          body.sort_by = companySortBy;
-        }
+      if (selectedItems.length > 0) {
+        setSelectedCompany("");
+        // setCompanySortBy("");
+        body.sector = selectedItems;
+      }
+
+      if (selectedCountry) {
+        setSelectedItems([]);
+        console.log(selectedItems);
+        body.country = selectedCountry;
+      }
+
+      if (companyOrderBy) {
+        body.order_by = companyOrderBy;
+        console.log("here");
+      }
+      if (companySortBy) {
+        body.sort_by = companySortBy;
+      }
+      console.log(selectedItems.length);
+      console.log(body);
+
+      if (criteriaRef.current) {
+        criteriaRef.current.scrollIntoView({ behavior: "smooth" });
       }
       const response = await restService.getStrategyTableData(body);
       if (response.status === 200) {
@@ -370,41 +285,9 @@ const RiskVisualization = () => {
         console.log(isBarClick);
 
         console.log(selectedCountry);
-        let filteredData = data.data;
 
-        if (selectedCountry) {
-          filteredData = filteredData.filter(
-            (item) => item.country == selectedCountry
-          );
-          console.log(graphTableDataCopy);
-          console.log(graphTableData);
-          console.log(filteredData);
-
-          if (criteriaRef.current) {
-            criteriaRef.current.scrollIntoView({ behavior: "smooth" });
-          }
-        }
-        if (isBarClick) {
-          filteredData = filteredData.filter((item) =>
-            selectedItems.some(
-              (selectedItem) =>
-                selectedItem.toLowerCase() === item.sector.toLowerCase()
-            )
-          );
-
-          setGraphTableData(filteredData);
-          setGraphTableDataCopy(filteredData);
-
-          console.log(graphTableDataCopy);
-          console.log(graphTableData);
-          console.log(filteredData);
-        } else {
-          setGraphTableData(filteredData);
-          setGraphTableDataCopy(filteredData);
-          console.log(graphTableDataCopy);
-          console.log(graphTableData);
-        }
-
+        setGraphTableData(data.data);
+        setGraphTableDataCopy(data.data);
         setTotalPages(data.paginator.total_pages);
         setPassingCriteria(data.companies_passing_criteris);
 
@@ -825,7 +708,7 @@ const RiskVisualization = () => {
           setIsBarClick(false);
         }}
         onClickTableBody={(data) => {
-          // setSelectedCompany(data);
+          setSelectedCompany(data);
           setIsSwitch1(true);
           setIsSwitch2(false);
           setShowVisualData(!showVisualData);
@@ -921,11 +804,7 @@ const CompaniesPassingCriteria = ({
       <Box justifyContent={"space-between"} display={"flex"}>
         <Typography style={{ fontSize: 20, fontWeight: "bold" }}>
           Companies Passing Criterias:{" "}
-          <span style={{ color: "gray" }}>
-            {selectedItems?.length < 1
-              ? passingCriteria
-              : graphTableDataCopy?.length}
-          </span>
+          <span style={{ color: "gray" }}>{passingCriteria}</span>
         </Typography>
 
         <Box>
@@ -1173,3 +1052,105 @@ const CompaniesPassingCriteria = ({
     </Card>
   );
 };
+
+const passingHeadCells = {
+  data: [
+    {
+      label: "Company Name",
+      key: "company_name",
+      isValueLink: false,
+      isDropDown: false,
+    },
+
+    {
+      label: "Ticker",
+      key: "symbol",
+      isValueLink: false,
+      isDropDown: false,
+    },
+    {
+      label: "Exchange",
+      key: "exchange",
+      isValueLink: false,
+      isDropDown: false,
+    },
+    {
+      label: "Sector",
+      key: "sector",
+      isValueLink: false,
+      isDropDown: false,
+    },
+    {
+      label: "Industry",
+      key: "industry",
+      isValueLink: false,
+      isDropDown: false,
+    },
+    {
+      label: "Total Return (%)",
+      key: "total_return",
+      isValueLink: false,
+      isDropDown: false,
+    },
+    {
+      label: "Annualized Return (%)",
+      key: "annualized_return",
+      isValueLink: false,
+      isDropDown: false,
+    },
+    {
+      label: "Rolling Return (%)",
+      key: "rolling_return",
+      isValueLink: false,
+      isDropDown: false,
+    },
+    {
+      label: "Standard Deviation (%)",
+      key: "stdev_return",
+      isValueLink: false,
+      isDropDown: false,
+    },
+    {
+      label: "Max Drawdown (%)",
+      key: "max_drawdown",
+      isValueLink: false,
+      isDropDown: false,
+    },
+    {
+      label: "Sharpe Ratio",
+      key: "sharpe_ratio",
+      isValueLink: false,
+      isDropDown: false,
+    },
+    {
+      label: "Sortino Ratio",
+      key: "sortino_ratio",
+      isValueLink: false,
+      isDropDown: false,
+    },
+  ],
+};
+
+const StyledTableCell = styled(TableCell)(({ theme }) => ({
+  [`&.${tableCellClasses.head}`]: {
+    backgroundColor: ColorConstants.APP_TABLE_HEAD_COLOR,
+    color: theme.palette.common.black,
+    padding: 12,
+    fontFamily: "Montserrat",
+  },
+  [`&.${tableCellClasses.body}`]: {
+    fontSize: 12,
+    padding: 12,
+    fontFamily: "Montserrat",
+  },
+}));
+
+const StyledTableRow = styled(TableRow)(({ theme }) => ({
+  "&:nth-of-type()": {
+    backgroundColor: theme.palette.action.hover,
+  },
+  // hide last border
+  "&:last-child td, &:last-child th": {
+    border: 0,
+  },
+}));

@@ -52,8 +52,8 @@ const OverviewTab = ({
 }) => {
   const restService = new InvestorScreenerService();
   const [companySortBy, setCompanySortBy] = useState("");
-  const [companyOrderBy, setCompanyOrderBy] = useState("asc");
-  const [sector, setSector] = useState("");
+  const [companyOrderBy, setCompanyOrderBy] = useState("");
+  // const [sector, setSector] = useState("");
   const [refresh, setRefresh] = useState(false);
 
   const [selectedStrategy, setSelectedStrategy] = useState(null);
@@ -87,25 +87,86 @@ const OverviewTab = ({
   const [uniqueExchanges, setUniqueExchanges] = useState([]);
   const [uniqueIndustries, setUniqueIndustries] = useState([]);
   const [uniqueSectors, setUniqueSectors] = useState([]);
-  const [isBarClick, setIsBarClick] = useState(false);
 
   const criteriaRef = useRef(null);
   const [selectedCountry, setSelectedCountry] = useState(null);
 
-  const handleDataVisualization = (strategy) => {
-    setIsSwitch2(true);
-    setSelectedStrategy(strategy);
-    handleScrollToTop();
-    setSelectedStrategyLabel(strategy.strategy_label);
+  const fetchGraphTableData = async () => {
+    try {
+      setIsLoading(true);
+      console.log("1");
+      console.log(selectedStrategy);
+      const body = {
+        strategy_name: selectedStrategy?.name,
+        page: currentPage,
+        data_per_page: currentRowsPerPage,
+      };
+
+      if (selectedCountry) {
+        setSelectedItems([]);
+        console.log(selectedItems);
+        body.country = selectedCountry;
+        console.log(selectedCountry);
+      }
+
+      if (selectedItems.length > 0) {
+        setSelectedCompany("");
+        console.log(selectedCountry);
+        body.sector = selectedItems;
+        console.log(selectedItems);
+      }
+
+      if (companyOrderBy) {
+        body.order_by = companyOrderBy;
+        console.log("here");
+        console.log(companyOrderBy);
+      }
+      if (companySortBy) {
+        body.sort_by = companySortBy;
+        console.log(companySortBy);
+      }
+
+      console.log(selectedItems.length);
+      console.log(body);
+
+      if (criteriaRef.current) {
+        criteriaRef.current.scrollIntoView({ behavior: "smooth" });
+      }
+      const response = await restService.getStrategyTableData(body);
+      if (response.status === 200) {
+        const data = response.data;
+        console.log(data.data);
+
+        console.log(selectedCountry);
+
+        setGraphTableData(data.data);
+        setGraphTableDataCopy(data.data);
+        setTotalPages(data.paginator.total_pages);
+        setPassingCriteria(data.companies_passing_criteris);
+
+        if (companySortBy == "exchange") {
+          setUniqueCompanies(uniqueExchanges);
+        } else if (companySortBy == "industry") {
+          setUniqueCompanies(uniqueIndustries);
+        } else if (companySortBy == "sector") {
+          setUniqueCompanies(uniqueSectors);
+        }
+
+        console.log(companySortBy);
+        console.log(uniqueCompanies);
+        setIsLoading(false);
+        console.log(graphTableDataCopy);
+      } else {
+        console.log("Unexpected status code:", response.status);
+        setIsLoading(false);
+      }
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      setIsLoading(false);
+    } finally {
+      setIsLoading(false);
+    }
   };
-  const handleInvestorVisualization = (investor) => {
-    setShowInvestor(!showInvestor);
-    setSelectedInvestor(investor);
-  };
-  const closeInvestorModal = () => {
-    setShowInvestor(!showInvestor);
-  };
-  console.log(selectedStrategy);
 
   const fetchMapsData = async () => {
     try {
@@ -130,7 +191,6 @@ const OverviewTab = ({
     }
   };
 
-  console.log(mapsData);
   const fetchGraphData = async () => {
     try {
       const body = {
@@ -192,11 +252,10 @@ const OverviewTab = ({
     }
   };
 
-  console.log(uniqueExchanges);
-  console.log(uniqueIndustries);
-  console.log(uniqueSectors);
+  useEffect(() => {
+    fetchCriteriaHeaders();
+  }, [selectedStrategy]);
 
-  // not related
   const fetchStrategyData = async () => {
     try {
       setIsLoading(true);
@@ -221,7 +280,6 @@ const OverviewTab = ({
         console.log(sSortBy);
         console.log(sOrderBy);
 
-        console.log(sector);
         console.log("overview table data:", strategiesCopy);
       } else {
         console.log("Unexpected status code:", response.status);
@@ -233,137 +291,44 @@ const OverviewTab = ({
     }
   };
 
-  // the Overview table
-  const fetchGraphTableData = async () => {
-    try {
-      setIsLoading(true);
-      console.log("1");
-      console.log(selectedStrategy);
-      const body = {
-        strategy_name: selectedStrategy?.name,
-        page: currentPage,
-        data_per_page: currentRowsPerPage,
-      };
-
-      if (selectedItems.length > 0) {
-        setSelectedCompany("");
-        body.sector = selectedItems;
-      }
-
-      if (selectedCountry) {
-        setSelectedItems([]);
-        console.log(selectedItems);
-        body.country = selectedCountry;
-      }
-      if (companyOrderBy) {
-        body.order_by = companyOrderBy;
-        console.log("here");
-      }
-      if (companySortBy) {
-        body.sort_by = companySortBy;
-      }
-
-      console.log(selectedItems.length);
-      console.log(body);
-
-      if (criteriaRef.current) {
-        criteriaRef.current.scrollIntoView({ behavior: "smooth" });
-      }
-      const response = await restService.getStrategyTableData(body);
-      if (response.status === 200) {
-        const data = response.data;
-        console.log(data.data);
-        console.log(isBarClick);
-
-        console.log(selectedCountry);
-
-        setGraphTableData(data.data);
-        setGraphTableDataCopy(data.data);
-        setTotalPages(data.paginator.total_pages);
-        setPassingCriteria(data.companies_passing_criteris);
-
-        if (companySortBy == "exchange") {
-          setUniqueCompanies(uniqueExchanges);
-        } else if (companySortBy == "industry") {
-          setUniqueCompanies(uniqueIndustries);
-        } else if (companySortBy == "sector") {
-          setUniqueCompanies(uniqueSectors);
-        }
-
-        console.log(companySortBy);
-        console.log(uniqueCompanies);
-        setIsLoading(false);
-        console.log(graphTableDataCopy);
-      } else {
-        console.log("Unexpected status code:", response.status);
-        setIsLoading(false);
-      }
-    } catch (error) {
-      console.error("Error fetching data:", error);
-      setIsLoading(false);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleHeaderClick = (key) => {
-    console.log(key);
-    setAnchorEl(key.currentTarget);
-    setOpenFilter(true);
-    setCompanySortBy(key);
-    setSector("");
-    setIsBarClick(false);
-    setSelectedCountry(null);
-  };
-
   useEffect(() => {
     fetchGraphData();
     fetchMapsData();
   }, [selectedStrategy, selectedCountry]);
 
-  const handleBarClick = (companySortByParam) => {
-    setCompanySortBy("");
-    setSelectedItems([]);
-    setSelectedCountry(null);
-    setCurrentPage(1);
-    setCompanySortBy("Sector");
-    setSelectedItems([companySortByParam]);
-    setIsBarClick(true);
-
-    console.log(selectedItems);
-    console.log(companySortBy);
-    console.log(companySortByParam);
-    console.log(companySortByParam);
-    console.log(selectedCountry);
-
-    setSector(companySortByParam);
-    if (criteriaRef.current) {
-      criteriaRef.current.scrollIntoView({ behavior: "smooth" });
-    }
-
-    console.log("here");
-  };
-
-  console.log(selectedItems);
-
   useEffect(() => {
     fetchGraphTableData();
   }, [
-    selectedStrategy,
     currentPage,
     currentRowsPerPage,
     companySortBy,
     companyOrderBy,
-    sector,
     selectedCountry,
-    selectedItems,
   ]);
 
+  console.log(selectedStrategy);
+  console.log(currentPage);
+  console.log(currentRowsPerPage);
+  console.log(companySortBy);
+  console.log(companyOrderBy);
+  console.log(selectedCountry);
+  console.log(selectedItems);
+
   useEffect(() => {
-    fetchCriteriaHeaders();
+    if (selectedStrategy) {
+      fetchGraphTableData();
+    }
+    console.log(selectedStrategy);
   }, [selectedStrategy]);
 
-  // not related
+  useEffect(() => {
+    if (selectedItems) {
+      fetchGraphTableData();
+    }
+    console.log(selectedItems);
+  }, [selectedItems]);
+
+
   const handleScrollToTop = () => {
     window.scrollTo({
       top: 0,
@@ -371,22 +336,66 @@ const OverviewTab = ({
     });
   };
 
+  const handleHeaderClick = (key) => {
+    console.log(key);
+    console.log(key.currentTarget);
+    console.log(companySortBy);
+
+    setAnchorEl(key.currentTarget);
+    setOpenFilter(true);
+    setCompanySortBy(key);
+    // setSector("");
+    setSelectedCountry(null);
+    setCompanyOrderBy("");
+  };
+
+  const handleBarClick = (companySortByParam) => {
+    setCompanySortBy("");
+    setSelectedItems([]);
+    setSelectedCountry(null);
+    setCurrentPage(1);
+    setCompanySortBy("sector");
+    setSelectedItems([companySortByParam]);
+
+    console.log(selectedItems);
+    console.log(companySortBy);
+    console.log(companySortByParam);
+    console.log(companySortByParam);
+    console.log(selectedCountry);
+
+    // setSector(companySortByParam);
+    if (criteriaRef.current) {
+      criteriaRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+
+    console.log("here");
+  };
+  const closeInvestorModal = () => {
+    setShowInvestor(!showInvestor);
+  };
+
   const handleReset = () => {
-    setCompanySortBy(""); // Reset to initial value
-    setCompanyOrderBy("asc"); // Reset to initial value
-    setSector(""); // Reset to initial value
-    setSelectedItems([]); // Reset to initial value
-    setSOrderBy(""); // Reset to initial value
-    setSSortBy(""); // Reset to initial value
-    setIsBarClick(false); // Reset to initial value
-    setSelectedCountry(); // Reset to initial value
+    setCompanySortBy(""); 
+    setCompanyOrderBy(""); 
+    setSelectedItems([]); 
+    setSOrderBy(""); 
+    setSSortBy(""); 
+    setSelectedCountry(); 
     setCurrentPage(1);
     setCurrentRowsPerPage(3);
     console.log("here");
   };
 
-  //auth related work
-  //auth related work
+  const handleDataVisualization = (strategy) => {
+    setIsSwitch2(true);
+    setSelectedStrategy(strategy);
+    handleScrollToTop();
+    setSelectedStrategyLabel(strategy.strategy_label);
+  };
+  const handleInvestorVisualization = (investor) => {
+    setShowInvestor(!showInvestor);
+    setSelectedInvestor(investor);
+  };
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -538,7 +547,6 @@ const OverviewTab = ({
                 onClickFilter={(event, key) => {
                   handleHeaderClick(key);
                   setAnchorEl(event.currentTarget);
-                  setIsBarClick(false);
                 }}
                 onClickTableBody={(data) => {
                   setSelectedCompany(data);
