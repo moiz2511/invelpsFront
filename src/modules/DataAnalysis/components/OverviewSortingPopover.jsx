@@ -100,7 +100,7 @@ const OverviewSortingPopover = ({
               label="Rolling Return (%)"
             />
             <FormControlLabel
-              value="standard_deviation"
+              value="stdev_return"
               control={<Radio />}
               label="Standard Deviation (%)"
             />

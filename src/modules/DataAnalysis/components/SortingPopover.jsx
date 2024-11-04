@@ -132,6 +132,11 @@ const SortingPopover = ({
               control={<Radio />}
               label="Max Drawdown"
             />
+              <FormControlLabel
+              value="country"
+              control={<Radio />}
+              label="Country"
+            />
           </RadioGroup>
 
           <FormLabel component="legend">Order</FormLabel>

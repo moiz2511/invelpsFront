@@ -91,6 +91,10 @@ const OverviewTab = ({
   const criteriaRef = useRef(null);
   const [selectedCountry, setSelectedCountry] = useState(null);
 
+console.log(companySortBy)
+console.log(companyOrderBy)
+
+
   const fetchGraphTableData = async () => {
     try {
       setIsLoading(true);
@@ -112,8 +116,20 @@ const OverviewTab = ({
       if (selectedItems.length > 0) {
         setSelectedCompany("");
         console.log(selectedCountry);
-        body.sector = selectedItems;
-        console.log(selectedItems);
+        console.log(selectedItems)
+        if(companySortBy == "exchange") {
+          console.log(companySortBy)
+
+        body.exchange = selectedItems;          
+        }
+        if(companySortBy == "industry") {
+          console.log(companySortBy)
+        body.industry = selectedItems;          
+        }
+        if(companySortBy == "sector") {
+          console.log(companySortBy)
+        body.sector = selectedItems;          
+        }
       }
 
       if (companyOrderBy) {
@@ -291,6 +307,8 @@ const OverviewTab = ({
     }
   };
 
+
+  
   useEffect(() => {
     fetchGraphData();
     fetchMapsData();
@@ -299,34 +317,44 @@ const OverviewTab = ({
   useEffect(() => {
     fetchGraphTableData();
   }, [
-    currentPage,
+    selectedCountry,
     currentRowsPerPage,
+    currentPage,
+    selectedStrategy,
     companySortBy,
     companyOrderBy,
-    selectedCountry,
+    selectedItems
+
+    // currentPage,
+    // currentRowsPerPage,
+    // companySortBy,
+    // companyOrderBy,
+    // ,
+    // selectedStrategy,
+    // selectedItems
   ]);
 
-  console.log(selectedStrategy);
   console.log(currentPage);
   console.log(currentRowsPerPage);
   console.log(companySortBy);
   console.log(companyOrderBy);
   console.log(selectedCountry);
+  console.log(selectedStrategy);
   console.log(selectedItems);
 
-  useEffect(() => {
-    if (selectedStrategy) {
-      fetchGraphTableData();
-    }
-    console.log(selectedStrategy);
-  }, [selectedStrategy]);
+  // useEffect(() => {
+  //   if (selectedStrategy) {
+  //     fetchGraphTableData();
+  //   }
+  //   console.log(selectedStrategy);
+  // }, [selectedStrategy]);
 
-  useEffect(() => {
-    if (selectedItems) {
-      fetchGraphTableData();
-    }
-    console.log(selectedItems);
-  }, [selectedItems]);
+  // useEffect(() => {
+  //   if (selectedItems) {
+  //     fetchGraphTableData();
+  //   }
+  //   console.log(selectedItems);
+  // }, [selectedItems]);
 
 
   const handleScrollToTop = () => {
@@ -481,7 +509,7 @@ const OverviewTab = ({
                 >
                   <Typography style={{ fontWeight: "bolder" }}>
                     {" "}
-                    Companies Per Country (%){" "}
+                    Companies Per Countrysss (%){" "}
                   </Typography>
                   <GeoChartComponent
                     data={mapsData}
@@ -760,9 +788,9 @@ const CompaniesPassingCriteria = ({
         </Box>
       </Box>
 
-      <Box position="relative">
+      <Box position="relative" >
         <TableContainer>
-          <Table sx={{ width: "100%", maxWidth: "100%", mt: 1 }} size="medium">
+          <Table sx={{ width: "full", maxWidth: "full", mt: 1 }} size="medium">
             {/* Overlay and Spinner */}
 
             <Box pos="relative" justifyContent="center">
@@ -1050,8 +1078,10 @@ const OverviewTableData = ({
             />
           </Box>
         </Box>
-        <TableContainer>
-          <Table sx={{ width: "100%", mt: 1 }} size="medium">
+        <TableContainer
+     
+        >
+          <Table sx={{ width: "full", mt: 1 }} size="medium">
             <Box pos="relative" justifyContent="center">
               {isLoading && (
                 <Box
@@ -1072,19 +1102,28 @@ const OverviewTableData = ({
                 </Box>
               )}
               <>
-                <TableHead>
-                  <TableRow>
+                <TableHead
+                
+                >
+                  <TableRow
+
+                 
+                  >
                     {headCells.data?.map((headCell, index) => (
-                      <StyledTableCell key={headCell.id} padding="normal">
+                      <StyledTableCell
+
+                     
+                      key={headCell.id} padding="normal">
                         <Box
                           sx={{
                             display: "flex",
                             alignItems: "center",
                             gap: 2,
-                            position: "relative",
+                            position: "relative"
+                            
                           }}
                         >
-                          <Box sx={{ display: "flex", alignItems: "center" }}>
+                          <Box sx={{ display: "flex", alignItems: "center", width:"full" }}>
                             {headCell.label}
                           </Box>
 
@@ -1099,10 +1138,10 @@ const OverviewTableData = ({
                     ))}
                   </TableRow>
                 </TableHead>
-                <TableBody>
+                <TableBody >
                   {strategiesCopy?.map((data, index) => {
                     return (
-                      <StyledTableRow hover key={index} sx={{ ml: 3 }}>
+                      <StyledTableRow hover key={index} sx={{ ml: 3 }} >
                         <StyledTableCell
                           onClick={() => onClickVisualization(data)}
                           // onClick={() => handleDataVisualization(data)}
