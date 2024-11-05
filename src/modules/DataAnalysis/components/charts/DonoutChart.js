@@ -24,18 +24,22 @@ const COLORS = [
 ];
 
 const DonutPieChart = ({ data, dataKey, nameKey }) => {
-  const [isMobile, setIsMobile] = useState(window.innerWidth < 768); // Default mobile breakpoint
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+  const [activeIndex, setActiveIndex] = useState(null); // Track the clicked cell index
 
   useEffect(() => {
     const handleResize = () => {
-      setIsMobile(window.innerWidth < 768); // Update based on viewport width
+      setIsMobile(window.innerWidth < 768);
     };
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // Calculate the total sum for the percentage calculation
   const total = data?.reduce((sum, entry) => sum + entry[dataKey], 0);
+
+  const handleClick = (index) => {
+    setActiveIndex(index); // Update the active index on click
+  };
 
   return (
     <ResponsiveContainer width="100%" height={370}>
@@ -52,10 +56,16 @@ const DonutPieChart = ({ data, dataKey, nameKey }) => {
             dataKey={dataKey}
             nameKey={nameKey}
           >
-            {data?.map((entry, index) => (
+            {data.map((entry, index) => (
               <Cell
                 key={`cell-${index}`}
                 fill={COLORS[index % COLORS.length]}
+                onClick={() => handleClick(index)}
+                style={{
+                  cursor: "pointer",
+                  stroke: activeIndex === index ? "none" : "none", 
+                  strokeWidth: activeIndex === index ? 3 : 0, 
+                }}
               />
             ))}
           </Pie>
@@ -65,7 +75,7 @@ const DonutPieChart = ({ data, dataKey, nameKey }) => {
               const percentage = (
                 (data[index][dataKey] / total) *
                 100
-              )?.toFixed(1);
+              ).toFixed(1);
               return `${value} (${percentage}%)`;
             }}
             layout={isMobile ? "horizontal" : "vertical"}

@@ -53,16 +53,12 @@ const OverviewTab = ({
   const restService = new InvestorScreenerService();
   const [companySortBy, setCompanySortBy] = useState("");
   const [companyOrderBy, setCompanyOrderBy] = useState("");
-  // const [sector, setSector] = useState("");
   const [refresh, setRefresh] = useState(false);
-
   const [selectedStrategy, setSelectedStrategy] = useState(null);
   const [allStrategies, setAllStrategies] = useState([]);
   const authCtx = useContext(AuthContext);
   const [authToken, setAuthToken] = useState(null);
-
   const [storedToken, setStoredToken] = useState(null);
-
   const [perExchangeKPI, setPerExhangeKPI] = useState([]);
   const [perSectorKPI, setPerSectorKPI] = useState([]);
   const [perMarketKPI, setPerMarketKPI] = useState([]);
@@ -91,15 +87,11 @@ const OverviewTab = ({
   const criteriaRef = useRef(null);
   const [selectedCountry, setSelectedCountry] = useState(null);
 
-console.log(companySortBy)
-console.log(companyOrderBy)
 
 
   const fetchGraphTableData = async () => {
     try {
       setIsLoading(true);
-      console.log("1");
-      console.log(selectedStrategy);
       const body = {
         strategy_name: selectedStrategy?.name,
         page: currentPage,
@@ -107,42 +99,31 @@ console.log(companyOrderBy)
       };
 
       if (selectedCountry) {
-        console.log(selectedItems);
         body.country = selectedCountry;
-        console.log(selectedCountry);
       }
 
       if (selectedItems.length > 0) {
         setSelectedCompany("");
-        console.log(selectedCountry);
-        console.log(selectedItems)
+        console.log(companySortBy);
+
         if(companySortBy == "exchange") {
-          console.log(companySortBy);
 
         body.exchange = selectedItems;          
         }
        else if(companySortBy == "industry") {
-          console.log(companySortBy);
         body.industry = selectedItems;          
         }
         else if(companySortBy == "sector") {
-          console.log(companySortBy);
         body.sector = selectedItems;          
         }
       }
 
       if (companyOrderBy) {
         body.order_by = companyOrderBy;
-        console.log("here");
-        console.log(companyOrderBy);
       }
       if (companySortBy) {
         body.sort_by = companySortBy;
-        console.log(companySortBy);
       }
-
-      console.log(selectedItems.length);
-      console.log(body);
 
       if (criteriaRef.current) {
         criteriaRef.current.scrollIntoView({ behavior: "smooth" });
@@ -150,9 +131,7 @@ console.log(companyOrderBy)
       const response = await restService.getStrategyTableData(body);
       if (response.status === 200) {
         const data = response.data;
-        console.log(data.data);
 
-        console.log(selectedCountry);
 
         setGraphTableData(data.data);
         setGraphTableDataCopy(data.data);
@@ -167,10 +146,9 @@ console.log(companyOrderBy)
           setUniqueCompanies(uniqueSectors);
         }
 
-        console.log(companySortBy);
-        console.log(uniqueCompanies);
+      
         setIsLoading(false);
-        console.log(graphTableDataCopy);
+        setOpenFilter(false)
       } else {
         console.log("Unexpected status code:", response.status);
         setIsLoading(false);
@@ -189,13 +167,11 @@ console.log(companyOrderBy)
         strategy_name: selectedStrategy?.name,
       };
 
-      console.log(body);
 
       const response = await restService.getStrategyCountryData(body);
 
       if (response.status === 200) {
         const data = response.data; // Ensure correct reference to response data
-        console.log("Company", data.data);
 
         setMapsData(data.data); // Set the map data state
       } else {
@@ -238,12 +214,10 @@ console.log(companyOrderBy)
         strategy_name: selectedStrategy?.name,
         country: selectedCountry
       };
-      console.log(body);
 
       const response = await restService.getStrategyHeaderValues(body);
       if (response.status === 200) {
         const data = response.data;
-        console.log(data);
 
         const uniqueExchangesSet = new Set(
           data.data?.map((item) => item.exchange).filter(Boolean)
@@ -332,21 +306,6 @@ console.log(companyOrderBy)
   console.log(selectedStrategy);
   console.log(selectedItems);
 
-  // useEffect(() => {
-  //   if (selectedStrategy) {
-  //     fetchGraphTableData();
-  //   }
-  //   console.log(selectedStrategy);
-  // }, [selectedStrategy]);
-
-  // useEffect(() => {
-  //   if (selectedItems) {
-  //     fetchGraphTableData();
-  //   }
-  //   console.log(selectedItems);
-  // }, [selectedItems]);
-
-
   const handleScrollToTop = () => {
     window.scrollTo({
       top: 0,
@@ -355,36 +314,18 @@ console.log(companyOrderBy)
   };
 
   const handleHeaderClick = (key) => {
-    console.log(key);
-    console.log(key.currentTarget);
-    console.log(companySortBy);
-    console.log(companyOrderBy);
-
-    console.log(selectedCountry)
-
     setAnchorEl(key.currentTarget);
     setOpenFilter(true);
     setCompanySortBy(key);
-
-  
-
-    console.log(companySortBy);
-    console.log(companyOrderBy);
   };
 
   const handleBarClick = (companySortByParam) => {
     setCompanySortBy("");
     setSelectedItems([]);
     setSelectedCountry(null);
-    setCurrentPage(1);
     setCompanySortBy("sector");
+    setCurrentPage(1);
     setSelectedItems([companySortByParam]);
-
-    console.log(selectedItems);
-    console.log(companySortBy);
-    console.log(companySortByParam);
-    console.log(companySortByParam);
-    console.log(selectedCountry);
 
     // setSector(companySortByParam);
     if (criteriaRef.current) {

@@ -40,6 +40,7 @@ import ColorConstants from "../../Core/constants/ColorConstants.json";
 import SortingPopover from "./SortingPopover";
 import FilterPopover from "./FilterPopover";
 import ResetFilters from "./ResetFilters";
+import { LegendToggleRounded } from "@mui/icons-material";
 
 const RiskVisualization = () => {
   const navigate = useNavigate();
@@ -51,7 +52,7 @@ const RiskVisualization = () => {
   const params = new URLSearchParams(location.search);
   const selectedStrategylocation = params.get("selectedStrategy");
   const selectedLabellocation = params.get("selectedStrategyLabel");
-  const setSelectedCompany = params.get("setSelectedCompany");
+  let setSelectedCompany = params.get("setSelectedCompany");
   // const selectedStrategylocation = location.state.selectedStrategy;
   // const selectedLabellocation = location.state.selectedStrategyLabel;
   // const setSelectedCompany = location.state.setSelectedCompany;
@@ -69,7 +70,6 @@ const RiskVisualization = () => {
   const [strategiesCopy, setStrategiesCopy] = useState([]);
   const [companySortBy, setCompanySortBy] = useState("");
   const [companyOrderBy, setCompanyOrderBy] = useState("");
-  const [sector, setSector] = useState("");
   const [refresh, setRefresh] = useState(false);
 
   const [selectedStrategyLabel, setSelectedStrategyLabel] = useState(
@@ -225,14 +225,13 @@ const RiskVisualization = () => {
       const response = await restService.getAllStrategies(body);
 
       if (response.status === 200) {
-        const data = response.data; // Ensure correct reference to response data
+        const data = response.data;
         console.log("Data:", data.strategies);
 
         setAllStrategies(data.strategies);
         setStrategiesCopy(data.strategies);
 
         console.log(sSortBy);
-        console.log(sector);
         console.log("overview table data:", strategiesCopy);
       } else {
         console.log("Unexpected status code:", response.status);
@@ -240,42 +239,57 @@ const RiskVisualization = () => {
     } catch (error) {
       console.error("Error fetching strategy data:", error);
     } finally {
-      setIsLoading(false); // Ensure loading state is turned off even if an error occurs
+      setIsLoading(false); 
     }
   };
 
   // the Overview table
   const fetchGraphTableData = async () => {
     try {
-      setIsLoading(true);
-      console.log("1");
-      console.log(selectedStrategy);
+      setIsLoading(true);     
       const body = {
         strategy_name: selectedStrategyLabel,
         page: currentPage,
         data_per_page: currentRowsPerPage,
+        [companySortBy == 'exchange' ? 'exchange' : companySortBy === 'industry' ? 'industry' : 'sector']: selectedItems,
       };
+      
 
-      if (selectedItems.length > 0) {
-        setSelectedCompany("");
-        // setCompanySortBy("");
-        body.sector = selectedItems;
-      }
+      console.log(companySortBy);
+      console.log(selectedItems);
+      console.log(body)
+
 
       if (selectedCountry) {
-        // setSelectedItems([]);
-        console.log(selectedItems);
         body.country = selectedCountry;
       }
 
+      // body.exchange = selectedItems
+      // console.log(body)
+
+      if(companySortBy == "exchange") {
+        body.exchange = selectedItems;          
+        }
+       else if(companySortBy == "industry") {
+        body.industry = selectedItems;          
+        }
+        else if(companySortBy == "sector") {
+        body.sector = selectedItems;          
+        }
+        
+      if (selectedItems.length > 0) {
+        setSelectedCompany = "";
+        console.log(companySortBy);
+       
+      }
+     
+
       if (companyOrderBy) {
         body.order_by = companyOrderBy;
-        console.log("here");
       }
       if (companySortBy) {
         body.sort_by = companySortBy;
       }
-      console.log(selectedItems.length);
       console.log(body);
 
       if (criteriaRef.current) {
@@ -284,10 +298,6 @@ const RiskVisualization = () => {
       const response = await restService.getStrategyTableData(body);
       if (response.status === 200) {
         const data = response.data;
-        console.log(data.data);
-        console.log(isBarClick);
-
-        console.log(selectedCountry);
 
         setGraphTableData(data.data);
         setGraphTableDataCopy(data.data);
@@ -302,10 +312,9 @@ const RiskVisualization = () => {
           setUniqueCompanies(uniqueSectors);
         }
 
-        console.log(companySortBy);
-        console.log(uniqueCompanies);
         setIsLoading(false);
-        console.log(graphTableDataCopy);
+        setOpenFilter(false)
+
       } else {
         console.log("Unexpected status code:", response.status);
         setIsLoading(false);
@@ -318,31 +327,51 @@ const RiskVisualization = () => {
     }
   };
 
+
+  useEffect(() => {
+    fetchGraphData();
+    fetchMapsData();
+  }, [selectedStrategy, selectedCountry]);
+
+
+  useEffect(() => {
+    fetchGraphTableData();
+  }, [
+    selectedCountry,
+    currentRowsPerPage,
+    currentPage,
+    selectedStrategy,
+    companySortBy,
+    companyOrderBy,
+    selectedItems,
+  ]);
+
+  console.log(currentPage);
+  console.log(currentRowsPerPage);
+  console.log(companySortBy);
+  console.log(companyOrderBy);
+  console.log(selectedCountry);
+  console.log(selectedStrategy);
+  console.log(selectedItems);
+
+
+
   const handleHeaderClick = (key) => {
     setAnchorEl(key.currentTarget);
     setOpenFilter(true);
     setCompanySortBy(key);
   };
 
-  useEffect(() => {
-    fetchGraphData();
-    fetchMapsData();
-  }, [selectedStrategy]);
 
   const handleBarClick = (companySortByParam) => {
-    console.log(companySortByParam);
     setCompanySortBy("");
-    console.log(companySortByParam);
     setSelectedItems([]);
     setSelectedCountry(null);
-    setCompanySortBy("Sector");
+    setCompanySortBy("sector");
+    setCurrentPage(1);
     setSelectedItems([companySortByParam]);
     setIsBarClick(true);
 
-    console.log(selectedItems);
-    console.log(companySortBy);
-
-    setSector(companySortByParam);
     if (criteriaRef.current) {
       criteriaRef.current.scrollIntoView({ behavior: "smooth" });
     }
@@ -421,46 +450,9 @@ const RiskVisualization = () => {
       setYears(filteredYears);
     }
   }, [strategyData]);
+;
 
-  console.log(years);
-  console.log(bestWorstData);
 
-  console.log(strategyData);
-
-  console.log(selectedItems);
-
-  useEffect(() => {
-    fetchGraphTableData();
-  }, [
-    selectedStrategy,
-    currentPage,
-    currentRowsPerPage,
-    companySortBy,
-    companyOrderBy,
-    sector,
-    selectedCountry,
-  ]);
-
-  useEffect(() => {
-    console.log(selectedItems);
-    if (selectedItems?.length > 0) {
-      const filteredData = graphTableDataCopy.filter((item) =>
-        selectedItems.some(
-          (selected) =>
-            item.exchange === selected ||
-            item.sector === selected ||
-            item.industry === selected
-        )
-      );
-      console.log(filteredData);
-      setGraphTableDataCopy(filteredData);
-    } else {
-      fetchGraphTableData();
-      console.log("here");
-    }
-
-    //checks if selected item matches to anythng in the array
-  }, [selectedItems]);
 
   useEffect(() => {
     fetchCriteriaHeaders();
@@ -504,10 +496,6 @@ const RiskVisualization = () => {
   console.log(uniqueIndustries);
   console.log(uniqueSectors);
 
-  useEffect(() => {
-    fetchGraphData();
-    fetchMapsData();
-  }, [selectedStrategy]);
 
   const buttons = [
     {
@@ -530,12 +518,6 @@ const RiskVisualization = () => {
     },
   ];
 
-  console.log(activeButton);
-  console.log(selectedStrategyLabel);
-  console.log(showVisualData);
-  console.log(tab2);
-  console.log(isSwitch2);
-
   useEffect(() => {
     const handleScrollToTop = () => {
       window.scrollTo({
@@ -548,12 +530,10 @@ const RiskVisualization = () => {
 
   useEffect(() => {
     const token = localStorage.getItem("token");
-    console.log(token);
     setStoredToken(token);
   }, []);
 
   useEffect(() => {
-    console.log(storedToken);
     if (authCtx.isLoggedIn || authCtx.token) {
       setAuthToken(authCtx.token);
     } else if (storedToken) {
@@ -566,24 +546,19 @@ const RiskVisualization = () => {
 
   useEffect(() => {
     if (authToken) {
-      console.log(authToken);
       fetchStrategyData();
     }
   }, [authToken, sOrderBy, sSortBy]);
 
   const handleReset = () => {
-    setCompanySortBy(""); // Reset to initial value
-    setCompanyOrderBy("asc"); // Reset to initial value
-    setSector(""); // Reset to initial value
-    setSelectedItems([]); // Reset to initial value
-    setSOrderBy(""); // Reset to initial value
-    setSSortBy(""); // Reset to initial value
-    setIsSort(false); // Reset to initial value
-    setIsBarClick(false); // Reset to initial value
-    setSelectedCountry(); // Reset to initial value
+    setCompanySortBy(""); 
+    setCompanyOrderBy(""); 
+    setSelectedItems([]); 
+    setSOrderBy(""); 
+    setSSortBy(""); 
+    setSelectedCountry(); 
     setCurrentPage(1);
     setCurrentRowsPerPage(3);
-    console.log("here");
   };
 
   return (
@@ -706,7 +681,7 @@ const RiskVisualization = () => {
           setIsBarClick(false);
         }}
         onClickTableBody={(data) => {
-          setSelectedCompany(data);
+          setSelectedCompany = data;
           setIsSwitch1(true);
           setIsSwitch2(false);
           setShowVisualData(!showVisualData);
@@ -769,20 +744,17 @@ const CompaniesPassingCriteria = ({
 
   const handlePrevPage = () => {
     setCurrentPage((prevPage) => Math.max(1, prevPage - 1));
-    setSelectedItems([]); //so on new page no filters are there
     console.log("here");
   };
 
   const handleNextPage = () => {
     setCurrentPage((prevPage) => Math.min(totalPages, prevPage + 1));
-    setSelectedItems([]); //so on new page no filters are there
     console.log("here");
   };
 
   const handleChangeRowsPerPage = (event) => {
     setCurrentRowsPerPage(parseInt(event.target.value, 10));
     setCurrentPage(1);
-    setSelectedItems([]); //so on new page no filters are there
     console.log("here");
   };
 
@@ -1032,9 +1004,12 @@ const CompaniesPassingCriteria = ({
           </Box>
 
           <Box display={"flex"} alignItems={"center"} px={2} gap={1}>
-            <span style={{ fontFamily: "Montserrat" }}>
-              {currentPage}-{currentRowsPerPage} of {totalPages}
+          <span style={{ fontFamily: "Montserrat" }}>
+              {currentPage} of {totalPages}
             </span>
+
+
+          
             <IconButton onClick={handlePrevPage} disabled={currentPage === 1}>
               <FaChevronLeft />
             </IconButton>
@@ -1115,8 +1090,8 @@ const passingHeadCells = {
       isDropDown: false,
     },
     {
-      label: "Sharpe Ratio",
-      key: "sharpe_ratio",
+      label: "Country",
+      key: "country",
       isValueLink: false,
       isDropDown: false,
     },
